@@ -506,6 +506,7 @@ class PreparedContextBuilder:
         primary: list[tuple[float, float, int, int, int]] = []
         neighbours: list[tuple[float, float, int, int, int]] = []
         secondary: list[tuple[float, float, int, int, int]] = []
+        filler: list[tuple[float, float, int, int, int]] = []
         for index, ((address, text), tokens) in enumerate(zip(entries, tokenized, strict=True)):
             spans = [(start, end) for start, end in _sentence_spans(text) if text[start:end].strip()]
             if not spans:
@@ -522,9 +523,12 @@ class PreparedContextBuilder:
             document_score = sum(weights[token] for token in query_tokens & tokens)
             best_position = max(range(len(scored)), key=lambda position: (scored[position][0], -scored[position][1]))
             for score, position, start, end in scored:
-                if score <= 0:
-                    continue
                 record = (document_score, score, index, start, end)
+                if score <= 0:
+                    # Nothing scores, yet unused budget still costs evidence tokens; the last
+                    # tier fills the remaining space in document order.
+                    filler.append(record)
+                    continue
                 distance = abs(position - best_position)
                 if distance == 0:
                     primary.append(record)
@@ -532,7 +536,7 @@ class PreparedContextBuilder:
                     neighbours.append(record)
                 else:
                     secondary.append(record)
-        if not (primary or neighbours or secondary):
+        if not (primary or neighbours or secondary or filler):
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
 
         def ordering(record: tuple[float, float, int, int, int]) -> tuple[float, float, int, int]:
@@ -541,7 +545,13 @@ class PreparedContextBuilder:
 
         selected: list[PreparedContextFragment] = []
         occupied: set[tuple[int, int, int]] = set()
-        for tier in (sorted(primary, key=ordering), sorted(neighbours, key=ordering), sorted(secondary, key=ordering)):
+        tiers = (
+            sorted(primary, key=ordering),
+            sorted(neighbours, key=ordering),
+            sorted(secondary, key=ordering),
+            sorted(filler, key=lambda record: (record[2], record[3])),
+        )
+        for tier in tiers:
             for _document_score, _score, index, start, end in tier:
                 fragment = PreparedContextFragment(
                     address=entries[index][0],
