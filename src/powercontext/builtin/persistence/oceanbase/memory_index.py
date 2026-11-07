@@ -464,6 +464,9 @@ class OceanBaseMemoryVectorIndex:
                 self.table.c.scope_id == scope_id,
                 self.table.c.memory_artifact_id.in_(memory_ids),
             )
+            .order_by(
+                text("l2_distance(pc_memory_vector_entries.embedding, :query_vector) APPROXIMATE")
+            )
             .limit(request.candidate_limit)
         )
         combined = union_all(fts, vector)
