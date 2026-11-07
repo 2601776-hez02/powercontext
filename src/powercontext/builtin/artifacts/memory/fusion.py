@@ -99,6 +99,15 @@ def fuse_rankings(
             identity[3].encode("utf-8"),
         ),
     )[:limit]
+    import logging
+
+    logging.getLogger("powercontext.hybrid.debug").error(
+        "fuse fts=%r vector=%r channels=%r scores=%r",
+        fts,
+        vector,
+        channels,
+        scores,
+    )
     return tuple(
         MemoryHit(
             memory_ref=candidates[identity].memory_ref,
