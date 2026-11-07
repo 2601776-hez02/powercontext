@@ -475,13 +475,16 @@ class OceanBaseMemoryVectorIndex:
         vector_rows = [row for row in all_rows if row["channel"] == "vector"]
         import logging
 
+        fts_hits = memory_channel_hits(fts_rows, request.memories)
+        vector_hits = memory_channel_hits(vector_rows, request.memories)
         logging.getLogger("powercontext.hybrid.debug").error(
-            "hybrid rows fts=%d vector=%d all=%r", len(fts_rows), len(vector_rows), all_rows
+            "hybrid rows fts=%d vector=%d fts_hits=%r vector_hits=%r",
+            len(fts_rows),
+            len(vector_rows),
+            fts_hits,
+            vector_hits,
         )
-        return MemorySearchChannels(
-            fts=memory_channel_hits(fts_rows, request.memories),
-            vector=memory_channel_hits(vector_rows, request.memories),
-        )
+        return MemorySearchChannels(fts=fts_hits, vector=vector_hits)
 
     async def vector_complete(
         self,
