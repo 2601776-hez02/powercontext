@@ -249,6 +249,7 @@ from powercontext.builtin.runtime.recall_sufficiency import (
     recall_effort,
 )
 from powercontext.builtin.runtime.statistics import RelationalScopedStatistics, overview_selection
+from powercontext.builtin.runtime.source_lifecycle import SourceLifecycleService
 from powercontext.builtin.scope import ScopeApplication, ScopeDescriptor, ScopeSelection
 from powercontext.builtin.scope.subject_sources import SubjectSourceService
 from powercontext.builtin.sources import (
@@ -2830,6 +2831,38 @@ class TopicMemoryApplication:
         return ScopedTopicMemoryApplication(self._runtime, scope_id)
 
 
+class ScopedSourceLifecycleApplication:
+    """Scope-bound Source dependency lifecycle service."""
+
+    def __init__(self, runtime: BuiltinRuntime, scope_id: str) -> None:
+        self._service = SourceLifecycleService(runtime, scope_id)
+
+    async def register_source(self, node_id: str, source_ref, *, revision: int) -> None:
+        await self._service.register_source(node_id, source_ref, revision=revision)
+
+    async def register_memory(self, node_id: str, citation, *, parents, policy) -> None:
+        await self._service.register_memory(node_id, citation, parents=parents, policy=policy)
+
+    async def register_topic(self, node_id: str, artifact_ref, *, parents, policy) -> None:
+        await self._service.register_topic(node_id, artifact_ref, parents=parents, policy=policy)
+
+    async def apply(self, event) -> list[str]:
+        return await self._service.apply(event)
+
+    async def resolve(self, node_id: str, *, purpose):
+        return await self._service.resolve(node_id, purpose=purpose)
+
+
+class SourceLifecycleApplication:
+    """Select the scoped Source dependency lifecycle service."""
+
+    def __init__(self, runtime: BuiltinRuntime) -> None:
+        self._runtime = runtime
+
+    def for_scope(self, scope_id: str, /) -> ScopedSourceLifecycleApplication:
+        return ScopedSourceLifecycleApplication(self._runtime, scope_id)
+
+
 class ScheduledSourceProcessor:
     """Map APScheduler activations to scoped Source-window policies."""
 
@@ -3128,6 +3161,7 @@ class BuiltinRuntime:
         self.memory = MemoryApplication(self)
         self.topic_memory = TopicMemoryApplication(self)
         self.records = RecordApplication(self)
+        self.lifecycle = SourceLifecycleApplication(self)
         self.prompts = PromptApplication(self)
         self.review = ReviewApplication(self)
         self.skill = SkillApplication(self)
