@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
 from itertools import chain
@@ -106,6 +107,7 @@ class PreparedContextBuild:
     origins: tuple[PreparedContextOrigin, ...]
     omissions: PreparedContextOmissions = PreparedContextOmissions()
     code_origins: tuple[CodeEvidenceRef, ...] = ()
+    fragments: tuple[PreparedContextFragment, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -115,6 +117,16 @@ class MemoryEntryAddress:
     memory: ArtifactAddress
     entry_id: str
     entry_version_id: str
+
+
+@dataclass(frozen=True)
+class PreparedContextFragment:
+    """One literal evidence span selected from a Memory entry."""
+
+    address: MemoryEntryAddress
+    start: int
+    end: int
+    text: str
 
 
 PreparedContextOrigin = MemoryCitation | ArtifactRef | MemoryEntryAddress | ArtifactAddress
@@ -234,6 +246,13 @@ class PreparedContextBuilder:
             raise PreparedContextInvariantError("topic-memory-candidate-limit")
         if sum(len(candidates.hits) for candidates in experience_candidates) > self.experience_candidate_limit:
             raise PreparedContextInvariantError("experience-candidate-limit")
+
+        if request.evidence_selection:
+            return self._select_evidence(
+                request=request,
+                current_scope_id=current_scope_id,
+                memory_candidates=memory_candidates,
+            )
 
         content, origins, omissions = self._select_entries(
             request=request,
@@ -432,6 +451,61 @@ class PreparedContextBuilder:
             return None, (), omissions
         content = render_context_text(included, assembly)
         return content, tuple(origins), omissions
+
+    def _select_evidence(
+        self,
+        *,
+        request: PrepareContextRequest,
+        current_scope_id: str | None,
+        memory_candidates: Sequence[PreparedMemoryCandidates],
+    ) -> PreparedContextBuild:
+        """Select query-relevant literal spans from Memory candidates within the byte budget."""
+        query_tokens = _tokenize(request.query)
+        ranked: list[tuple[int, PreparedContextFragment]] = []
+        seen: set[tuple[str, str]] = set()
+        for group in memory_candidates:
+            for hit in group.hits:
+                if group.memory_ref is not None and hit.memory_ref != group.memory_ref:
+                    raise PreparedContextInvariantError("memory-ref-mismatch")
+                identity = (hit.entry_id, hit.entry_version_id)
+                if identity in seen:
+                    continue
+                if not hit.entry_id.strip() or not hit.entry_version_id.strip() or not hit.text.strip():
+                    continue
+                seen.add(identity)
+                memory = ArtifactAddress(scope_id=group.scope_id, artifact=hit.memory_ref)
+                address = MemoryEntryAddress(
+                    memory=memory,
+                    entry_id=hit.entry_id,
+                    entry_version_id=hit.entry_version_id,
+                )
+                for start, end in _sentence_spans(hit.text):
+                    fragment_text = hit.text[start:end]
+                    if not fragment_text.strip():
+                        continue
+                    score = _token_overlap(fragment_text, query_tokens)
+                    if score <= 0:
+                        continue
+                    ranked.append(
+                        (
+                            score,
+                            PreparedContextFragment(address=address, start=start, end=end, text=fragment_text),
+                        )
+                    )
+        ranked.sort(key=lambda item: item[0], reverse=True)
+        selected: list[PreparedContextFragment] = []
+        for _, fragment in ranked:
+            if _evidence_rendered_bytes((*selected, fragment)) > request.max_bytes:
+                continue
+            selected.append(fragment)
+        if not selected:
+            return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
+        content = _render_evidence(selected)
+        return PreparedContextBuild(
+            context=PreparedContext(status="ready", content=content, content_bytes=len(content.encode("utf-8"))),
+            origins=tuple(fragment.address for fragment in selected),
+            fragments=tuple(selected),
+        )
 
     def _profile_entries(self, candidates: Sequence[PreparedProfileCandidate]) -> tuple[_PreparedContextEntry, ...]:
         entries = []
@@ -692,6 +766,47 @@ def _render(entries: Sequence[_PreparedContextEntry]) -> str:
     }
     encoded = json.dumps(envelope, ensure_ascii=False, separators=(",", ":"))
     return "\n\n".join((TRUST_POLICY, f"{_BEGIN_MARKER}\n{encoded}\n{_END_MARKER}"))
+
+
+_SENTENCE_PATTERN = re.compile(r"[^.!?\n]+[.!?\n]*")
+_TOKEN_PATTERN = re.compile(r"[a-z]+|\d+")
+
+
+def _tokenize(text: str) -> set[str]:
+    return set(_TOKEN_PATTERN.findall(text.casefold()))
+
+
+def _sentence_spans(text: str):
+    for match in _SENTENCE_PATTERN.finditer(text):
+        yield match.start(), match.end()
+
+
+def _token_overlap(text: str, query_tokens: set[str]) -> int:
+    return len(query_tokens.intersection(_tokenize(text)))
+
+
+def _render_evidence(fragments: Sequence[PreparedContextFragment]) -> str:
+    items = [
+        {
+            "citation": {
+                "scope_id": fragment.address.memory.scope_id,
+                "memory_ref": fragment.address.memory.artifact.model_dump(mode="json"),
+                "entry_id": fragment.address.entry_id,
+                "entry_version_id": fragment.address.entry_version_id,
+            },
+            "content": fragment.text,
+            "start": fragment.start,
+            "end": fragment.end,
+        }
+        for fragment in fragments
+    ]
+    envelope = {"trust": "untrusted_history", "items": items}
+    encoded = json.dumps(envelope, ensure_ascii=False, separators=(",", ":"))
+    return "\n\n".join((TRUST_POLICY, f"{_BEGIN_MARKER}\n{encoded}\n{_END_MARKER}"))
+
+
+def _evidence_rendered_bytes(fragments: Sequence[PreparedContextFragment]) -> int:
+    return len(_render_evidence(fragments).encode("utf-8"))
 
 
 def _text_item(entry: _PreparedContextEntry) -> ContextTextItem:
