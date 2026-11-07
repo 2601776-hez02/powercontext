@@ -519,41 +519,25 @@ class PreparedContextBuilder:
         prepared.sort(key=lambda row: (-row[0], row[1], row[2]))
 
         # One contiguous fragment per abstract spends the byte budget on原文 instead of repeating
-        # a citation per sentence, and a best-sentence window keeps multi-sentence evidence whole.
+        # a citation per sentence. Each abstract takes the widest window around its best sentence
+        # that still fits, because annotated evidence usually covers a short contiguous span and
+        # any unused byte costs recall.
         selected: list[PreparedContextFragment] = []
-        windows = {
-            "best": lambda best, count: (best, best),
-            "both": lambda best, count: (max(best - 1, 0), min(best + 1, count - 1)),
-            "next": lambda best, count: (best, min(best + 1, count - 1)),
-            "previous": lambda best, count: (max(best - 1, 0), best),
-        }
         for _document_score, best, _index, address, text, spans in prepared:
-            for name in ("both", "next", "previous", "best"):
-                low, high = windows[name](best, len(spans))
-                if low > high:
-                    continue
+            chosen: PreparedContextFragment | None = None
+            for window in range(len(spans), -1, -1):
+                low = max(best - window, 0)
+                high = min(best + window, len(spans) - 1)
                 start, end = spans[low][0], spans[high][1]
-                fragment = PreparedContextFragment(address=address, start=start, end=end, text=text[start:end])
-                if not fragment.text.strip():
+                candidate = PreparedContextFragment(address=address, start=start, end=end, text=text[start:end])
+                if not candidate.text.strip():
                     continue
-                if _evidence_rendered_bytes((*selected, fragment)) > request.max_bytes:
+                if _evidence_rendered_bytes((*selected, candidate)) > request.max_bytes:
                     continue
-                selected.append(fragment)
+                chosen = candidate
                 break
-
-        # Spend any budget left over on the sentences that did not make a window, in rank order.
-        covered = {(fragment.address.entry_id, fragment.start, fragment.end) for fragment in selected}
-        for _document_score, _best, _index, address, text, spans in prepared:
-            for start, end in spans:
-                if (address.entry_id, start, end) in covered:
-                    continue
-                fragment = PreparedContextFragment(address=address, start=start, end=end, text=text[start:end])
-                if not fragment.text.strip():
-                    continue
-                if _evidence_rendered_bytes((*selected, fragment)) > request.max_bytes:
-                    continue
-                covered.add((address.entry_id, start, end))
-                selected.append(fragment)
+            if chosen is not None:
+                selected.append(chosen)
 
         if not selected:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
