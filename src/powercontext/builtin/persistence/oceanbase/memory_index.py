@@ -470,8 +470,14 @@ class OceanBaseMemoryVectorIndex:
         rows = (
             await connection.execute(combined, {"query_vector": query_vector})
         ).mappings()
-        fts_rows = [row for row in rows if row["channel"] == "fts"]
-        vector_rows = [row for row in rows if row["channel"] == "vector"]
+        all_rows = list(rows)
+        fts_rows = [row for row in all_rows if row["channel"] == "fts"]
+        vector_rows = [row for row in all_rows if row["channel"] == "vector"]
+        import logging
+
+        logging.getLogger("powercontext.hybrid.debug").error(
+            "hybrid rows fts=%d vector=%d all=%r", len(fts_rows), len(vector_rows), all_rows
+        )
         return MemorySearchChannels(
             fts=memory_channel_hits(fts_rows, request.memories),
             vector=memory_channel_hits(vector_rows, request.memories),
