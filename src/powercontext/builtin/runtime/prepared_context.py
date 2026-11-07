@@ -503,71 +503,58 @@ class PreparedContextBuilder:
             for token, count in document_frequency.items()
         }
 
-        primary: list[tuple[float, float, int, int, int]] = []
-        neighbours: list[tuple[float, float, int, int, int]] = []
-        secondary: list[tuple[float, float, int, int, int]] = []
-        filler: list[tuple[float, float, int, int, int]] = []
+        prepared: list[tuple[float, int, int, MemoryEntryAddress, str, list[tuple[int, int]]]] = []
         for index, ((address, text), tokens) in enumerate(zip(entries, tokenized, strict=True)):
             spans = [(start, end) for start, end in _sentence_spans(text) if text[start:end].strip()]
             if not spans:
                 continue
-            scored = [
-                (
-                    sum(weights[token] for token in query_tokens & _tokenize(text[start:end])),
-                    position,
-                    start,
-                    end,
-                )
-                for position, (start, end) in enumerate(spans)
+            scores = [
+                sum(weights[token] for token in query_tokens & _tokenize(text[start:end])) for start, end in spans
             ]
+            best = max(range(len(scores)), key=lambda position: (scores[position], -position))
             document_score = sum(weights[token] for token in query_tokens & tokens)
-            best_position = max(range(len(scored)), key=lambda position: (scored[position][0], -scored[position][1]))
-            for score, position, start, end in scored:
-                record = (document_score, score, index, start, end)
-                if score <= 0:
-                    # Nothing scores, yet unused budget still costs evidence tokens; the last
-                    # tier fills the remaining space in document order.
-                    filler.append(record)
-                    continue
-                distance = abs(position - best_position)
-                if distance == 0:
-                    primary.append(record)
-                elif distance == 1:
-                    neighbours.append(record)
-                else:
-                    secondary.append(record)
-        if not (primary or neighbours or secondary or filler):
+            prepared.append((document_score, best, index, address, text, spans))
+        if not prepared:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
+        prepared.sort(key=lambda row: (-row[0], row[1], row[2]))
 
-        def ordering(record: tuple[float, float, int, int, int]) -> tuple[float, float, int, int]:
-            document_score, score, index, start, _end = record
-            return (-document_score, -score, index, start)
-
+        # One contiguous fragment per abstract spends the byte budget on原文 instead of repeating
+        # a citation per sentence, and a best-sentence window keeps multi-sentence evidence whole.
         selected: list[PreparedContextFragment] = []
-        occupied: set[tuple[int, int, int]] = set()
-        tiers = (
-            sorted(primary, key=ordering),
-            sorted(neighbours, key=ordering),
-            sorted(secondary, key=ordering),
-            sorted(filler, key=lambda record: (record[2], record[3])),
-        )
-        for tier in tiers:
-            for _document_score, _score, index, start, end in tier:
-                fragment = PreparedContextFragment(
-                    address=entries[index][0],
-                    start=start,
-                    end=end,
-                    text=entries[index][1][start:end],
-                )
-                slot = (index, start, end)
-                if slot in occupied:
+        windows = {
+            "best": lambda best, count: (best, best),
+            "both": lambda best, count: (max(best - 1, 0), min(best + 1, count - 1)),
+            "next": lambda best, count: (best, min(best + 1, count - 1)),
+            "previous": lambda best, count: (max(best - 1, 0), best),
+        }
+        for _document_score, best, _index, address, text, spans in prepared:
+            for name in ("both", "next", "previous", "best"):
+                low, high = windows[name](best, len(spans))
+                if low > high:
                     continue
+                start, end = spans[low][0], spans[high][1]
+                fragment = PreparedContextFragment(address=address, start=start, end=end, text=text[start:end])
                 if not fragment.text.strip():
                     continue
                 if _evidence_rendered_bytes((*selected, fragment)) > request.max_bytes:
                     continue
-                occupied.add(slot)
                 selected.append(fragment)
+                break
+
+        # Spend any budget left over on the sentences that did not make a window, in rank order.
+        covered = {(fragment.address.entry_id, fragment.start, fragment.end) for fragment in selected}
+        for _document_score, _best, _index, address, text, spans in prepared:
+            for start, end in spans:
+                if (address.entry_id, start, end) in covered:
+                    continue
+                fragment = PreparedContextFragment(address=address, start=start, end=end, text=text[start:end])
+                if not fragment.text.strip():
+                    continue
+                if _evidence_rendered_bytes((*selected, fragment)) > request.max_bytes:
+                    continue
+                covered.add((address.entry_id, start, end))
+                selected.append(fragment)
+
         if not selected:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
         content = _render_evidence(selected)
