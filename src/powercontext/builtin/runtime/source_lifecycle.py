@@ -104,7 +104,13 @@ class SourceLifecycleService:
         parents: tuple[str, ...],
         policy: Policy,
     ) -> None:
-        await self._register(node_id, "topic", parents, policy, artifact_ref.model_dump(mode="json"), 0, 0, False)
+        record = await self._runtime.records.for_scope(self._scope_id).get_artifact_revision(
+            artifact_ref.family,
+            artifact_ref.artifact_id,
+            artifact_ref.revision,
+        )
+        reference = {**artifact_ref.model_dump(mode="json"), "content": record.content}
+        await self._register(node_id, "topic", parents, policy, reference, 0, 0, False)
 
     async def _register(
         self,
@@ -142,20 +148,19 @@ class SourceLifecycleService:
             available = True
         else:
             available = _derived_available(nodes, parents, policy)
-        await self._store(
-            _Node(
-                node_type=node_type,
-                parents=parents,
-                policy=policy,
-                reference=reference,
-                revision=revision,
-                sequence=sequence,
-                available=available,
-            ),
-            node_id,
+        node = _Node(
+            node_type=node_type,
+            parents=parents,
+            policy=policy,
+            reference=reference,
+            revision=revision,
+            sequence=sequence,
+            available=available,
         )
-        if node_type != "source" and not available:
-            await self._propagate_native(node_id, nodes, available=False)
+        await self._store(node, node_id)
+        nodes[node_id] = node
+        if node_type == "topic" or (node_type == "memory" and not available):
+            await self._propagate_native(node_id, nodes, available=available)
 
     async def apply(self, event: SourceLifecycleEvent) -> list[str]:
         nodes = await self._load()
@@ -241,10 +246,11 @@ class SourceLifecycleService:
                 await service.forget(current, entries=matching, reason="source-lifecycle")
 
     async def _set_topic_state(self, node_id: str, reference: dict[str, Any], available: bool) -> None:
-        ref = ArtifactRef.model_validate(reference)
+        ref = ArtifactRef.model_validate({k: v for k, v in reference.items() if k != "content"})
+        content = reference.get("content")
         async with self._runtime.database.transaction() as connection:
             if available:
-                await _reactivate_topic(connection, self._scope_id, ref)
+                await _reactivate_topic(connection, self._scope_id, ref, content)
             else:
                 await _deactivate_topic(connection, self._scope_id, ref)
 
@@ -327,8 +333,23 @@ def _derived_available(nodes: dict[str, _Node], parents: tuple[str, ...], policy
 
 
 async def _deactivate_topic(connection: AsyncConnection, scope_id: str, ref: ArtifactRef) -> None:
+    from sqlalchemy import text as sql_text
+
     from powercontext.builtin.persistence.tables import TOPIC_MEMORY_ACTIVE_CHUNKS_TABLE, TOPIC_MEMORY_ACTIVE_TOPICS_TABLE
 
+    if connection.dialect.name == "sqlite":
+        await connection.execute(
+            sql_text(
+                "DELETE FROM pc_topic_memory_topic_fts WHERE scope_id = :scope_id AND artifact_id = :artifact_id"
+            ),
+            {"scope_id": scope_id, "artifact_id": ref.artifact_id},
+        )
+        await connection.execute(
+            sql_text(
+                "DELETE FROM pc_topic_memory_chunk_fts WHERE scope_id = :scope_id AND artifact_id = :artifact_id"
+            ),
+            {"scope_id": scope_id, "artifact_id": ref.artifact_id},
+        )
     await connection.execute(
         delete(TOPIC_MEMORY_ACTIVE_CHUNKS_TABLE).where(
             TOPIC_MEMORY_ACTIVE_CHUNKS_TABLE.c.scope_id == scope_id,
@@ -343,46 +364,82 @@ async def _deactivate_topic(connection: AsyncConnection, scope_id: str, ref: Art
     )
 
 
-async def _reactivate_topic(connection: AsyncConnection, scope_id: str, ref: ArtifactRef) -> None:
-    from powercontext.builtin.artifacts.topic_memory.chunking import chunk_topic_memory_detail
-    from powercontext.builtin.persistence.tables import (
-        ARTIFACTS_TABLE,
-        TOPIC_MEMORY_ACTIVE_CHUNKS_TABLE,
-        TOPIC_MEMORY_ACTIVE_TOPICS_TABLE,
-    )
+async def _reactivate_topic(
+    connection: AsyncConnection,
+    scope_id: str,
+    ref: ArtifactRef,
+    content: dict[str, Any] | None,
+) -> None:
+    from sqlalchemy import insert, text as sql_text
 
-    row = (
-        await connection.execute(
-            select(ARTIFACTS_TABLE.c.content).where(
-                ARTIFACTS_TABLE.c.scope_id == scope_id,
-                ARTIFACTS_TABLE.c.family == TopicMemory.family,
-                ARTIFACTS_TABLE.c.artifact_id == ref.artifact_id,
-                ARTIFACTS_TABLE.c.revision == ref.revision,
-            )
-        )
-    ).mappings().one_or_none()
-    if row is None:
-        return
-    from powercontext.builtin.artifacts.topic_memory.models import TopicMemory
-
-    content = row["content"]
-    if isinstance(content, bytes):
-        content = json.loads(content.decode("utf-8"))
-    topic = TopicMemory.model_validate(content)
-    title = topic.content.title
-    summary = topic.content.summary
-    detail = topic.content.detail
     from powercontext.builtin.artifacts.search import analyze_text
+    from powercontext.builtin.artifacts.topic_memory.chunking import chunk_topic_memory_detail
+    from powercontext.builtin.persistence.tables import TOPIC_MEMORY_ACTIVE_CHUNKS_TABLE, TOPIC_MEMORY_ACTIVE_TOPICS_TABLE
 
+    if not content:
+        return
+    title = content.get("title", "")
+    summary = content.get("summary", "")
+    detail = content.get("detail", "")
     searchable = analyze_text(f"{title}\n{summary}")
+    chunks = chunk_topic_memory_detail(detail)
+
+    if connection.dialect.name == "sqlite":
+        await connection.execute(
+            sql_text(
+                "DELETE FROM pc_topic_memory_topic_fts WHERE scope_id = :scope_id AND artifact_id = :artifact_id"
+            ),
+            {"scope_id": scope_id, "artifact_id": ref.artifact_id},
+        )
+        await connection.execute(
+            sql_text(
+                "DELETE FROM pc_topic_memory_chunk_fts WHERE scope_id = :scope_id AND artifact_id = :artifact_id"
+            ),
+            {"scope_id": scope_id, "artifact_id": ref.artifact_id},
+        )
+        await connection.execute(
+            sql_text(
+                "INSERT INTO pc_topic_memory_topic_fts "
+                "(scope_id, artifact_id, revision, title, summary, searchable_text) "
+                "VALUES (:scope_id, :artifact_id, :revision, :title, :summary, :searchable_text)"
+            ),
+            {
+                "scope_id": scope_id,
+                "artifact_id": ref.artifact_id,
+                "revision": ref.revision,
+                "title": title,
+                "summary": summary,
+                "searchable_text": searchable,
+            },
+        )
+        for chunk in chunks:
+            await connection.execute(
+                sql_text(
+                    "INSERT INTO pc_topic_memory_chunk_fts "
+                    "(scope_id, artifact_id, revision, chunk_ordinal, start_offset, title, summary, "
+                    "chunk_text, searchable_text) "
+                    "VALUES (:scope_id, :artifact_id, :revision, :chunk_ordinal, :start_offset, :title, :summary, "
+                    ":chunk_text, :searchable_text)"
+                ),
+                {
+                    "scope_id": scope_id,
+                    "artifact_id": ref.artifact_id,
+                    "revision": ref.revision,
+                    "chunk_ordinal": chunk.ordinal,
+                    "start_offset": chunk.start_offset,
+                    "title": title,
+                    "summary": summary,
+                    "chunk_text": chunk.text,
+                    "searchable_text": analyze_text(chunk.text),
+                },
+            )
+
     await connection.execute(
         delete(TOPIC_MEMORY_ACTIVE_TOPICS_TABLE).where(
             TOPIC_MEMORY_ACTIVE_TOPICS_TABLE.c.scope_id == scope_id,
             TOPIC_MEMORY_ACTIVE_TOPICS_TABLE.c.artifact_id == ref.artifact_id,
         )
     )
-    from sqlalchemy import insert
-
     await connection.execute(
         insert(TOPIC_MEMORY_ACTIVE_TOPICS_TABLE).values(
             scope_id=scope_id,
@@ -392,7 +449,7 @@ async def _reactivate_topic(connection: AsyncConnection, scope_id: str, ref: Art
             title=title,
             summary=summary,
             searchable_text=searchable,
-            source_count=len(topic.lineage.sources),
+            source_count=0,
         )
     )
     await connection.execute(
@@ -401,7 +458,6 @@ async def _reactivate_topic(connection: AsyncConnection, scope_id: str, ref: Art
             TOPIC_MEMORY_ACTIVE_CHUNKS_TABLE.c.artifact_id == ref.artifact_id,
         )
     )
-    chunks = chunk_topic_memory_detail(detail)
     await connection.execute(
         insert(TOPIC_MEMORY_ACTIVE_CHUNKS_TABLE),
         [
