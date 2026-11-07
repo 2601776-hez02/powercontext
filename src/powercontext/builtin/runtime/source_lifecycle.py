@@ -172,13 +172,16 @@ class SourceLifecycleService:
             raise SourceLifecycleError("same-sequence event with different content")
         if event.sequence == node.sequence and event.available == node.available:
             return sorted(self._available_ids(nodes))
+        previous_available = self._available_ids(nodes)
         updated = node.model_copy(update={"sequence": event.sequence, "available": event.available})
         nodes[event.node_id] = updated
         await self._store(updated, event.node_id)
         active = self._recompute(nodes)
         for node_id in _registration_order(nodes):
-            target = nodes[node_id]
-            await self._propagate_native(node_id, nodes, available=node_id in active)
+            was = node_id in previous_available
+            now = node_id in active
+            if was != now:
+                await self._propagate_native(node_id, nodes, available=now)
         await self._store_all(nodes)
         return sorted(active)
 
@@ -232,10 +235,6 @@ class SourceLifecycleService:
             matching = [entry for entry in entries if entry.entry_id == citation.entry_id]
             if not matching:
                 return
-            target = matching[0]
-            already_active = target.entry_id in {
-                entry.entry_id for entry in entries if entry.state == "active"
-            } or True
             if available:
                 await service.reactivate(current, entries=matching, reason="source-lifecycle")
             else:
@@ -247,12 +246,6 @@ class SourceLifecycleService:
             if available:
                 await _reactivate_topic(connection, self._scope_id, ref)
             else:
-                await connection.execute(
-                    delete(SOURCE_LIFECYCLE_TABLE).where(
-                        SOURCE_LIFECYCLE_TABLE.c.scope_id == self._scope_id,
-                        SOURCE_LIFECYCLE_TABLE.c.node_id == "__topic_state__",
-                    )
-                )
                 await _deactivate_topic(connection, self._scope_id, ref)
 
     async def _load(self) -> dict[str, _Node]:
