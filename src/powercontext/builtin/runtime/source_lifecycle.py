@@ -264,6 +264,11 @@ class SourceLifecycleService:
     async def _set_topic_state(self, node_id: str, reference: dict[str, Any], available: bool) -> None:
         ref = ArtifactRef.model_validate({k: v for k, v in reference.items() if k != "content"})
         content = reference.get("content")
+        import logging
+
+        logging.getLogger("powercontext.lifecycle.debug").error(
+            "topic state node=%s available=%s artifact_id=%s", node_id, available, ref.artifact_id
+        )
         async with self._runtime.database.transaction() as connection:
             if available:
                 await _reactivate_topic(connection, self._scope_id, ref, content)
