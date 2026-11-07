@@ -60,11 +60,21 @@ class PDFPageSource(Source):
 
 
 def _pdf_page_source_id(document_id: str, document_sha256: str, page_number: int) -> str:
-    return f"pdf:{quote(document_id, safe='')}:{document_sha256}:{page_number}"
+    identity = f"pdf:{quote(document_id, safe='')}:{document_sha256}:{page_number}"
+    if len(identity) <= 256:
+        return identity
+    # A long caller-supplied document id cannot enlarge the identity past the contract bound.
+    digest = hashlib.sha256(document_id.encode("utf-8")).hexdigest()
+    return f"pdf:h:{digest}:{document_sha256}:{page_number}"
 
 
 def _pdf_page_key(source_id: str) -> tuple[str, int] | None:
     parts = source_id.split(":")
+    if len(parts) == 5 and parts[0] == "pdf" and parts[1] == "h":
+        try:
+            return f"h:{parts[2]}", int(parts[4])
+        except ValueError:
+            return None
     if len(parts) != 4 or parts[0] != "pdf":
         return None
     try:
@@ -178,22 +188,22 @@ def _content_terms(text: str) -> list[str]:
     return [term for term in _evidence_terms(text) if term not in _EVIDENCE_STOPWORDS and len(term) > 1]
 
 
-def _rank_pages(
-    candidates: dict[tuple[str, int], tuple[Any, str]],
+def _rank_entries(
+    candidates: dict[tuple[str, str], tuple[Any, str]],
     question: str,
-) -> list[tuple[str, int]]:
-    """Rank distinct pages by weighted query coverage, then by aggregate term frequency."""
+) -> list[tuple[str, str]]:
+    """Rank candidate entries by weighted query coverage, then by aggregate term frequency."""
 
     query_terms = list(dict.fromkeys(_content_terms(question)))
     if not query_terms:
         query_terms = list(dict.fromkeys(_evidence_terms(question)))
     if not query_terms:
         return list(candidates)
+    page_terms: dict[tuple[str, str], Counter[str]] = {}
     document_frequency = dict.fromkeys(query_terms, 0)
-    page_terms: dict[tuple[str, int], dict[str, int]] = {}
-    for key, (_citation, text) in candidates.items():
+    for identity, (_citation, text) in candidates.items():
         frequencies = Counter(_evidence_terms(text))
-        page_terms[key] = frequencies
+        page_terms[identity] = frequencies
         for term in query_terms:
             if term in frequencies:
                 document_frequency[term] += 1
@@ -202,13 +212,13 @@ def _rank_pages(
         term: math.log(1.0 + (total - count + 0.5) / (count + 0.5))
         for term, count in document_frequency.items()
     }
-    scored: list[tuple[float, float, str, int]] = []
-    for key, frequencies in page_terms.items():
+    scored: list[tuple[float, float, str, str]] = []
+    for identity, frequencies in page_terms.items():
         coverage = sum(weights[term] for term in query_terms if term in frequencies)
         frequency = sum(min(frequencies.get(term, 0), 8) * weights[term] for term in query_terms)
-        scored.append((coverage, frequency, key[0], key[1]))
+        scored.append((coverage, frequency, identity[0], identity[1]))
     scored.sort(key=lambda item: (-item[0], -item[1], item[2], item[3]))
-    return [(document_id, page_number) for _coverage, _frequency, document_id, page_number in scored]
+    return [(entry_id, version_id) for _coverage, _frequency, entry_id, version_id in scored]
 
 
 async def search_pdf_pages(memory, question: str, limit: int = 10):
@@ -228,30 +238,45 @@ async def search_pdf_pages(memory, question: str, limit: int = 10):
     per_query_limit = max(limit * 20, 200)
     queries: list[str] = [question]
     queries.extend(list(dict.fromkeys(_content_terms(question)))[:10])
-    candidates: dict[tuple[str, int], tuple[Any, str]] = {}
+    candidates: dict[tuple[str, str], tuple[Any, str]] = {}
     for query in queries:
         page = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=per_query_limit))
         for hit in page.hits:
-            citation = MemoryCitation(
-                memory_ref=hit.memory_ref,
-                entry_id=hit.entry_id,
-                entry_version_id=hit.entry_version_id,
-            )
-            resolved = await memory.get(GetMemoryEntryRequest(citation=citation))
-            entry = resolved.entry
-            page_key: tuple[str, int] | None = None
-            for reference in entry.sources:
-                if reference.source_type == PDF_PAGE_SOURCE_NAME:
-                    page_key = _pdf_page_key(reference.source_id)
-                    if page_key is not None:
-                        break
-            if page_key is None:
+            identity = (hit.entry_id, hit.entry_version_id)
+            if identity in candidates:
                 continue
-            candidates.setdefault(page_key, (citation, entry.text))
+            candidates[identity] = (
+                MemoryCitation(
+                    memory_ref=hit.memory_ref,
+                    entry_id=hit.entry_id,
+                    entry_version_id=hit.entry_version_id,
+                ),
+                hit.text,
+            )
     if not candidates:
         return ()
-    ranked = _rank_pages(candidates, question)
-    return tuple(candidates[key][0] for key in ranked[:limit])
+    ranked = _rank_entries(candidates, question)
+    citations: list[Any] = []
+    seen_pages: set[tuple[str, int]] = set()
+    inspected = 0
+    inspection_limit = max(limit * 8, 80)
+    for identity in ranked:
+        if len(citations) >= limit or inspected >= inspection_limit:
+            break
+        citation, _text = candidates[identity]
+        inspected += 1
+        entry = (await memory.get(GetMemoryEntryRequest(citation=citation))).entry
+        page_key: tuple[str, int] | None = None
+        for reference in entry.sources:
+            if reference.source_type == PDF_PAGE_SOURCE_NAME:
+                page_key = _pdf_page_key(reference.source_id)
+                if page_key is not None:
+                    break
+        if page_key is None or page_key in seen_pages:
+            continue
+        seen_pages.add(page_key)
+        citations.append(citation)
+    return tuple(citations)
 
 
 __all__ = [
