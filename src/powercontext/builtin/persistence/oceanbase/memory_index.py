@@ -467,24 +467,13 @@ class OceanBaseMemoryVectorIndex:
             .limit(request.candidate_limit)
         )
         combined = union_all(fts, vector)
-        rows = (
-            await connection.execute(combined, {"query_vector": query_vector})
-        ).mappings()
-        all_rows = list(rows)
-        fts_rows = [row for row in all_rows if row["channel"] == "fts"]
-        vector_rows = [row for row in all_rows if row["channel"] == "vector"]
-        import logging
-
-        fts_hits = memory_channel_hits(fts_rows, request.memories)
-        vector_hits = memory_channel_hits(vector_rows, request.memories)
-        logging.getLogger("powercontext.hybrid.debug").error(
-            "hybrid rows fts=%d vector=%d fts_hits=%r vector_hits=%r",
-            len(fts_rows),
-            len(vector_rows),
-            fts_hits,
-            vector_hits,
+        rows = list((await connection.execute(combined, {"query_vector": query_vector})).mappings())
+        fts_rows = [row for row in rows if row["channel"] == "fts"]
+        vector_rows = [row for row in rows if row["channel"] == "vector"]
+        return MemorySearchChannels(
+            fts=memory_channel_hits(fts_rows, request.memories),
+            vector=memory_channel_hits(vector_rows, request.memories),
         )
-        return MemorySearchChannels(fts=fts_hits, vector=vector_hits)
 
     async def vector_complete(
         self,
