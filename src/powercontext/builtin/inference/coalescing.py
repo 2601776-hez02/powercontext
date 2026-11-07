@@ -63,25 +63,30 @@ class CoalescingEmbeddingModel:
             return EmbeddingResult(vectors=(), usage=InferenceUsage(requests=0))
 
         loop = asyncio.get_running_loop()
+        futures: dict[str, asyncio.Future | None] = {}
         async with self._lock:
             for text in unique:
                 if text in self._cache:
                     self._cache.move_to_end(text)
-                elif text not in self._inflight:
+                    futures[text] = None
+                elif text in self._inflight:
+                    futures[text] = self._inflight[text]
+                else:
                     future = loop.create_future()
                     self._inflight[text] = future
                     self._pending.append(text)
+                    futures[text] = future
             if self._pending and self._flush_task is None:
                 self._flush_task = loop.create_task(self._flush())
 
         awaited: set[int] = set()
         resolved: dict[str, tuple[float, ...]] = {}
         for text in unique:
-            if text in self._cache:
+            future = futures[text]
+            if future is None:
                 resolved[text] = self._cache[text]
             else:
-                future = self._inflight[text]
-                vector = await future
+                vector = await asyncio.shield(future)
                 resolved[text] = vector
                 batch_id = self._future_batch.get(future)
                 if batch_id is not None:
