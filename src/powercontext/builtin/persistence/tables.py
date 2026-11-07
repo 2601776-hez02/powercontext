@@ -1191,6 +1191,7 @@ SOURCE_LIFECYCLE_TABLE = Table(
     Column("reference", _entry_text_type(), nullable=False),
     Column("revision", Integer),
     Column("sequence", Integer),
+    Column("ordinal", Integer, nullable=False),
     Column("available", Boolean, nullable=False),
     ForeignKeyConstraint(("scope_id",), ("pc_scopes.scope_id",), ondelete="CASCADE"),
     CheckConstraint("node_type IN ('source', 'memory', 'topic')", name="ck_pc_source_lifecycle_node_type"),

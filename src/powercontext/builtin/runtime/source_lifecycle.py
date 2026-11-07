@@ -73,6 +73,7 @@ class _Node(BaseModel):
     reference: dict[str, Any]
     revision: int
     sequence: int
+    ordinal: int
     available: bool
 
 
@@ -155,6 +156,7 @@ class SourceLifecycleService:
             reference=reference,
             revision=revision,
             sequence=sequence,
+            ordinal=len(nodes),
             available=available,
         )
         await self._store(node, node_id)
@@ -182,13 +184,6 @@ class SourceLifecycleService:
         nodes[event.node_id] = updated
         await self._store(updated, event.node_id)
         active = self._recompute(nodes)
-        import logging
-
-        logging.getLogger("powercontext.lifecycle.debug").error(
-            "apply active=%r previous=%r",
-            sorted(active),
-            sorted(previous_available),
-        )
         for node_id in _registration_order(nodes):
             was = node_id in previous_available
             now = node_id in active
@@ -257,25 +252,10 @@ class SourceLifecycleService:
                     await service.reactivate(current, entries=matching, reason="source-lifecycle")
                 else:
                     await service.forget(current, entries=matching, reason="source-lifecycle")
-                import logging
-
-                after = await service.head(context.artifacts.memory_artifact_id)
-                logging.getLogger("powercontext.lifecycle.debug").error(
-                    "memory state node=%s available=%s before_rev=%s after_rev=%s",
-                    node_id,
-                    available,
-                    current.revision,
-                    after.revision if after else None,
-                )
 
     async def _set_topic_state(self, node_id: str, reference: dict[str, Any], available: bool) -> None:
         ref = ArtifactRef.model_validate({k: v for k, v in reference.items() if k != "content"})
         content = reference.get("content")
-        import logging
-
-        logging.getLogger("powercontext.lifecycle.debug").error(
-            "topic state node=%s available=%s artifact_id=%s", node_id, available, ref.artifact_id
-        )
         async with self._runtime.database.transaction() as connection:
             if available:
                 await _reactivate_topic(connection, self._scope_id, ref, content)
@@ -297,6 +277,7 @@ class SourceLifecycleService:
                     reference=json.loads(row["reference"]),
                     revision=row["revision"] or 0,
                     sequence=row["sequence"] or 0,
+                    ordinal=int(row["ordinal"]),
                     available=bool(row["available"]),
                 )
                 for row in rows
@@ -330,13 +311,14 @@ class SourceLifecycleService:
                 reference=json.dumps(node.reference),
                 revision=node.revision if node.node_type == "source" else None,
                 sequence=node.sequence if node.node_type == "source" else None,
+                ordinal=node.ordinal,
                 available=node.available,
             )
         )
 
 
 def _registration_order(nodes: dict[str, _Node]) -> list[str]:
-    return list(nodes)
+    return [node_id for node_id, _ in sorted(nodes.items(), key=lambda item: item[1].ordinal)]
 
 
 def _ancestors(nodes: dict[str, _Node], parents: tuple[str, ...]) -> set[str]:
