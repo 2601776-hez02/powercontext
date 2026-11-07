@@ -489,6 +489,21 @@ class ScopedSourceApplication:
                             span.set_attributes({_MEMORY_CAPTURE_SOURCE_COUNT: 1})
             except BaseValueConflictError as error:
                 raise SourceConflictError("identity", error.identity) from None
+            if self._runtime.artifact_processing_supervisor is not None:
+                try:
+                    self._runtime.artifact_processing_supervisor.wake()
+                except Exception as error:
+                    log_safely(
+                        logger,
+                        logging.WARNING,
+                        "Source supervisor wake failed after capture",
+                        exc_info=error,
+                        extra={
+                            "event": "source.capture.wake_failed",
+                            "outcome": "accepted",
+                            "unit": "source",
+                        },
+                    )
             return SourceReceipt(
                 source_ref=SourceRef(source_type=record.source_type, source_id=record.source_id),
                 sequence=record.position,

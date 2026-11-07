@@ -49,6 +49,7 @@ else:
 from powercontext._logging import log_safely
 from powercontext.builtin.persistence.database import AsyncDatabase
 from powercontext.builtin.persistence.errors import ArtifactProcessingLeadershipLostError
+from powercontext.builtin.persistence.cursors import SourceCursorRepository
 from powercontext.builtin.persistence.processing_intents import ArtifactProcessingIntentRepository
 from powercontext.builtin.persistence.supervision import (
     ArtifactProcessingBindingStateRepository,
@@ -57,7 +58,11 @@ from powercontext.builtin.persistence.supervision import (
     ArtifactProcessingLeaseRepository,
     database_utc_now,
 )
-from powercontext.builtin.persistence.tables import ARTIFACT_PROCESSING_INTENTS_TABLE, ARTIFACT_PROCESSING_LEASES_TABLE
+from powercontext.builtin.persistence.tables import (
+    ARTIFACT_PROCESSING_INTENTS_TABLE,
+    ARTIFACT_PROCESSING_LEASES_TABLE,
+    SOURCE_JOURNAL_HEADS_TABLE,
+)
 from powercontext.builtin.runtime.processing_contracts import (
     ArtifactProcessingWorkAssignment,
     ArtifactProcessingWorkerCompletion,
@@ -117,6 +122,8 @@ class ArtifactProcessingBinding:
     # Only automatic admission is filtered; already accepted requests retain
     # their own Worker authorization and domain completion semantics.
     automatic_scope_filter: Callable[[AsyncConnection, tuple[str, ...]], Awaitable[frozenset[str]]] | None = None
+    # Optional per-scope pending-journal-count admission threshold.
+    count_threshold: int | None = None
 
     def __post_init__(self) -> None:
         if not self.binding_name or self.binding_name != self.binding_name.strip():
@@ -650,6 +657,7 @@ class ArtifactProcessingSupervisor:
             state.reconcile_complete = True
         # Alternate discovery channels so explicit traffic cannot monopolize admission.
         state.automatic_next = not state.automatic_next
+        await self._discover_count(state)
         if state.automatic_next:
             await self._discover_automatic(state)
             await self._discover_requested(state)
@@ -779,6 +787,49 @@ class ArtifactProcessingSupervisor:
         state.scan_in_progress = scan_in_progress
         state.next_schedule_at = next_schedule_at
         state.next_discovery_at = next_discovery_at
+        for scope in admitted:
+            self._enqueue(state, scope)
+
+    async def _discover_count(self, state: _FamilyState) -> None:
+        binding = state.binding
+        if binding.count_threshold is None:
+            return
+        capacity = self._fresh_capacity(state)
+        if capacity <= 0:
+            return
+        admitted: list[str] = []
+        async with self._database.transaction() as connection:
+            await self._leases.require_fence(connection, self._require_current_fence())
+            rows = await self._intents.scan(
+                connection,
+                binding.binding_name,
+                after_sequence=0,
+                limit=min(capacity, _DISCOVERY_PAGE_SIZE),
+                dirty_only=True,
+            )
+            eligible = await _count_eligible_scopes(
+                connection,
+                tuple(
+                    row.scope_id
+                    for row in rows
+                    if row.scope_id not in state.queued
+                    and row.scope_id not in state.running
+                    and row.scope_id not in state.retries
+                ),
+                binding_name=binding.binding_name,
+                threshold=binding.count_threshold,
+            )
+            for row in rows:
+                if row.scope_id not in eligible:
+                    continue
+                current = await self._intents.load(connection, row.scope_id, binding.binding_name, for_update=True)
+                if (
+                    current is not None
+                    and current.dirty_generation > current.clean_generation
+                    and current.requested_generation == current.handled_generation
+                ):
+                    await self._intents.request(connection, row.scope_id, binding.binding_name)
+                admitted.append(row.scope_id)
         for scope in admitted:
             self._enqueue(state, scope)
 
@@ -1167,6 +1218,33 @@ def _schedule_deadline(
     return latest, datetime.max.replace(tzinfo=None) if following is None else following.astimezone(UTC).replace(
         tzinfo=None
     )
+
+
+async def _count_eligible_scopes(
+    connection: AsyncConnection,
+    scope_ids: tuple[str, ...],
+    *,
+    binding_name: str,
+    threshold: int,
+) -> frozenset[str]:
+    """Return scopes whose pending journal entries meet or exceed the threshold."""
+    if not scope_ids:
+        return frozenset()
+    heads = SOURCE_JOURNAL_HEADS_TABLE
+    cursors = SourceCursorRepository()
+    eligible: set[str] = set()
+    for scope_id in scope_ids:
+        high = int(
+            await connection.scalar(
+                select(heads.c.position).where(heads.c.scope_id == scope_id)
+            )
+            or 0
+        )
+        cursor = await cursors.load(connection, scope_id, binding_name)
+        low = 0 if cursor is None else cursor.cursor.sequence
+        if high - low >= threshold:
+            eligible.add(scope_id)
+    return frozenset(eligible)
 
 
 class ArtifactProcessingSupervisors:

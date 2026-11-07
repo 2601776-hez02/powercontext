@@ -25,9 +25,12 @@ from sqlalchemy import (
     UniqueConstraint,
     bindparam,
     delete,
+    func,
     insert,
+    literal,
     select,
     text,
+    union_all,
 )
 from sqlalchemy.dialects.mysql import match
 from sqlalchemy.ext.asyncio import AsyncConnection
@@ -393,6 +396,83 @@ class OceanBaseMemoryVectorIndex:
             )
         ).mappings()
         return MemorySearchChannels(vector=memory_channel_hits(rows, request.memories))
+
+    async def search_hybrid(
+        self,
+        connection: AsyncConnection,
+        scope_id: str,
+        request: MemorySearchRequest,
+        /,
+    ) -> MemorySearchChannels:
+        """Return FTS and vector candidates through a single combined statement."""
+        if request.embedding_profile != self.profile or request.query_vector is None:
+            raise CapabilityNotSupportedError("embedding-profile")
+        if not await self.vector_complete(connection, scope_id, request.memories, self.profile):
+            raise CapabilityNotSupportedError("vector")
+        memory_ids = tuple(memory.artifact_id for memory in request.memories)
+        query_vector = validate_embedding(request.query_vector, dimension=self.profile.dimension)
+
+        fts_score = match(MEMORY_ENTRY_HEADS_TABLE.c.searchable_text, against=request.analyzed_query)
+        fts = (
+            select(
+                MEMORY_ENTRY_HEADS_TABLE.c.memory_artifact_id,
+                MEMORY_ENTRY_HEADS_TABLE.c.head_revision,
+                MEMORY_ENTRY_HEADS_TABLE.c.entry_id,
+                MEMORY_ENTRY_HEADS_TABLE.c.entry_version_id,
+                MEMORY_ENTRY_VERSIONS_TABLE.c.text,
+                literal(None).label("distance"),
+                literal("fts").label("channel"),
+            )
+            .join(
+                MEMORY_ENTRY_VERSIONS_TABLE,
+                (MEMORY_ENTRY_VERSIONS_TABLE.c.scope_id == MEMORY_ENTRY_HEADS_TABLE.c.scope_id)
+                & (
+                    MEMORY_ENTRY_VERSIONS_TABLE.c.memory_artifact_id
+                    == MEMORY_ENTRY_HEADS_TABLE.c.memory_artifact_id
+                )
+                & (MEMORY_ENTRY_VERSIONS_TABLE.c.entry_version_id == MEMORY_ENTRY_HEADS_TABLE.c.entry_version_id),
+            )
+            .where(
+                MEMORY_ENTRY_HEADS_TABLE.c.scope_id == scope_id,
+                MEMORY_ENTRY_HEADS_TABLE.c.memory_artifact_id.in_(memory_ids),
+                fts_score,
+            )
+            .limit(request.candidate_limit)
+        )
+        vector = (
+            select(
+                self.table.c.memory_artifact_id,
+                self.table.c.head_revision,
+                self.table.c.entry_id,
+                self.table.c.entry_version_id,
+                MEMORY_ENTRY_VERSIONS_TABLE.c.text,
+                func.l2_distance(self.table.c.embedding, bindparam("query_vector", type_=VECTOR(self.profile.dimension))).label(
+                    "distance"
+                ),
+                literal("vector").label("channel"),
+            )
+            .join(
+                MEMORY_ENTRY_VERSIONS_TABLE,
+                (MEMORY_ENTRY_VERSIONS_TABLE.c.scope_id == self.table.c.scope_id)
+                & (MEMORY_ENTRY_VERSIONS_TABLE.c.memory_artifact_id == self.table.c.memory_artifact_id)
+                & (MEMORY_ENTRY_VERSIONS_TABLE.c.entry_version_id == self.table.c.entry_version_id),
+            )
+            .where(
+                self.table.c.scope_id == scope_id,
+                self.table.c.memory_artifact_id.in_(memory_ids),
+            )
+            .limit(request.candidate_limit)
+        )
+        combined = union_all(fts, vector)
+        rows = (
+            await connection.execute(combined, {"query_vector": query_vector})
+        ).mappings()
+        fts_rows = [row for row in rows if row["channel"] == "fts"]
+        vector_rows = [row for row in rows if row["channel"] == "vector"]
+        return MemorySearchChannels(
+            fts=memory_channel_hits(fts_rows, request.memories),
+            vector=memory_channel_hits(vector_rows, request.memories),
+        )
 
     async def vector_complete(
         self,
