@@ -231,19 +231,25 @@ class SourceLifecycleService:
 
     async def _set_memory_state(self, node_id: str, reference: dict[str, Any], available: bool) -> None:
         citation = MemoryCitation.model_validate(reference)
-        async with self._runtime._context(self._scope_id) as context:
-            service = context.artifacts.memory
-            current = await service.head(context.artifacts.memory_artifact_id)
-            if current is None:
-                return
-            entries = await service.entries(current)
-            matching = [entry for entry in entries if entry.entry_id == citation.entry_id]
-            if not matching:
-                return
-            if available:
-                await service.reactivate(current, entries=matching, reason="source-lifecycle")
-            else:
-                await service.forget(current, entries=matching, reason="source-lifecycle")
+        from powercontext.builtin.statistics import ModelUsagePurpose
+
+        async with self._runtime._context(
+            self._scope_id,
+            embedding_purpose=ModelUsagePurpose.MEMORY_INDEXING,
+        ) as context:
+            async with self._runtime._locked(self._scope_id):
+                service = context.artifacts.memory
+                current = await service.head(context.artifacts.memory_artifact_id)
+                if current is None:
+                    return
+                entries = await service.entries(current)
+                matching = [entry for entry in entries if entry.entry_id == citation.entry_id]
+                if not matching:
+                    return
+                if available:
+                    await service.reactivate(current, entries=matching, reason="source-lifecycle")
+                else:
+                    await service.forget(current, entries=matching, reason="source-lifecycle")
 
     async def _set_topic_state(self, node_id: str, reference: dict[str, Any], available: bool) -> None:
         ref = ArtifactRef.model_validate({k: v for k, v in reference.items() if k != "content"})

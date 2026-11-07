@@ -20,14 +20,17 @@ from pyobvector import VECTOR, VectorIndex
 from sqlalchemy import (
     BigInteger,
     Column,
+    Float,
     MetaData,
     Table,
     UniqueConstraint,
     bindparam,
+    cast,
     delete,
     func,
     insert,
-    literal,
+    literal_column,
+    null,
     select,
     text,
     union_all,
@@ -420,8 +423,8 @@ class OceanBaseMemoryVectorIndex:
                 MEMORY_ENTRY_HEADS_TABLE.c.entry_id,
                 MEMORY_ENTRY_HEADS_TABLE.c.entry_version_id,
                 MEMORY_ENTRY_VERSIONS_TABLE.c.text,
-                literal(None).label("distance"),
-                literal("fts").label("channel"),
+                cast(null(), Float).label("distance"),
+                literal_column("'fts'").label("channel"),
             )
             .join(
                 MEMORY_ENTRY_VERSIONS_TABLE,
@@ -449,7 +452,7 @@ class OceanBaseMemoryVectorIndex:
                 func.l2_distance(self.table.c.embedding, bindparam("query_vector", type_=VECTOR(self.profile.dimension))).label(
                     "distance"
                 ),
-                literal("vector").label("channel"),
+                literal_column("'vector'").label("channel"),
             )
             .join(
                 MEMORY_ENTRY_VERSIONS_TABLE,
