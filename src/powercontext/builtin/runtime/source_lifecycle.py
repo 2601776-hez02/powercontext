@@ -182,6 +182,13 @@ class SourceLifecycleService:
         nodes[event.node_id] = updated
         await self._store(updated, event.node_id)
         active = self._recompute(nodes)
+        import logging
+
+        logging.getLogger("powercontext.lifecycle.debug").error(
+            "apply active=%r previous=%r",
+            sorted(active),
+            sorted(previous_available),
+        )
         for node_id in _registration_order(nodes):
             was = node_id in previous_available
             now = node_id in active
