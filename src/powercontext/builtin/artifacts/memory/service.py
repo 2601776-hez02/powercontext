@@ -838,6 +838,11 @@ class MemoryService:
         """
 
         if self._reranker is None or not hits:
+            import logging
+
+            logging.getLogger("powercontext.hybrid.debug").error(
+                "reranked result hits=%r", hits[:limit],
+            )
             return MemorySearchResult(
                 mode=mode,
                 hits=hits[:limit],
