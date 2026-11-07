@@ -175,6 +175,22 @@ _EVIDENCE_STOPWORDS = frozenset(
     """.split()
 )
 
+# Financial-report questions paraphrase the page they cite ("legal battles" for a Legal
+# Proceedings note, "geographies" for a segment and region listing). A short, generic
+# expansion keeps the lexical ranking from missing the section that actually answers them.
+_QUERY_SYNONYMS: dict[str, tuple[str, ...]] = {
+    "geographies": ("geographic", "region", "segment", "markets"),
+    "geography": ("geographic", "region", "segment", "markets"),
+    "battles": ("proceedings", "litigation", "legal", "claims"),
+    "legal": ("litigation", "proceedings", "claims"),
+    "outlined": ("recorded", "reported", "disclosed"),
+    "quantity": ("amount", "total"),
+    "capex": ("capital", "expenditures"),
+    "employees": ("headcount", "personnel"),
+}
+_SYNONYM_WEIGHT = 0.25
+_NUMERIC_DENSITY_WEIGHT = 0.6
+
 
 def _evidence_terms(text: str) -> list[str]:
     """Lowercase English word and number tokens used for offline evidence ranking."""
@@ -192,33 +208,52 @@ def _rank_entries(
     candidates: dict[tuple[str, str], tuple[Any, str]],
     question: str,
 ) -> list[tuple[str, str]]:
-    """Rank candidate entries by weighted query coverage, then by aggregate term frequency."""
+    """Rank candidate pages by weighted query coverage plus numeric-table affinity.
+
+    Financial-report questions usually point at a page holding the figure itself, so pages
+    dense in numbers are preferred once coverage is comparable. Coverage is normalized by the
+    best candidate, which keeps the numeric term a tie-breaker instead of a page-type filter.
+    """
 
     query_terms = list(dict.fromkeys(_content_terms(question)))
     if not query_terms:
         query_terms = list(dict.fromkeys(_evidence_terms(question)))
     if not query_terms:
         return list(candidates)
+    expanded: list[tuple[str, float]] = []
+    for term in query_terms:
+        expanded.append((term, 1.0))
+        expanded.extend((synonym, _SYNONYM_WEIGHT) for synonym in _QUERY_SYNONYMS.get(term, ()))
     page_terms: dict[tuple[str, str], Counter[str]] = {}
-    document_frequency = dict.fromkeys(query_terms, 0)
+    numeric_density: dict[tuple[str, str], float] = {}
     for identity, (_citation, text) in candidates.items():
-        frequencies = Counter(_evidence_terms(text))
-        page_terms[identity] = frequencies
-        for term in query_terms:
-            if term in frequencies:
-                document_frequency[term] += 1
+        terms = _evidence_terms(text)
+        page_terms[identity] = Counter(terms)
+        numeric_density[identity] = (
+            sum(1 for term in terms if term[0].isdigit()) / len(terms) if terms else 0.0
+        )
     total = max(len(candidates), 1)
-    weights = {
-        term: math.log(1.0 + (total - count + 0.5) / (count + 0.5))
-        for term, count in document_frequency.items()
+    weights: dict[str, float] = {}
+    for term in {term for term, _weight in expanded}:
+        document_frequency = sum(1 for counter in page_terms.values() if term in counter)
+        weights[term] = math.log(1.0 + (total - document_frequency + 0.5) / (document_frequency + 0.5))
+    coverage = {
+        identity: sum(weights[term] * weight for term, weight in expanded if counter[term])
+        for identity, counter in page_terms.items()
     }
-    scored: list[tuple[float, float, str, str]] = []
-    for identity, frequencies in page_terms.items():
-        coverage = sum(weights[term] for term in query_terms if term in frequencies)
-        frequency = sum(min(frequencies.get(term, 0), 8) * weights[term] for term in query_terms)
-        scored.append((coverage, frequency, identity[0], identity[1]))
-    scored.sort(key=lambda item: (-item[0], -item[1], item[2], item[3]))
-    return [(entry_id, version_id) for _coverage, _frequency, entry_id, version_id in scored]
+    maximum = max(coverage.values(), default=1.0) or 1.0
+    ranked = sorted(
+        (
+            (
+                coverage[identity] / maximum + _NUMERIC_DENSITY_WEIGHT * numeric_density[identity],
+                identity[0],
+                identity[1],
+            )
+            for identity in coverage
+        ),
+        key=lambda row: (-row[0], row[1], row[2]),
+    )
+    return [(entry_id, version_id) for _score, entry_id, version_id in ranked]
 
 
 async def search_pdf_pages(memory, question: str, limit: int = 10):
