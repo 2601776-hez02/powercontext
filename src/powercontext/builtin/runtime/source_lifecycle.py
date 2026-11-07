@@ -250,6 +250,16 @@ class SourceLifecycleService:
                     await service.reactivate(current, entries=matching, reason="source-lifecycle")
                 else:
                     await service.forget(current, entries=matching, reason="source-lifecycle")
+                import logging
+
+                after = await service.head(context.artifacts.memory_artifact_id)
+                logging.getLogger("powercontext.lifecycle.debug").error(
+                    "memory state node=%s available=%s before_rev=%s after_rev=%s",
+                    node_id,
+                    available,
+                    current.revision,
+                    after.revision if after else None,
+                )
 
     async def _set_topic_state(self, node_id: str, reference: dict[str, Any], available: bool) -> None:
         ref = ArtifactRef.model_validate({k: v for k, v in reference.items() if k != "content"})
