@@ -414,6 +414,7 @@ class OceanBaseMemoryVectorIndex:
             raise CapabilityNotSupportedError("vector")
         memory_ids = tuple(memory.artifact_id for memory in request.memories)
         query_vector = validate_embedding(request.query_vector, dimension=self.profile.dimension)
+        tag_filter = request.tag_filter
 
         fts_score = match(MEMORY_ENTRY_HEADS_TABLE.c.searchable_text, against=request.analyzed_query)
         fts = (
@@ -439,6 +440,26 @@ class OceanBaseMemoryVectorIndex:
                 MEMORY_ENTRY_HEADS_TABLE.c.scope_id == scope_id,
                 MEMORY_ENTRY_HEADS_TABLE.c.memory_artifact_id.in_(memory_ids),
                 fts_score,
+                *(
+                    ()
+                    if tag_filter is None
+                    else (
+                        tag_predicate(
+                            scope_id,
+                            "memory",
+                            MEMORY_ENTRY_HEADS_TABLE.c.memory_artifact_id,
+                            "memory_entry",
+                            MEMORY_ENTRY_HEADS_TABLE.c.entry_id,
+                            tag_filter,
+                        ),
+                    )
+                ),
+            )
+            .order_by(
+                fts_score.desc(),
+                MEMORY_ENTRY_HEADS_TABLE.c.memory_artifact_id,
+                MEMORY_ENTRY_HEADS_TABLE.c.entry_id,
+                MEMORY_ENTRY_HEADS_TABLE.c.entry_version_id,
             )
             .limit(request.candidate_limit)
         )
@@ -463,6 +484,20 @@ class OceanBaseMemoryVectorIndex:
             .where(
                 self.table.c.scope_id == scope_id,
                 self.table.c.memory_artifact_id.in_(memory_ids),
+                *(
+                    ()
+                    if tag_filter is None
+                    else (
+                        tag_predicate(
+                            scope_id,
+                            "memory",
+                            self.table.c.memory_artifact_id,
+                            "memory_entry",
+                            self.table.c.entry_id,
+                            tag_filter,
+                        ),
+                    )
+                ),
             )
             .order_by(
                 text("l2_distance(pc_memory_vector_entries.embedding, :query_vector) APPROXIMATE")
@@ -470,7 +505,14 @@ class OceanBaseMemoryVectorIndex:
             .limit(request.candidate_limit)
         )
         combined = union_all(fts, vector)
-        rows = list((await connection.execute(combined, {"query_vector": query_vector})).mappings())
+        rows = list(
+            (
+                await connection.execute(
+                    combined,
+                    {"query_vector": query_vector, **memory_tag_parameters(tag_filter)},
+                )
+            ).mappings()
+        )
         fts_rows = [row for row in rows if row["channel"] == "fts"]
         vector_rows = [row for row in rows if row["channel"] == "vector"]
         return MemorySearchChannels(

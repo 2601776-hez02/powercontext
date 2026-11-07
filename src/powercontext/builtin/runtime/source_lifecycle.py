@@ -95,6 +95,7 @@ class SourceLifecycleService:
         parents: tuple[str, ...],
         policy: Policy,
     ) -> None:
+        await self._require_memory_entry(citation)
         await self._register(node_id, "memory", parents, policy, citation.model_dump(mode="json"), 0, 0, False)
 
     async def register_topic(
@@ -127,8 +128,6 @@ class SourceLifecycleService:
         if not isinstance(node_id, str) or not node_id.strip():
             raise SourceLifecycleError("node_id must be a non-blank string")
         nodes = await self._load()
-        if node_id in nodes:
-            raise SourceLifecycleError("node_id is already registered in this scope")
         for parent in parents:
             if parent not in nodes:
                 raise SourceLifecycleError("parent must be registered first")
@@ -141,10 +140,24 @@ class SourceLifecycleService:
                 raise SourceLifecycleError("parents must be unique")
             if node_id in parents:
                 raise SourceLifecycleError("a node cannot depend on itself")
-            if node_type == "memory" and node_id in _ancestors(nodes, parents):
+            if node_id in _ancestors(nodes, parents):
                 raise SourceLifecycleError("dependency cycle detected")
-            if node_type == "topic" and node_id in _ancestors(nodes, parents):
-                raise SourceLifecycleError("dependency cycle detected")
+        signature = _binding_signature(node_type, parents, policy, reference, revision)
+        existing = nodes.get(node_id)
+        if existing is not None:
+            stored = _binding_signature(
+                existing.node_type,
+                existing.parents,
+                existing.policy,
+                existing.reference,
+                existing.revision,
+            )
+            if stored != signature:
+                raise SourceLifecycleError("node_id is already registered with a different binding")
+            # An identical registration is idempotent; it also re-asserts the native state so
+            # a registration interrupted before propagation finishes can be retried.
+            await self._propagate_native(node_id, nodes, available=existing.available)
+            return
         if node_type == "source":
             available = True
         else:
@@ -178,7 +191,14 @@ class SourceLifecycleService:
         if event.sequence == node.sequence and event.available != node.available:
             raise SourceLifecycleError("same-sequence event with different content")
         if event.sequence == node.sequence and event.available == node.available:
-            return sorted(self._available_ids(nodes))
+            # A successful replay must not add Memory revisions, but an earlier attempt may
+            # have been interrupted after persisting the Source state and before every
+            # descendant finished its native propagation. Recompute and re-assert the native
+            # state; the Memory and Topic transitions are no-ops when already correct.
+            active = self._recompute(nodes)
+            await self._propagate_native_states(nodes, active)
+            await self._store_all(nodes)
+            return sorted(active)
         previous_available = self._available_ids(nodes)
         updated = node.model_copy(update={"sequence": event.sequence, "available": event.available})
         nodes[event.node_id] = updated
@@ -230,6 +250,27 @@ class SourceLifecycleService:
             await self._set_memory_state(node_id, node.reference, available)
         elif node.node_type == "topic":
             await self._set_topic_state(node_id, node.reference, available)
+
+    async def _propagate_native_states(self, nodes: dict[str, _Node], active: set[str]) -> None:
+        for node_id in _registration_order(nodes):
+            if nodes[node_id].node_type == "source":
+                continue
+            await self._propagate_native(node_id, nodes, available=node_id in active)
+
+    async def _require_memory_entry(self, citation: MemoryCitation) -> None:
+        """Require the citation to resolve against the Scope's current Memory head."""
+
+        async with self._runtime._context(self._scope_id) as context:
+            service = context.artifacts.memory
+            current = await service.head(context.artifacts.memory_artifact_id)
+            if current is None:
+                raise SourceLifecycleError("memory citation does not exist")
+            entries = await service.entries(current)
+            if not any(
+                entry.entry_id == citation.entry_id and entry.entry_version_id == citation.entry_version_id
+                for entry in entries
+            ):
+                raise SourceLifecycleError("memory citation does not exist")
 
     async def _set_memory_state(self, node_id: str, reference: dict[str, Any], available: bool) -> None:
         citation = MemoryCitation.model_validate(reference)
@@ -319,6 +360,24 @@ class SourceLifecycleService:
 
 def _registration_order(nodes: dict[str, _Node]) -> list[str]:
     return [node_id for node_id, _ in sorted(nodes.items(), key=lambda item: item[1].ordinal)]
+
+
+def _binding_signature(
+    node_type: _NodeType,
+    parents: tuple[str, ...],
+    policy: Policy | None,
+    reference: dict[str, Any],
+    revision: int,
+) -> tuple[str, tuple[str, ...], Policy | None, str, int]:
+    """Identify one registration so an identical retry can be idempotent."""
+
+    return (
+        node_type,
+        tuple(parents),
+        policy,
+        json.dumps(reference, sort_keys=True, default=str),
+        revision if node_type == "source" else 0,
+    )
 
 
 def _ancestors(nodes: dict[str, _Node], parents: tuple[str, ...]) -> set[str]:

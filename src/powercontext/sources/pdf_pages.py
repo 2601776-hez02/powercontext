@@ -18,6 +18,10 @@ from __future__ import annotations
 
 import hashlib
 import io
+import math
+import re
+from collections import Counter
+from typing import Any
 from urllib.parse import quote
 
 from pydantic import BaseModel
@@ -153,34 +157,101 @@ PDF_PAGE_SOURCE_DEFINITION = AdapterSourceDefinition(
 )
 
 
+_EVIDENCE_STOPWORDS = frozenset(
+    """
+    a an and are as at be been being by did do does for from had has have how in into is it its
+    of on or per the their them then there these they this those to was were what when where which
+    who why will with would year years fy fiscal total company companies reported report
+    """.split()
+)
+
+
+def _evidence_terms(text: str) -> list[str]:
+    """Lowercase English word and number tokens used for offline evidence ranking."""
+
+    return [term for term in re.findall(r"[a-z]+|\d+", text.casefold()) if term]
+
+
+def _content_terms(text: str) -> list[str]:
+    """Rank-eligible query terms: evidence tokens without generic question wording."""
+
+    return [term for term in _evidence_terms(text) if term not in _EVIDENCE_STOPWORDS and len(term) > 1]
+
+
+def _rank_pages(
+    candidates: dict[tuple[str, int], tuple[Any, str]],
+    question: str,
+) -> list[tuple[str, int]]:
+    """Rank distinct pages by weighted query coverage, then by aggregate term frequency."""
+
+    query_terms = list(dict.fromkeys(_content_terms(question)))
+    if not query_terms:
+        query_terms = list(dict.fromkeys(_evidence_terms(question)))
+    if not query_terms:
+        return list(candidates)
+    document_frequency = dict.fromkeys(query_terms, 0)
+    page_terms: dict[tuple[str, int], dict[str, int]] = {}
+    for key, (_citation, text) in candidates.items():
+        frequencies = Counter(_evidence_terms(text))
+        page_terms[key] = frequencies
+        for term in query_terms:
+            if term in frequencies:
+                document_frequency[term] += 1
+    total = max(len(candidates), 1)
+    weights = {
+        term: math.log(1.0 + (total - count + 0.5) / (count + 0.5))
+        for term, count in document_frequency.items()
+    }
+    scored: list[tuple[float, float, str, int]] = []
+    for key, frequencies in page_terms.items():
+        coverage = sum(weights[term] for term in query_terms if term in frequencies)
+        frequency = sum(min(frequencies.get(term, 0), 8) * weights[term] for term in query_terms)
+        scored.append((coverage, frequency, key[0], key[1]))
+    scored.sort(key=lambda item: (-item[0], -item[1], item[2], item[3]))
+    return [(document_id, page_number) for _coverage, _frequency, document_id, page_number in scored]
+
+
 async def search_pdf_pages(memory, question: str, limit: int = 10):
-    """Search a scoped Memory for up to ``limit`` distinct evidence pages."""
+    """Search a scoped Memory for up to ``limit`` distinct evidence pages.
+
+    One lexical search over a long natural-language question lets the admission floor drop
+    pages that only share a single term, so evidence pages are easy to lose. This fans out
+    the question into its own terms, unions the admitted candidates, and reranks the pool
+    offline by weighted query coverage before resolving exact page citations.
+    """
+
     from powercontext.builtin.artifacts.memory.models import MemoryCitation
     from powercontext.builtin.runtime import GetMemoryEntryRequest, SearchMemoryRequest
 
-    search_limit = max(limit * 5, limit + 20)
-    page = await memory.search(SearchMemoryRequest(query=question, mode="fts", limit=search_limit))
-    seen: set[tuple[str, int]] = set()
-    citations: list[MemoryCitation] = []
-    for hit in page.hits:
-        citation = MemoryCitation(
-            memory_ref=hit.memory_ref,
-            entry_id=hit.entry_id,
-            entry_version_id=hit.entry_version_id,
-        )
-        entry = (await memory.get(GetMemoryEntryRequest(citation=citation))).entry
-        page_key: tuple[str, int] | None = None
-        for reference in entry.sources:
-            if reference.source_type == PDF_PAGE_SOURCE_NAME:
-                page_key = _pdf_page_key(reference.source_id)
-                if page_key is not None:
-                    break
-        if page_key is not None and page_key not in seen:
-            seen.add(page_key)
-            citations.append(citation)
-        if len(citations) >= limit:
-            break
-    return tuple(citations)
+    if limit < 1:
+        return ()
+    per_query_limit = max(limit * 20, 200)
+    queries: list[str] = [question]
+    queries.extend(list(dict.fromkeys(_content_terms(question)))[:10])
+    candidates: dict[tuple[str, int], tuple[Any, str]] = {}
+    for query in queries:
+        page = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=per_query_limit))
+        for hit in page.hits:
+            citation = MemoryCitation(
+                memory_ref=hit.memory_ref,
+                entry_id=hit.entry_id,
+                entry_version_id=hit.entry_version_id,
+            )
+            resolved = await memory.get(GetMemoryEntryRequest(citation=citation))
+            entry = resolved.entry
+            page_key: tuple[str, int] | None = None
+            for reference in entry.sources:
+                if reference.source_type == PDF_PAGE_SOURCE_NAME:
+                    page_key = _pdf_page_key(reference.source_id)
+                    if page_key is not None:
+                        break
+            if page_key is None:
+                continue
+            candidates.setdefault(page_key, (citation, entry.text))
+    if not candidates:
+        return ()
+    ranked = _rank_pages(candidates, question)
+    return tuple(candidates[key][0] for key in ranked[:limit])
 
 
 __all__ = [

@@ -17,6 +17,7 @@
 from __future__ import annotations
 
 import json
+import math
 import re
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
@@ -459,9 +460,17 @@ class PreparedContextBuilder:
         current_scope_id: str | None,
         memory_candidates: Sequence[PreparedMemoryCandidates],
     ) -> PreparedContextBuild:
-        """Select query-relevant literal spans from Memory candidates within the byte budget."""
+        """Select query-relevant literal spans from Memory candidates within the byte budget.
+
+        Selection is ranked across the candidate abstracts instead of taking the globally
+        highest-overlap sentences first: every abstract contributes its best sentence before
+        any abstract contributes a second one, so evidence in a later candidate is not crowded
+        out by repeated matches in an earlier one. Rare query terms weigh more than common
+        ones, and the neighbours of each best sentence follow, because annotated evidence
+        usually covers a short contiguous span rather than one isolated sentence.
+        """
         query_tokens = _tokenize(request.query)
-        ranked: list[tuple[int, PreparedContextFragment]] = []
+        entries: list[tuple[MemoryEntryAddress, str]] = []
         seen: set[tuple[str, str]] = set()
         for group in memory_candidates:
             for hit in group.hits:
@@ -479,25 +488,76 @@ class PreparedContextBuilder:
                     entry_id=hit.entry_id,
                     entry_version_id=hit.entry_version_id,
                 )
-                for start, end in _sentence_spans(hit.text):
-                    fragment_text = hit.text[start:end]
-                    if not fragment_text.strip():
-                        continue
-                    score = _token_overlap(fragment_text, query_tokens)
-                    if score <= 0:
-                        continue
-                    ranked.append(
-                        (
-                            score,
-                            PreparedContextFragment(address=address, start=start, end=end, text=fragment_text),
-                        )
-                    )
-        ranked.sort(key=lambda item: item[0], reverse=True)
-        selected: list[PreparedContextFragment] = []
-        for _, fragment in ranked:
-            if _evidence_rendered_bytes((*selected, fragment)) > request.max_bytes:
+                entries.append((address, hit.text))
+        if not entries:
+            return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
+
+        tokenized = [_tokenize(text) for _address, text in entries]
+        document_frequency = dict.fromkeys(query_tokens, 0)
+        for tokens in tokenized:
+            for token in query_tokens & tokens:
+                document_frequency[token] += 1
+        total_documents = len(tokenized)
+        weights = {
+            token: math.log(1.0 + (total_documents - count + 0.5) / (count + 0.5))
+            for token, count in document_frequency.items()
+        }
+
+        primary: list[tuple[float, float, int, int, int]] = []
+        neighbours: list[tuple[float, float, int, int, int]] = []
+        secondary: list[tuple[float, float, int, int, int]] = []
+        for index, ((address, text), tokens) in enumerate(zip(entries, tokenized, strict=True)):
+            spans = [(start, end) for start, end in _sentence_spans(text) if text[start:end].strip()]
+            if not spans:
                 continue
-            selected.append(fragment)
+            scored = [
+                (
+                    sum(weights[token] for token in query_tokens & _tokenize(text[start:end])),
+                    position,
+                    start,
+                    end,
+                )
+                for position, (start, end) in enumerate(spans)
+            ]
+            document_score = sum(weights[token] for token in query_tokens & tokens)
+            best_position = max(range(len(scored)), key=lambda position: (scored[position][0], -scored[position][1]))
+            for score, position, start, end in scored:
+                if score <= 0:
+                    continue
+                record = (document_score, score, index, start, end)
+                distance = abs(position - best_position)
+                if distance == 0:
+                    primary.append(record)
+                elif distance == 1:
+                    neighbours.append(record)
+                else:
+                    secondary.append(record)
+        if not (primary or neighbours or secondary):
+            return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
+
+        def ordering(record: tuple[float, float, int, int, int]) -> tuple[float, float, int, int]:
+            document_score, score, index, start, _end = record
+            return (-document_score, -score, index, start)
+
+        selected: list[PreparedContextFragment] = []
+        occupied: set[tuple[int, int, int]] = set()
+        for tier in (sorted(primary, key=ordering), sorted(neighbours, key=ordering), sorted(secondary, key=ordering)):
+            for _document_score, _score, index, start, end in tier:
+                fragment = PreparedContextFragment(
+                    address=entries[index][0],
+                    start=start,
+                    end=end,
+                    text=entries[index][1][start:end],
+                )
+                slot = (index, start, end)
+                if slot in occupied:
+                    continue
+                if not fragment.text.strip():
+                    continue
+                if _evidence_rendered_bytes((*selected, fragment)) > request.max_bytes:
+                    continue
+                occupied.add(slot)
+                selected.append(fragment)
         if not selected:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
         content = _render_evidence(selected)

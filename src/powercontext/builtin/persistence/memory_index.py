@@ -247,7 +247,7 @@ class CompositeMemoryIndex:
         request: MemorySearchRequest,
         /,
     ) -> MemorySearchChannels:
-        if request.mode == "hybrid" and request.tag_filter is None:
+        if request.mode == "hybrid":
             for index in self.indexes:
                 hybrid_search = getattr(index, "search_hybrid", None)
                 if hybrid_search is not None:
