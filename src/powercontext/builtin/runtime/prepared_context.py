@@ -224,6 +224,15 @@ class PreparedContextBuilder:
         profile_candidates: Sequence[PreparedProfileCandidate] = (),
         code_candidates: Sequence[PreparedCodeCandidate] = (),
     ) -> PreparedContextBuild:
+        if request.evidence_selection:
+            # Selection mode is defined over Memory candidates only, so it takes precedence over
+            # Code assembly instead of losing the evidence envelope to it.
+            return self._select_evidence(
+                request=request,
+                current_scope_id=current_scope_id,
+                memory_candidates=memory_candidates,
+            )
+
         if request.include_code:
 
             def historical(history_request: PrepareContextRequest, entries: int) -> PreparedContextBuild:
@@ -247,13 +256,6 @@ class PreparedContextBuilder:
             raise PreparedContextInvariantError("topic-memory-candidate-limit")
         if sum(len(candidates.hits) for candidates in experience_candidates) > self.experience_candidate_limit:
             raise PreparedContextInvariantError("experience-candidate-limit")
-
-        if request.evidence_selection:
-            return self._select_evidence(
-                request=request,
-                current_scope_id=current_scope_id,
-                memory_candidates=memory_candidates,
-            )
 
         content, origins, omissions = self._select_entries(
             request=request,
@@ -471,18 +473,21 @@ class PreparedContextBuilder:
         """
         query_tokens = _tokenize(request.query)
         entries: list[tuple[MemoryEntryAddress, str]] = []
-        seen: set[tuple[str, str]] = set()
+        seen: set[tuple[str, str, str]] = set()
         for group in memory_candidates:
+            scope_id = group.scope_id.strip() or (current_scope_id or "").strip()
             for hit in group.hits:
                 if group.memory_ref is not None and hit.memory_ref != group.memory_ref:
                     raise PreparedContextInvariantError("memory-ref-mismatch")
-                identity = (hit.entry_id, hit.entry_version_id)
+                identity = (scope_id, hit.entry_id, hit.entry_version_id)
                 if identity in seen:
                     continue
                 if not hit.entry_id.strip() or not hit.entry_version_id.strip() or not hit.text.strip():
                     continue
+                if not scope_id:
+                    continue
                 seen.add(identity)
-                memory = ArtifactAddress(scope_id=group.scope_id, artifact=hit.memory_ref)
+                memory = ArtifactAddress(scope_id=scope_id, artifact=hit.memory_ref)
                 address = MemoryEntryAddress(
                     memory=memory,
                     entry_id=hit.entry_id,
@@ -507,7 +512,8 @@ class PreparedContextBuilder:
         for index, ((address, text), tokens) in enumerate(zip(entries, tokenized, strict=True)):
             spans = [(start, end) for start, end in _sentence_spans(text) if text[start:end].strip()]
             if not spans:
-                continue
+                # Text without sentence punctuation still has to yield a fragment.
+                spans = [(0, len(text))]
             scores = [
                 sum(weights[token] for token in query_tokens & _tokenize(text[start:end])) for start, end in spans
             ]
@@ -864,6 +870,10 @@ def _render_evidence(fragments: Sequence[PreparedContextFragment]) -> str:
     ]
     envelope = {"trust": "untrusted_history", "items": items}
     encoded = json.dumps(envelope, ensure_ascii=False, separators=(",", ":"))
+    # JSON leaves Unicode line separators raw while str.splitlines() treats them as line breaks;
+    # escaping them keeps the payload on one line, the same way the legacy text renderer does.
+    for separator in ("\u0085", "\u2028", "\u2029"):
+        encoded = encoded.replace(separator, f"\\u{ord(separator):04x}")
     return "\n\n".join((TRUST_POLICY, f"{_BEGIN_MARKER}\n{encoded}\n{_END_MARKER}"))
 
 
