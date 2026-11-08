@@ -1,4 +1,4 @@
-# Copyright (c) 2026 OceanBase.
+﻿# Copyright (c) 2026 OceanBase.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -175,21 +175,40 @@ _EVIDENCE_STOPWORDS = frozenset(
     """.split()
 )
 
-# Financial-report questions paraphrase the page they cite ("legal battles" for a Legal
-# Proceedings note, "geographies" for a segment and region listing). A short, generic
-# expansion keeps the lexical ranking from missing the section that actually answers them.
-_QUERY_SYNONYMS: dict[str, tuple[str, ...]] = {
-    "geographies": ("geographic", "region", "segment", "markets"),
-    "geography": ("geographic", "region", "segment", "markets"),
-    "battles": ("proceedings", "litigation", "legal", "claims"),
-    "legal": ("litigation", "proceedings", "claims"),
-    "outlined": ("recorded", "reported", "disclosed"),
-    "quantity": ("amount", "total"),
-    "capex": ("capital", "expenditures"),
-    "employees": ("headcount", "personnel"),
-}
-_SYNONYM_WEIGHT = 0.25
+# FinanceBench prompts append analysis instructions to the question. Those words match many
+# pages and would dominate a lexical score, so they never rank evidence pages.
+_QUERY_NOISE = frozenset(
+    """
+    answer answers approximately assume assuming based calculate compute consider details following
+    give given investment analyst note only perspective please provide question rely relying respond
+    response roughly shown state upon use using within
+    """.split()
+)
+
+# A question that asks for a figure is answered by a primary financial statement far more often
+# than by narrative text, so statement pages get a prior only for those questions.
+_METRIC_TERMS = frozenset(
+    """
+    amount asset assets billion capital cash cost costs debt earnings equity expense expenses growth
+    income liability liabilities liquidity million margin percent percentage profit profits quick
+    ratio revenues revenue share shares spending thousand value
+    """.split()
+)
+_STATEMENT_HEADERS = (
+    "consolidated statement of income",
+    "consolidated statements of income",
+    "consolidated statement of operations",
+    "consolidated statements of operations",
+    "consolidated statement of earnings",
+    "consolidated statements of earnings",
+    "consolidated statement of cash flows",
+    "consolidated statements of cash flows",
+    "consolidated balance sheet",
+    "consolidated balance sheets",
+)
+_STATEMENT_WEIGHT = 0.6
 _NUMERIC_DENSITY_WEIGHT = 0.6
+_HEADING_WEIGHT = 0.5
 
 
 def _evidence_terms(text: str) -> list[str]:
@@ -199,7 +218,21 @@ def _evidence_terms(text: str) -> list[str]:
 
 
 def _content_terms(text: str) -> list[str]:
-    """Rank-eligible query terms: evidence tokens without generic question wording."""
+    """Rank-eligible query terms: evidence tokens without question wording or prompt noise."""
+
+    return [
+        term
+        for term in _evidence_terms(text)
+        if term not in _EVIDENCE_STOPWORDS and term not in _QUERY_NOISE and len(term) > 1
+    ]
+
+
+def _lookup_terms(text: str) -> list[str]:
+    """Candidate-generation terms: every distinctive token, prompt noise included.
+
+    Ranking drops that noise, but candidate generation must stay broad so a page that only
+    shares one incidental word is still available to the reranker.
+    """
 
     return [term for term in _evidence_terms(text) if term not in _EVIDENCE_STOPWORDS and len(term) > 1]
 
@@ -208,11 +241,11 @@ def _rank_entries(
     candidates: dict[tuple[str, str], tuple[Any, str]],
     question: str,
 ) -> list[tuple[str, str]]:
-    """Rank candidate pages by weighted query coverage plus numeric-table affinity.
+    """Rank candidate pages by weighted query coverage plus report-structure priors.
 
-    Financial-report questions usually point at a page holding the figure itself, so pages
-    dense in numbers are preferred once coverage is comparable. Coverage is normalized by the
-    best candidate, which keeps the numeric term a tie-breaker instead of a page-type filter.
+    Coverage is normalized by the best candidate. A page dense in numbers is preferred once
+    coverage is comparable, and a primary financial statement gets an extra prior when the
+    question asks for a figure; both are tie-breakers rather than page-type filters.
     """
 
     query_terms = list(dict.fromkeys(_content_terms(question)))
@@ -220,32 +253,44 @@ def _rank_entries(
         query_terms = list(dict.fromkeys(_evidence_terms(question)))
     if not query_terms:
         return list(candidates)
-    expanded: list[tuple[str, float]] = []
-    for term in query_terms:
-        expanded.append((term, 1.0))
-        expanded.extend((synonym, _SYNONYM_WEIGHT) for synonym in _QUERY_SYNONYMS.get(term, ()))
+    statement_prior = _STATEMENT_WEIGHT if any(term in _METRIC_TERMS for term in query_terms) else 0.0
     page_terms: dict[tuple[str, str], Counter[str]] = {}
     numeric_density: dict[tuple[str, str], float] = {}
+    statement_page: dict[tuple[str, str], float] = {}
+    heading_match: dict[tuple[str, str], float] = {}
     for identity, (_citation, text) in candidates.items():
         terms = _evidence_terms(text)
         page_terms[identity] = Counter(terms)
         numeric_density[identity] = (
             sum(1 for term in terms if term[0].isdigit()) / len(terms) if terms else 0.0
         )
+        folded = text.casefold()
+        statement_page[identity] = (
+            1.0 if statement_prior and any(marker in folded for marker in _STATEMENT_HEADERS) else 0.0
+        )
+        # A page heading names its section ("GEOGRAPHIC OPERATIONS", "NOTE 24 ..."), so a query
+        # term there is much stronger evidence than the same term deep in the body text.
+        heading = set(_evidence_terms(text[:240]))
+        heading_match[identity] = (
+            sum(1 for term in query_terms if term in heading) / len(query_terms) if query_terms else 0.0
+        )
     total = max(len(candidates), 1)
     weights: dict[str, float] = {}
-    for term in {term for term, _weight in expanded}:
+    for term in query_terms:
         document_frequency = sum(1 for counter in page_terms.values() if term in counter)
         weights[term] = math.log(1.0 + (total - document_frequency + 0.5) / (document_frequency + 0.5))
     coverage = {
-        identity: sum(weights[term] * weight for term, weight in expanded if counter[term])
+        identity: sum(weights[term] for term in query_terms if counter[term])
         for identity, counter in page_terms.items()
     }
     maximum = max(coverage.values(), default=1.0) or 1.0
     ranked = sorted(
         (
             (
-                coverage[identity] / maximum + _NUMERIC_DENSITY_WEIGHT * numeric_density[identity],
+                coverage[identity] / maximum
+                + _NUMERIC_DENSITY_WEIGHT * numeric_density[identity]
+                + statement_prior * statement_page[identity]
+                + _HEADING_WEIGHT * heading_match[identity],
                 identity[0],
                 identity[1],
             )
@@ -272,7 +317,7 @@ async def search_pdf_pages(memory, question: str, limit: int = 10):
         return ()
     per_query_limit = max(limit * 20, 200)
     queries: list[str] = [question]
-    queries.extend(list(dict.fromkeys(_content_terms(question)))[:10])
+    queries.extend(list(dict.fromkeys(_lookup_terms(question)))[:10])
     candidates: dict[tuple[str, str], tuple[Any, str]] = {}
     for query in queries:
         page = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=per_query_limit))
