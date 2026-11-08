@@ -512,10 +512,10 @@ class PreparedContextBuilder:
                 sum(weights[token] for token in query_tokens & _tokenize(text[start:end])) for start, end in spans
             ]
             best = max(range(len(scores)), key=lambda position: (scores[position], -position))
-            # A relevant abstract usually contains one or two passages that answer the claim;
-            # ranking abstracts by their two strongest passages is sharper than by total overlap,
-            # which lets a long off-topic abstract with scattered matches win.
-            document_score = sum(sorted(scores, reverse=True)[:2]) if scores else 0.0
+            # A relevant abstract usually holds one or two passages that answer the claim, while a
+            # long abstract accumulates scattered matches; normalize by length so the tight
+            # abstract that actually states the answer wins.
+            document_score = sum(sorted(scores, reverse=True)[:2]) / max(math.sqrt(len(text)), 1.0)
             prepared.append((document_score, best, index, address, text, spans))
         if not prepared:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
