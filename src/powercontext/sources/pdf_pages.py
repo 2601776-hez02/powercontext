@@ -1,4 +1,4 @@
-﻿# Copyright (c) 2026 OceanBase.
+# Copyright (c) 2026 OceanBase.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -209,6 +209,116 @@ _STATEMENT_HEADERS = (
 _STATEMENT_WEIGHT = 0.6
 _NUMERIC_DENSITY_WEIGHT = 0.6
 _HEADING_WEIGHT = 0.5
+_SECTION_HINT_WEIGHT = 0.9
+_SYNONYM_WEIGHT = 0.25
+
+# Financial-report questions paraphrase the page they cite ("legal battles" for a Legal
+# Proceedings note, "geographies" for a segment and region listing). A short, generic
+# expansion keeps the lexical ranking from missing the section that actually answers them.
+_QUERY_SYNONYMS: dict[str, tuple[str, ...]] = {
+    "geographies": ("geographic", "region", "segment", "markets"),
+    "geography": ("geographic", "region", "segment", "markets"),
+    "battles": ("proceedings", "litigation", "legal", "claims"),
+    "legal": ("litigation", "proceedings", "claims"),
+    "outlined": ("recorded", "reported", "disclosed"),
+    "quantity": ("amount", "total"),
+}
+
+# A question about a figure is answered by one of the primary statements, and the running
+# header of every 10-K page names its section. Match the question type against the header
+# vocabulary to boost exactly the pages of that section.
+_SECTION_HINTS: tuple[tuple[frozenset[str], tuple[str, ...]], ...] = (
+    (
+        frozenset(
+            {
+                "margin",
+                "margins",
+                "income",
+                "profit",
+                "profits",
+                "earnings",
+                "revenue",
+                "revenues",
+                "expense",
+                "expenses",
+                "cost",
+                "costs",
+                "sales",
+            }
+        ),
+        (
+            "statement of income",
+            "statements of income",
+            "statement of operations",
+            "statements of operations",
+            "statement of earnings",
+            "statements of earnings",
+            "results of operations",
+            "discussion and analysis",
+        ),
+    ),
+    (
+        frozenset(
+            {
+                "ratio",
+                "ratios",
+                "liquidity",
+                "liability",
+                "liabilities",
+                "asset",
+                "assets",
+                "debt",
+                "balance",
+            }
+        ),
+        ("balance sheet", "balance sheets"),
+    ),
+    (
+        frozenset({"cash", "flow", "flows", "capex", "depreciation", "amortization"}),
+        ("statement of cash flows", "statements of cash flows"),
+    ),
+    (
+        frozenset(
+            {
+                "geograph",
+                "geographies",
+                "geography",
+                "region",
+                "regions",
+                "segment",
+                "segments",
+                "market",
+                "markets",
+                "category",
+                "categories",
+            }
+        ),
+        ("segment", "geographic", "region", "market"),
+    ),
+    (
+        frozenset({"legal", "litigation", "proceeding", "proceedings", "lawsuit", "battles"}),
+        ("legal", "proceeding", "litigation"),
+    ),
+    (
+        frozenset({"restructuring", "restructure", "impairment"}),
+        ("restructuring", "impairment"),
+    ),
+    (
+        frozenset({"customer", "customers", "concentration"}),
+        ("customer", "concentration"),
+    ),    (
+        frozenset({"drove", "drive", "driven", "discussion"}),
+        ("discussion and analysis", "results of operations"),
+    ),
+    (
+        frozenset({"product", "products", "service", "services"}),
+        ("item 1", "business"),
+    ),
+)
+
+_NARRATIVE_HINTS = frozenset(
+    {"customer", "customers", "product", "products", "service", "services", "geographies", "geography"}
+)
 
 
 def _evidence_terms(text: str) -> list[str]:
@@ -218,23 +328,50 @@ def _evidence_terms(text: str) -> list[str]:
 
 
 def _content_terms(text: str) -> list[str]:
-    """Rank-eligible query terms: evidence tokens without question wording or prompt noise."""
+    """Rank-eligible query terms: evidence tokens without question wording or prompt noise.
 
-    return [
-        term
-        for term in _evidence_terms(text)
-        if term not in _EVIDENCE_STOPWORDS and term not in _QUERY_NOISE and len(term) > 1
-    ]
+    Fiscal-year shorthands are normalized to the calendar year printed on the statements
+    ("FY22" -> "2022") so a question can still match the figure pages.
+    """
+
+    raw = _evidence_terms(text)
+    selected: list[str] = []
+    index = 0
+    while index < len(raw):
+        term = raw[index]
+        if term == "fy" and index + 1 < len(raw) and re.fullmatch(r"\d{2,4}", raw[index + 1]):
+            year = raw[index + 1]
+            selected.append(f"20{year}" if len(year) == 2 else year)
+            index += 2
+            continue
+        if term not in _EVIDENCE_STOPWORDS and term not in _QUERY_NOISE and len(term) > 1:
+            selected.append(term)
+        index += 1
+    return selected
 
 
 def _lookup_terms(text: str) -> list[str]:
     """Candidate-generation terms: every distinctive token, prompt noise included.
 
     Ranking drops that noise, but candidate generation must stay broad so a page that only
-    shares one incidental word is still available to the reranker.
+    shares one incidental word is still available to the reranker. Fiscal-year shorthands are
+    expanded to the calendar year actually printed on the statements ("FY22" -> "2022").
     """
 
-    return [term for term in _evidence_terms(text) if term not in _EVIDENCE_STOPWORDS and len(term) > 1]
+    raw = _evidence_terms(text)
+    selected: list[str] = []
+    index = 0
+    while index < len(raw):
+        term = raw[index]
+        if term == "fy" and index + 1 < len(raw) and re.fullmatch(r"\d{2,4}", raw[index + 1]):
+            year = raw[index + 1]
+            selected.append(f"20{year}" if len(year) == 2 else year)
+            index += 2
+            continue
+        if term not in _EVIDENCE_STOPWORDS and len(term) > 1:
+            selected.append(term)
+        index += 1
+    return selected
 
 
 def _rank_entries(
@@ -244,8 +381,9 @@ def _rank_entries(
     """Rank candidate pages by weighted query coverage plus report-structure priors.
 
     Coverage is normalized by the best candidate. A page dense in numbers is preferred once
-    coverage is comparable, and a primary financial statement gets an extra prior when the
-    question asks for a figure; both are tie-breakers rather than page-type filters.
+    coverage is comparable, a primary financial statement gets an extra prior when the
+    question asks for a figure, and a page whose running header names the section the question
+    is about (balance sheets, legal proceedings, geographic segments) is boosted directly.
     """
 
     query_terms = list(dict.fromkeys(_content_terms(question)))
@@ -253,11 +391,27 @@ def _rank_entries(
         query_terms = list(dict.fromkeys(_evidence_terms(question)))
     if not query_terms:
         return list(candidates)
+    expanded: list[tuple[str, float]] = []
+    for term in query_terms:
+        expanded.append((term, 1.0))
+        expanded.extend((synonym, _SYNONYM_WEIGHT) for synonym in _QUERY_SYNONYMS.get(term, ()))
     statement_prior = _STATEMENT_WEIGHT if any(term in _METRIC_TERMS for term in query_terms) else 0.0
+    wanted_sections = tuple(
+        keyword
+        for hints, keywords in _SECTION_HINTS
+        if any(term in hints for term in query_terms)
+        for keyword in keywords
+    )
+    # A customer or product question is answered by narrative business or risk-factor text,
+    # not by the numeric tables, so those questions prefer narrative pages over dense tables.
+    narrative_question = any(
+        term in _NARRATIVE_HINTS for term in query_terms
+    )
     page_terms: dict[tuple[str, str], Counter[str]] = {}
     numeric_density: dict[tuple[str, str], float] = {}
     statement_page: dict[tuple[str, str], float] = {}
     heading_match: dict[tuple[str, str], float] = {}
+    section_match: dict[tuple[str, str], float] = {}
     for identity, (_citation, text) in candidates.items():
         terms = _evidence_terms(text)
         page_terms[identity] = Counter(terms)
@@ -274,23 +428,29 @@ def _rank_entries(
         heading_match[identity] = (
             sum(1 for term in query_terms if term in heading) / len(query_terms) if query_terms else 0.0
         )
+        heading_text = text[:240].casefold()
+        section_match[identity] = (
+            1.0 if wanted_sections and any(keyword in heading_text for keyword in wanted_sections) else 0.0
+        )
     total = max(len(candidates), 1)
     weights: dict[str, float] = {}
-    for term in query_terms:
+    for term in {term for term, _weight in expanded}:
         document_frequency = sum(1 for counter in page_terms.values() if term in counter)
         weights[term] = math.log(1.0 + (total - document_frequency + 0.5) / (document_frequency + 0.5))
     coverage = {
-        identity: sum(weights[term] for term in query_terms if counter[term])
+        identity: sum(weights[term] * weight for term, weight in expanded if counter[term])
         for identity, counter in page_terms.items()
     }
     maximum = max(coverage.values(), default=1.0) or 1.0
+    numeric_weight = -_NUMERIC_DENSITY_WEIGHT if narrative_question else _NUMERIC_DENSITY_WEIGHT
     ranked = sorted(
         (
             (
                 coverage[identity] / maximum
-                + _NUMERIC_DENSITY_WEIGHT * numeric_density[identity]
+                + numeric_weight * numeric_density[identity]
                 + statement_prior * statement_page[identity]
-                + _HEADING_WEIGHT * heading_match[identity],
+                + _HEADING_WEIGHT * heading_match[identity]
+                + _SECTION_HINT_WEIGHT * section_match[identity],
                 identity[0],
                 identity[1],
             )
@@ -317,7 +477,7 @@ async def search_pdf_pages(memory, question: str, limit: int = 10):
         return ()
     per_query_limit = max(limit * 20, 200)
     queries: list[str] = [question]
-    queries.extend(list(dict.fromkeys(_lookup_terms(question)))[:10])
+    queries.extend(list(dict.fromkeys(_lookup_terms(question)))[:14])
     candidates: dict[tuple[str, str], tuple[Any, str]] = {}
     for query in queries:
         page = await memory.search(SearchMemoryRequest(query=query, mode="fts", limit=per_query_limit))
