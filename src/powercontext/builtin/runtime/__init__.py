@@ -172,6 +172,16 @@ from powercontext.builtin.runtime.models import (
     SubmitSourceObservation,
     TopicMemoryFlushResult,
 )
+from powercontext.builtin.runtime.prepared_context import (
+    MemoryEntryAddress,
+    PreparedContextBuild,
+    PreparedContextBuilder,
+    PreparedContextFragment,
+    PreparedContextOrigin,
+    PreparedExperienceCandidates,
+    PreparedMemoryCandidates,
+    PreparedProfileCandidate,
+)
 from powercontext.builtin.runtime.protocols import PowerContextProvider, RemoteIngestion
 from powercontext.builtin.runtime.readiness import (
     CachedReadinessProbe,
@@ -303,6 +313,7 @@ __all__ = [
     "MemoryMutationResult",
     "MemoryRevisionChanges",
     "MemorySearchPage",
+    "MemoryEntryAddress",
     "MemoryWriteAssessment",
     "MemoryWriteGate",
     "MemoryWriteGateRequest",
@@ -318,7 +329,14 @@ __all__ = [
     "PrepareContextRequest",
     "PrepareHandoff",
     "PreparedContext",
+    "PreparedContextBuild",
+    "PreparedContextBuilder",
+    "PreparedContextFragment",
+    "PreparedContextOrigin",
+    "PreparedExperienceCandidates",
     "PreparedHandoff",
+    "PreparedMemoryCandidates",
+    "PreparedProfileCandidate",
     "ProposeExperienceRequest",
     "ProposeSkillRequest",
     "ReadinessCheckStatus",
