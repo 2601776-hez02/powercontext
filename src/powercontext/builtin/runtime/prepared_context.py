@@ -561,7 +561,7 @@ class PreparedContextBuilder:
         # a leaky distractor, so cover both with one sentence each and grow the leader's window with
         # what is left. A single window would drop the second answer from the context entirely.
         shared = False
-        if len(prepared) >= 2:
+        if len(prepared) >= 2 and prepared[0][4] != prepared[1][4]:
             leading_terms = best_terms(0)
             trailing_terms = best_terms(1)
             union = leading_terms | trailing_terms
