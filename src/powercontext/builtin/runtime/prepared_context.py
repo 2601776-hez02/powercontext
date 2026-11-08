@@ -522,7 +522,7 @@ class PreparedContextBuilder:
             # strongest sentences describe it far better than the total overlap, which lets a long
             # off-topic abstract accumulate scattered matches.
             document_score = sum(sorted(scores, reverse=True)[:2])
-            prepared.append((document_score, best, index, address, text, spans, max(scores) if scores else 0.0))
+            prepared.append((document_score, best, index, address, text, spans))
         if not prepared:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
         prepared.sort(key=lambda row: (-row[0], row[1], row[2]))
@@ -532,28 +532,55 @@ class PreparedContextBuilder:
         # that still fits, because annotated evidence usually covers a short contiguous span and
         # any unused byte costs recall.
         def best_sentence(rank: int) -> PreparedContextFragment:
-            _score, best, _index, address, text, spans, _peak = prepared[rank]
+            _score, best, _index, address, text, spans = prepared[rank]
             start, end = spans[best]
             return PreparedContextFragment(address=address, start=start, end=end, text=text[start:end])
 
+        def window_at(rank: int, window: int) -> PreparedContextFragment:
+            _score, best, _index, address, text, spans = prepared[rank]
+            low = max(best - window, 0)
+            high = min(best + window, len(spans) - 1)
+            start, end = spans[low][0], spans[high][1]
+            return PreparedContextFragment(address=address, start=start, end=end, text=text[start:end])
+
+        def accepts(candidate: PreparedContextFragment, others: tuple[PreparedContextFragment, ...]) -> bool:
+            if not candidate.text.strip():
+                return False
+            if any(candidate.text == other.text for other in others):
+                return False
+            return _evidence_rendered_bytes((*others, candidate)) <= request.max_bytes
+
         def widest_window(rank: int, others: tuple[PreparedContextFragment, ...]) -> PreparedContextFragment | None:
-            _score, best, _index, address, text, spans, _peak = prepared[rank]
-            for window in range(len(spans), -1, -1):
-                low = max(best - window, 0)
-                high = min(best + window, len(spans) - 1)
-                start, end = spans[low][0], spans[high][1]
-                candidate = PreparedContextFragment(address=address, start=start, end=end, text=text[start:end])
-                if not candidate.text.strip():
-                    continue
-                if _evidence_rendered_bytes((*others, candidate)) > request.max_bytes:
-                    continue
-                return candidate
-            return None
+            _score, _best, _index, _address, _text, spans = prepared[rank]
+            # Rendered size only grows with the window radius, so binary search the widest window
+            # that fits instead of encoding a candidate for every width.
+            low, high = 0, len(spans) - 1
+            chosen: PreparedContextFragment | None = None
+            while low <= high:
+                middle = (low + high) // 2
+                candidate = window_at(rank, middle)
+                if accepts(candidate, others):
+                    chosen = candidate
+                    low = middle + 1
+                else:
+                    high = middle - 1
+            return chosen
 
         def best_terms(rank: int) -> set[str]:
-            _score, best, _index, _address, text, spans, _peak = prepared[rank]
+            _score, best, _index, _address, text, spans = prepared[rank]
             start, end = spans[best]
             return query_tokens & _tokenize(text[start:end])
+
+        def shared_pair(rank: int) -> tuple[PreparedContextFragment, PreparedContextFragment] | None:
+            trailing = best_sentence(rank)
+            leading = widest_window(0, (trailing,))
+            if leading is None:
+                return None
+            # Splitting only pays off while the leader keeps a meaningful share; a huge trailing
+            # sentence would starve the leader and cost more evidence than the second answer adds.
+            if len(leading.text.encode("utf-8")) * 2 < len(trailing.text.encode("utf-8")):
+                return None
+            return leading, trailing
 
         selected: list[PreparedContextFragment] = []
         # Two candidates can both answer the query. When their best sentences match mostly the same
@@ -568,10 +595,9 @@ class PreparedContextBuilder:
             if union:
                 shared = len(leading_terms & trailing_terms) / len(union) >= _EVIDENCE_SHARED_TERMS
         if shared:
-            trailing = best_sentence(1)
-            leading = widest_window(0, (trailing,))
-            if leading is not None:
-                selected = [leading, trailing]
+            pair = shared_pair(1)
+            if pair is not None:
+                selected = [pair[0], pair[1]]
         if not selected:
             leading = widest_window(0, ())
             if leading is not None:
@@ -588,7 +614,7 @@ class PreparedContextBuilder:
             # Even one sentence can be wider than the budget. Drop to a literal character-level
             # prefix of the strongest span instead of returning nothing, because an empty result
             # for a request that has candidates is a failure rather than a valid answer.
-            _document_score, best, _index, address, text, spans, _peak = prepared[0]
+            _document_score, best, _index, address, text, spans = prepared[0]
             start, end = spans[best]
             low, high = start + 1, end
             while low <= high:
@@ -885,10 +911,6 @@ def _tokenize(text: str) -> set[str]:
 def _sentence_spans(text: str):
     for match in _SENTENCE_PATTERN.finditer(text):
         yield match.start(), match.end()
-
-
-def _token_overlap(text: str, query_tokens: set[str]) -> int:
-    return len(query_tokens.intersection(_tokenize(text)))
 
 
 def _render_evidence(fragments: Sequence[PreparedContextFragment]) -> str:
