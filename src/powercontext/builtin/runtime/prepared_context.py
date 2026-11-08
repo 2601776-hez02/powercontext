@@ -550,11 +550,24 @@ class PreparedContextBuilder:
                 return candidate
             return None
 
+        def best_terms(rank: int) -> set[str]:
+            _score, best, _index, _address, text, spans, _peak = prepared[rank]
+            start, end = spans[best]
+            return query_tokens & _tokenize(text[start:end])
+
         selected: list[PreparedContextFragment] = []
-        # Two candidates can both answer the query. When the runner-up matches nearly as well as
-        # the leader, cover both with one sentence each and grow the leader's window with what is
-        # left, because a single window would leave the second answer out of the context entirely.
-        if len(prepared) >= 2 and prepared[0][6] > 0 and prepared[1][6] >= _EVIDENCE_SHARED_PEAK * prepared[0][6]:
+        # Two candidates can both answer the query. When their best sentences match mostly the same
+        # query terms, they are answers to the same question rather than a relevant abstract next to
+        # a leaky distractor, so cover both with one sentence each and grow the leader's window with
+        # what is left. A single window would drop the second answer from the context entirely.
+        shared = False
+        if len(prepared) >= 2:
+            leading_terms = best_terms(0)
+            trailing_terms = best_terms(1)
+            union = leading_terms | trailing_terms
+            if union:
+                shared = len(leading_terms & trailing_terms) / len(union) >= _EVIDENCE_SHARED_TERMS
+        if shared:
             trailing = best_sentence(1)
             leading = widest_window(0, (trailing,))
             if leading is not None:
@@ -861,8 +874,8 @@ def _render(entries: Sequence[_PreparedContextEntry]) -> str:
 
 _SENTENCE_PATTERN = re.compile(r"[^.!?\n]+[.!?\n]*")
 _TOKEN_PATTERN = re.compile(r"[a-z]+|\d+")
-# Cover a second abstract only when its best sentence matches nearly as well as the leader's.
-_EVIDENCE_SHARED_PEAK = 0.75
+# Share the budget with a second abstract when both best sentences match the same query terms.
+_EVIDENCE_SHARED_TERMS = 0.5
 
 
 def _tokenize(text: str) -> set[str]:
