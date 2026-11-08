@@ -512,7 +512,10 @@ class PreparedContextBuilder:
                 sum(weights[token] for token in query_tokens & _tokenize(text[start:end])) for start, end in spans
             ]
             best = max(range(len(scores)), key=lambda position: (scores[position], -position))
-            document_score = sum(weights[token] for token in query_tokens & tokens)
+            # A relevant abstract usually contains one or two passages that answer the claim;
+            # ranking abstracts by their two strongest passages is sharper than by total overlap,
+            # which lets a long off-topic abstract with scattered matches win.
+            document_score = sum(sorted(scores, reverse=True)[:2]) if scores else 0.0
             prepared.append((document_score, best, index, address, text, spans))
         if not prepared:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
@@ -538,6 +541,24 @@ class PreparedContextBuilder:
                 break
             if chosen is not None:
                 selected.append(chosen)
+
+        if not selected:
+            # Even one sentence can be wider than the budget. Drop to a literal character-level
+            # prefix of the strongest span instead of returning nothing, because an empty result
+            # for a request that has candidates is a failure rather than a valid answer.
+            _document_score, best, _index, address, text, spans = prepared[0]
+            start, end = spans[best]
+            low, high = start + 1, end
+            while low <= high:
+                middle = (low + high) // 2
+                candidate = PreparedContextFragment(
+                    address=address, start=start, end=middle, text=text[start:middle]
+                )
+                if _evidence_rendered_bytes((candidate,)) <= request.max_bytes:
+                    selected = [candidate]
+                    low = middle + 1
+                else:
+                    high = middle - 1
 
         if not selected:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
