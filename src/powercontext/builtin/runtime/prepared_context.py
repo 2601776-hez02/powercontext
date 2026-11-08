@@ -522,7 +522,7 @@ class PreparedContextBuilder:
             # long abstract accumulates scattered matches; normalize by length so the tight
             # abstract that actually states the answer wins.
             document_score = sum(sorted(scores, reverse=True)[:2]) / max(math.sqrt(len(text)), 1.0)
-            prepared.append((document_score, best, index, address, text, spans))
+            prepared.append((document_score, best, index, address, text, spans, max(scores) if scores else 0.0))
         if not prepared:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
         prepared.sort(key=lambda row: (-row[0], row[1], row[2]))
@@ -531,9 +531,13 @@ class PreparedContextBuilder:
         # a citation per sentence. Each abstract takes the widest window around its best sentence
         # that still fits, because annotated evidence usually covers a short contiguous span and
         # any unused byte costs recall.
-        selected: list[PreparedContextFragment] = []
-        for _document_score, best, _index, address, text, spans in prepared:
-            chosen: PreparedContextFragment | None = None
+        def best_sentence(rank: int) -> PreparedContextFragment:
+            _score, best, _index, address, text, spans, _peak = prepared[rank]
+            start, end = spans[best]
+            return PreparedContextFragment(address=address, start=start, end=end, text=text[start:end])
+
+        def widest_window(rank: int, others: tuple[PreparedContextFragment, ...]) -> PreparedContextFragment | None:
+            _score, best, _index, address, text, spans, _peak = prepared[rank]
             for window in range(len(spans), -1, -1):
                 low = max(best - window, 0)
                 high = min(best + window, len(spans) - 1)
@@ -541,18 +545,37 @@ class PreparedContextBuilder:
                 candidate = PreparedContextFragment(address=address, start=start, end=end, text=text[start:end])
                 if not candidate.text.strip():
                     continue
-                if _evidence_rendered_bytes((*selected, candidate)) > request.max_bytes:
+                if _evidence_rendered_bytes((*others, candidate)) > request.max_bytes:
                     continue
-                chosen = candidate
-                break
-            if chosen is not None:
-                selected.append(chosen)
+                return candidate
+            return None
+
+        selected: list[PreparedContextFragment] = []
+        # Two candidates can both answer the query. When the runner-up matches nearly as well as
+        # the leader, cover both with one sentence each and grow the leader's window with what is
+        # left, because a single window would leave the second answer out of the context entirely.
+        if len(prepared) >= 2 and prepared[0][6] > 0 and prepared[1][6] >= _EVIDENCE_SHARED_PEAK * prepared[0][6]:
+            trailing = best_sentence(1)
+            leading = widest_window(0, (trailing,))
+            if leading is not None:
+                selected = [leading, trailing]
+        if not selected:
+            leading = widest_window(0, ())
+            if leading is not None:
+                selected = [leading]
+        if len(selected) == 1 and selected[0].address == prepared[0][3]:
+            # Any budget the leader could not use goes to the next candidates.
+            for rank in range(1, len(prepared)):
+                trailing = widest_window(rank, tuple(selected))
+                if trailing is not None:
+                    selected.append(trailing)
+                    break
 
         if not selected:
             # Even one sentence can be wider than the budget. Drop to a literal character-level
             # prefix of the strongest span instead of returning nothing, because an empty result
             # for a request that has candidates is a failure rather than a valid answer.
-            _document_score, best, _index, address, text, spans = prepared[0]
+            _document_score, best, _index, address, text, spans, _peak = prepared[0]
             start, end = spans[best]
             low, high = start + 1, end
             while low <= high:
@@ -838,6 +861,8 @@ def _render(entries: Sequence[_PreparedContextEntry]) -> str:
 
 _SENTENCE_PATTERN = re.compile(r"[^.!?\n]+[.!?\n]*")
 _TOKEN_PATTERN = re.compile(r"[a-z]+|\d+")
+# Cover a second abstract only when its best sentence matches nearly as well as the leader's.
+_EVIDENCE_SHARED_PEAK = 0.75
 
 
 def _tokenize(text: str) -> set[str]:
