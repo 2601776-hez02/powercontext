@@ -419,6 +419,107 @@ def cmd_db(args: argparse.Namespace, settings: Settings) -> int:
         return 0
 
 
+def cmd_adopt(args: argparse.Namespace, settings: Settings) -> int:
+    """Adopt a patch produced in a manual MiniMax Web/App session.
+
+    The answer text is recorded verbatim, the diff is extracted with the same
+    parser the API path uses, then the usual before/after verification runs.
+    """
+    from .agent import apply_patch, extract_patch, git_diff, reset_workdir  # noqa: PLC0415
+
+    task = load_task(Path(args.task))
+    answer_path = Path(args.answer)
+    answer = answer_path.read_text(encoding="utf-8", errors="replace")
+    patch = extract_patch(answer)
+    if patch is None:
+        print("error: the answer file does not contain a unified diff", file=sys.stderr)
+        return 5
+
+    run_dir = settings.records_dir / "minimax" / task.task_id
+    run_dir.mkdir(parents=True, exist_ok=True)
+    (run_dir / "web-answer.md").write_text(answer, encoding="utf-8")
+
+    baseline_commit = prepare_workdir(settings.sample_repo, settings.workdir, reset=True)
+    baseline = run_pytest(settings.workdir, task.acceptance_tests)
+    write_test_log(run_dir / "tests-before-web.log", baseline)
+    reset_workdir(settings.workdir)
+    applied = apply_patch(settings.workdir, patch)
+    if not applied.ok:
+        print(f"error: the diff did not apply: {applied.output[-800:]}", file=sys.stderr)
+        return 5
+    (run_dir / "web.patch").write_text(patch, encoding="utf-8")
+    diff = git_diff(settings.workdir)
+    if diff.strip():
+        settings.artifacts_dir.mkdir(parents=True, exist_ok=True)
+        (settings.artifacts_dir / "code.diff").write_text(diff, encoding="utf-8")
+
+    acceptance = run_pytest(settings.workdir, task.acceptance_tests)
+    write_test_log(run_dir / "tests-after-web.log", acceptance)
+    regression = run_pytest(settings.workdir, task.regression_tests) if acceptance.exit_code == 0 else None
+    if regression is not None:
+        write_test_log(run_dir / "tests-regression-web.log", regression)
+
+    success = acceptance.exit_code == 0 and (regression is None or regression.exit_code == 0)
+    record = {
+        "schema": "sdd-web-session/v1",
+        "task_id": task.task_id,
+        "model_label": args.model_label,
+        "channel": "MiniMax Web/App (manual session)",
+        "answer_file": str(answer_path),
+        "answer_chars": len(answer),
+        "patch_chars": len(patch),
+        "baseline_commit": baseline_commit,
+        "baseline": baseline.as_dict(),
+        "acceptance": acceptance.as_dict(),
+        "regression": regression.as_dict() if regression else None,
+        "success": success,
+        "recorded_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    }
+    write_json(run_dir / "web-run.json", record)
+
+    state = None
+    if not args.no_state:
+        store = TaskStateStore(settings.powercontext_url, settings.powercontext_token)
+        state, _ = store.remember_state(
+            task.task_id,
+            task.title,
+            status="verified" if success else "in_progress",
+            verification={
+                "command": f"manual MiniMax session ({args.model_label})",
+                "exit_code": acceptance.exit_code,
+                "summary": acceptance.summary,
+                "at": record["recorded_at"],
+                "workdir": str(settings.workdir),
+                "regression_exit_code": regression.exit_code if regression else None,
+            },
+        )
+    append_event(
+        settings.records_dir,
+        "adopt",
+        {"task": task.task_id, "model": args.model_label, "success": success,
+         "baseline_exit": baseline.exit_code,
+         "acceptance_exit": acceptance.exit_code,
+         "regression_exit": regression.exit_code if regression else None,
+         "state_revision": state["revision"] if state else None},
+    )
+    if args.json:
+        _print(record)
+    else:
+        print(f"task            {task.task_id}")
+        print(f"channel         {record['channel']} · {args.model_label}")
+        print(f"baseline        {baseline.summary} (exit {baseline.exit_code})")
+        print(f"patch           {len(patch)} chars → applied to {settings.workdir}")
+        print(f"acceptance      {acceptance.summary} (exit {acceptance.exit_code})")
+        if regression:
+            print(f"regression      {regression.summary} (exit {regression.exit_code})")
+        print(f"artifacts       {settings.artifacts_dir / 'code.diff'}")
+        print(f"record          {run_dir / 'web-run.json'}")
+        if state:
+            print(f"state           revision {state['revision']} · {state['status']}")
+        print(f"result          {'SUCCESS' if success else 'FAILED'}")
+    return 0 if success else 1
+
+
 def cmd_doctor(args: argparse.Namespace, settings: Settings) -> int:
     report: dict[str, Any] = {"version": __version__, "settings": _settings_view(settings),
                               "environment": environment()}
@@ -549,6 +650,13 @@ def build_parser() -> argparse.ArgumentParser:
     db.add_argument("--param", action="append")
     db.add_argument("--json", action="store_true")
 
+    adopt = sub.add_parser("adopt", help="apply and verify a patch produced in a manual MiniMax session")
+    adopt.add_argument("--task", required=True)
+    adopt.add_argument("--answer", required=True, help="file holding the model answer (verbatim)")
+    adopt.add_argument("--model-label", default="MiniMax Web/App session")
+    adopt.add_argument("--no-state", action="store_true")
+    adopt.add_argument("--json", action="store_true")
+
     doctor = sub.add_parser("doctor", help="check seekdb, PowerContext, MiniMax and the sample")
     doctor.add_argument("--json", action="store_true")
     return parser
@@ -562,6 +670,7 @@ COMMANDS = {
     "agent": cmd_agent,
     "verify": cmd_verify,
     "prompt": cmd_prompt,
+    "adopt": cmd_adopt,
     "db": cmd_db,
     "doctor": cmd_doctor,
 }
