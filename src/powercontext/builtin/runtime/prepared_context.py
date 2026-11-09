@@ -695,6 +695,26 @@ class PreparedContextBuilder:
 
         if not selected:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
+        if _EVIDENCE_FILL_TAIL and selected:
+            # A window stops on a sentence boundary, so a few dozen bytes can stay unused. Extend
+            # the last fragment into the following text: the span is still a literal substring and
+            # any word it adds is evidence the budget already paid for.
+            last = selected[-1]
+            entry_text = next(text for address, text in entries if address == last.address)
+            low, high = last.end + 1, min(len(entry_text), last.end + 4096)
+            grown = last
+            while low <= high:
+                middle = (low + high) // 2
+                candidate = PreparedContextFragment(
+                    address=last.address, start=last.start, end=middle, text=entry_text[last.start:middle]
+                )
+                if _evidence_rendered_bytes((*selected[:-1], candidate)) <= request.max_bytes:
+                    grown = candidate
+                    low = middle + 1
+                else:
+                    high = middle - 1
+            if grown is not last:
+                selected = [*selected[:-1], grown]
         content = _render_evidence(selected)
         return PreparedContextBuild(
             context=PreparedContext(status="ready", content=content, content_bytes=len(content.encode("utf-8"))),
@@ -971,6 +991,8 @@ _EVIDENCE_WINDOW_MODE = "hybrid"
 # Cover a multi-part question when its two halves together account for the whole query.
 _EVIDENCE_MULTIPART_SPLIT = True
 _EVIDENCE_MULTIPART_COVERAGE = 1.0
+# Spend leftover bytes by extending the last fragment into the following text.
+_EVIDENCE_FILL_TAIL = True
 # A claim is about its content words; grammar words match every abstract equally well.
 _EVIDENCE_COMMON_WORD_FACTOR = 0.2
 _EVIDENCE_COMMON_WORDS = frozenset(
