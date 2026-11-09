@@ -582,6 +582,7 @@ class PreparedContextBuilder:
                         prefix.append(prefix[-1] + value)
                     best_gain: float | None = None
                     best_span: PreparedContextFragment | None = None
+                    best_length = 0
                     for start_index in range(len(spans)):
                         for end_index in range(start_index, len(spans)):
                             start, end = spans[start_index][0], spans[end_index][1]
@@ -593,9 +594,13 @@ class PreparedContextBuilder:
                             if not candidate.text.strip():
                                 continue
                             gain = prefix[end_index + 1] - prefix[start_index]
-                            if best_gain is None or gain > best_gain:
+                            length = end - start
+                            # Equal evidence: take the longer span, because unused budget is
+                            # recall given away on the words the claim shares with the abstract.
+                            if best_gain is None or gain > best_gain or (gain == best_gain and length > best_length):
                                 best_gain = gain
                                 best_span = candidate
+                                best_length = length
                     if best_span is not None:
                         return best_span
             # Rendered size only grows with the window radius, so binary search the widest window
