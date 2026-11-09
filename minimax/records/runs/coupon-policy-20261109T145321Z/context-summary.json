@@ -1,7 +1,7 @@
 {
   "task": "coupon-policy",
-  "pack": "artifacts/context-pack-v2.json",
-  "markdown": "artifacts/context-pack-v2.md",
+  "pack": "/root/minimax/records/replay/20261109T145307Z/context-with-state.json",
+  "markdown": "/root/minimax/records/replay/20261109T145307Z/context-with-state.md",
   "selected": {
     "specs": [
       {
@@ -11,7 +11,7 @@
       },
       {
         "ref": "docs/specs/pricing.md#PRC-3",
-        "score": 0.501,
+        "score": 0.496,
         "why": "fulltext match; exact symbol/path match"
       },
       {
@@ -99,66 +99,33 @@
     "stale_sources": []
   },
   "state": {
-    "created_at": "2026-11-09T14:17:43Z",
+    "created_at": "2026-11-09T14:53:19Z",
     "done": [
       "Read PRC-3, PRC-4 and RSV-3",
       "Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted"
     ],
     "next_step": "Send the context pack to MiniMax and review the patch",
-    "revision": 3,
+    "revision": 1,
     "schema": "sdd-task-state/v1",
-    "status": "verified",
+    "status": "in_progress",
     "task_id": "coupon-policy",
     "title": "Apply coupon codes case-insensitively and reject expired codes",
     "todo": [
       "Normalize coupon codes before the catalog lookup",
       "Reject expired coupons with ExpiredCouponError before capacity is consumed"
     ],
-    "updated_at": "2026-11-09T14:17:51Z",
-    "verifications": [
-      {
-        "command": "/root/minimax/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py",
-        "duration_s": 0.193,
-        "errors": 0,
-        "exit_code": 1,
-        "failed": 6,
-        "log": "/root/minimax/records/runs/coupon-policy-20261109T141750Z/tests.log",
-        "passed": 1,
-        "started_at": "2026-11-09T14:17:50Z",
-        "summary": "1 passed, 6 failed",
-        "targets": [
-          "tests/test_coupon_policy.py"
-        ],
-        "workdir": "/root/minimax/.runtime/workdir"
-      },
-      {
-        "command": "/root/minimax/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py tests/test_pricing.py tests/test_reservation.py",
-        "duration_s": 0.183,
-        "errors": 0,
-        "exit_code": 0,
-        "failed": 0,
-        "log": "/root/minimax/records/runs/coupon-policy-20261109T141751Z/tests.log",
-        "passed": 17,
-        "started_at": "2026-11-09T14:17:50Z",
-        "summary": "17 passed",
-        "targets": [
-          "tests/test_coupon_policy.py",
-          "tests/test_pricing.py",
-          "tests/test_reservation.py"
-        ],
-        "workdir": "/root/minimax/.runtime/workdir"
-      }
-    ],
+    "updated_at": "2026-11-09T14:53:19Z",
+    "verifications": [],
     "_citation": {
       "memory_ref": {
         "family": "memory",
         "artifact_id": "memory",
-        "revision": 3
+        "revision": 1
       },
-      "entry_id": "mem_ent_85cd3af3943d4b9bbc64a7656914ee0e",
-      "entry_version_id": "mem_ver_21d9263cf9894980a5713df201e0f8ae"
+      "entry_id": "mem_ent_d63b7f92511c4613945d9ae8c5c0f1a3",
+      "entry_version_id": "mem_ver_26e73c12a7c7412b8bcf8c3d87ae953c"
     },
-    "_score": 0.015873015873015872
+    "_score": 0.01639344262295082
   },
   "state_error": "",
   "capture": null,
@@ -173,8 +140,8 @@
       "spec": 10,
       "test": 20
     },
-    "imports": 2,
-    "history_rows": 20,
+    "imports": 1,
+    "history_rows": 10,
     "indexes": [
       "ix_sdd_item_doc",
       "ix_sdd_item_kind",
@@ -186,12 +153,12 @@
     "data_path": "/root/minimax/.runtime/seekdb"
   },
   "index": {
-    "import_id": "20261109T141752697580",
-    "started_at": "2026-11-09T14:17:52Z",
-    "finished_at": "2026-11-09T14:17:52Z",
+    "import_id": "20261109T145317452744",
+    "started_at": "2026-11-09T14:53:17Z",
+    "finished_at": "2026-11-09T14:53:17Z",
     "repo_path": "/root/minimax/.runtime/repo",
     "seekdb_target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
-    "spec_revision": "18471ec477520271ee8e3a5cc9a15673",
+    "spec_revision": "1e10174f8aaa5bc1cb55072400e5da69",
     "code_revision": "0655c6f8159031dc8ef7337201bade87",
     "test_revision": "93ca07ea448bc0bba47fbbc8855d5b23",
     "document_count": 10,

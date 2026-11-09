@@ -1,9 +1,9 @@
 # Development context: Apply coupon codes case-insensitively and reject expired codes
 
 - Task id: `coupon-policy`
-- Generated: 2026-11-09T14:17:45Z
+- Generated: 2026-11-09T14:53:21Z
 - Repository: `/root/minimax/.runtime/repo`
-- Index: import `20261109T141742002881` · spec revision `1e10174f8aaa` · code revision `0655c6f81590` · 50 items
+- Index: import `20261109T145317452744` · spec revision `1e10174f8aaa` · code revision `0655c6f81590` · 50 items
 - Storage: embedded-seekdb:/root/minimax/.runtime/seekdb (seekdb 5.7.25-OceanBase seekdb-v1.4.0.0)
 
 ## Task
@@ -214,7 +214,7 @@ def test_surrounding_whitespace_is_ignored() -> None:
 
 ## Task state (persisted in PowerContext)
 
-- Status: `in_progress` · updated 2026-11-09T14:17:43Z
+- Status: `in_progress` · updated 2026-11-09T14:53:19Z
 - Done:
   - Read PRC-3, PRC-4 and RSV-3
   - Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted

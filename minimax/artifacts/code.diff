@@ -1,43 +1,52 @@
 diff --git a/src/evently/pricing.py b/src/evently/pricing.py
-index 0e39296..02597d5 100644
+index 0e39296..c00b3a9 100644
 --- a/src/evently/pricing.py
 +++ b/src/evently/pricing.py
-@@ -2,8 +2,10 @@
+@@ -13,16 +13,42 @@ def subtotal_cents(quantity: int) -> int:
+     return TICKET_PRICE_CENTS * quantity
  
- from __future__ import annotations
  
-+from datetime import datetime, timezone
++import datetime as dt
++from .errors import ExpiredCouponError
 +
- from .catalog import CATALOG, Coupon
--from .errors import UnknownCouponError
-+from .errors import ExpiredCouponError, UnknownCouponError
- 
- TICKET_PRICE_CENTS = 12_500
- 
-@@ -14,9 +16,13 @@ def subtotal_cents(quantity: int) -> int:
- 
- 
++
++def _normalize_code(code: str) -> str:
++    """Return the canonical form of ``code`` used for catalog lookups."""
++    if not isinstance(code, str):
++        return ""
++    return code.strip().replace("-", "").upper()
++
++
++def _valid_until(coupon: Coupon) -> dt.date | None:
++    """Return the last date on which ``coupon`` may be used, if it has one."""
++    for field in ("valid_until", "valid_until_date", "expires_on", "expires_at"):
++        value = getattr(coupon, field, None)
++        if value is not None:
++            return value.date() if isinstance(value, dt.datetime) else value
++    return None
++
++
  def find_coupon(code: str) -> Coupon:
 -    """Return the catalog entry the customer typed in."""
-+    """Return the catalog entry the customer typed in.
-+
-+    PRC-3: matching is case-insensitive and surrounding whitespace is stripped
-+    before the lookup; the catalog itself is never modified.
-+    """
-     try:
+-    try:
 -        return CATALOG[code]
-+        return CATALOG[code.strip().upper()]
-     except KeyError:
-         raise UnknownCouponError(f"unknown coupon code: {code!r}") from None
+-    except KeyError:
+-        raise UnknownCouponError(f"unknown coupon code: {code!r}") from None
++    """Return the catalog entry matching ``code``, ignoring case and padding."""
++    key = _normalize_code(code)
++    for catalog_code, coupon in CATALOG.items():
++        if _normalize_code(catalog_code) == key:
++            return coupon
++    raise UnknownCouponError(f"unknown coupon code: {code!r}")
  
-@@ -24,5 +30,10 @@ def find_coupon(code: str) -> Coupon:
+ 
  def apply_coupon(code: str, amount_cents: int) -> int:
      """Return ``amount_cents`` after applying the coupon for ``code``."""
      coupon = find_coupon(code)
-+    today = datetime.now(timezone.utc).date()
-+    if coupon.valid_until < today:
++    valid_until = _valid_until(coupon)
++    if valid_until is not None and valid_until < dt.datetime.now(dt.timezone.utc).date():
 +        raise ExpiredCouponError(
-+            f"coupon {coupon.code} expired on {coupon.valid_until.isoformat()}"
++            f"coupon {coupon.code!r} expired on {valid_until.isoformat()}"
 +        )
      discount = amount_cents * coupon.percent_off // 100
      return amount_cents - discount

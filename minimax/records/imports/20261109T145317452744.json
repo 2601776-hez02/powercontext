@@ -1,6 +1,6 @@
 {
   "repo": "/root/minimax/.runtime/repo",
-  "import_id": "20261109T141742002881",
+  "import_id": "20261109T145317452744",
   "documents": 10,
   "items": 50,
   "items_by_kind": {
@@ -21,98 +21,98 @@
   },
   "changed_documents": [
     {
-      "import_id": "20261109T141742002881",
+      "import_id": "20261109T145317452744",
       "path": "docs/specs/pricing.md",
       "kind": "spec",
       "before": "",
       "after": "a5c3344e1b75",
       "change": "added",
-      "imported_at": "2026-11-09T14:17:42Z"
+      "imported_at": "2026-11-09T14:53:17Z"
     },
     {
-      "import_id": "20261109T141742002881",
+      "import_id": "20261109T145317452744",
       "path": "docs/specs/reservation.md",
       "kind": "spec",
       "before": "",
       "after": "845db18e9ab5",
       "change": "added",
-      "imported_at": "2026-11-09T14:17:42Z"
+      "imported_at": "2026-11-09T14:53:17Z"
     },
     {
-      "import_id": "20261109T141742002881",
+      "import_id": "20261109T145317452744",
       "path": "src/evently/__init__.py",
       "kind": "code",
       "before": "",
       "after": "f5096f71ebc8",
       "change": "added",
-      "imported_at": "2026-11-09T14:17:42Z"
+      "imported_at": "2026-11-09T14:53:17Z"
     },
     {
-      "import_id": "20261109T141742002881",
+      "import_id": "20261109T145317452744",
       "path": "src/evently/catalog.py",
       "kind": "code",
       "before": "",
       "after": "52896c2982a8",
       "change": "added",
-      "imported_at": "2026-11-09T14:17:42Z"
+      "imported_at": "2026-11-09T14:53:17Z"
     },
     {
-      "import_id": "20261109T141742002881",
+      "import_id": "20261109T145317452744",
       "path": "src/evently/errors.py",
       "kind": "code",
       "before": "",
       "after": "faa9b5e69a6f",
       "change": "added",
-      "imported_at": "2026-11-09T14:17:42Z"
+      "imported_at": "2026-11-09T14:53:17Z"
     },
     {
-      "import_id": "20261109T141742002881",
+      "import_id": "20261109T145317452744",
       "path": "src/evently/pricing.py",
       "kind": "code",
       "before": "",
       "after": "42054ffe235d",
       "change": "added",
-      "imported_at": "2026-11-09T14:17:42Z"
+      "imported_at": "2026-11-09T14:53:17Z"
     },
     {
-      "import_id": "20261109T141742002881",
+      "import_id": "20261109T145317452744",
       "path": "src/evently/reservation.py",
       "kind": "code",
       "before": "",
       "after": "03b71ba982dd",
       "change": "added",
-      "imported_at": "2026-11-09T14:17:42Z"
+      "imported_at": "2026-11-09T14:53:17Z"
     },
     {
-      "import_id": "20261109T141742002881",
+      "import_id": "20261109T145317452744",
       "path": "tests/test_coupon_policy.py",
       "kind": "test",
       "before": "",
       "after": "65220d8d8b33",
       "change": "added",
-      "imported_at": "2026-11-09T14:17:42Z"
+      "imported_at": "2026-11-09T14:53:17Z"
     },
     {
-      "import_id": "20261109T141742002881",
+      "import_id": "20261109T145317452744",
       "path": "tests/test_pricing.py",
       "kind": "test",
       "before": "",
       "after": "67516e8dd7b5",
       "change": "added",
-      "imported_at": "2026-11-09T14:17:42Z"
+      "imported_at": "2026-11-09T14:53:17Z"
     },
     {
-      "import_id": "20261109T141742002881",
+      "import_id": "20261109T145317452744",
       "path": "tests/test_reservation.py",
       "kind": "test",
       "before": "",
       "after": "54c42e24bb28",
       "change": "added",
-      "imported_at": "2026-11-09T14:17:42Z"
+      "imported_at": "2026-11-09T14:53:17Z"
     }
   ],
   "seekdb_target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
   "seekdb_version": "5.7.25-OceanBase seekdb-v1.4.0.0",
-  "duration_s": 1.575,
-  "imported_at": "2026-11-09T14:17:42Z"
+  "duration_s": 1.564,
+  "imported_at": "2026-11-09T14:53:17Z"
 }

@@ -1,0 +1,55 @@
+{
+  "schema": "sdd-web-session/v1",
+  "task_id": "coupon-policy",
+  "model_label": "MiniMax-M3.1-Flash (Web/App manual session, 6m21s)",
+  "channel": "MiniMax Web/App (manual session)",
+  "answer_file": "/root/web-answer.md",
+  "answer_chars": 2623,
+  "patch_chars": 1878,
+  "baseline_commit": "e78d63c1f6238fdf39a9e4cd2f255bd10be6e403",
+  "baseline": {
+    "command": "/root/mm-probe/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py",
+    "targets": [
+      "tests/test_coupon_policy.py"
+    ],
+    "workdir": "/root/minimax/.runtime/workdir",
+    "exit_code": 1,
+    "passed": 1,
+    "failed": 6,
+    "errors": 0,
+    "duration_s": 0.191,
+    "started_at": "2026-11-09T14:53:37Z",
+    "summary": "1 passed, 6 failed"
+  },
+  "acceptance": {
+    "command": "/root/mm-probe/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py",
+    "targets": [
+      "tests/test_coupon_policy.py"
+    ],
+    "workdir": "/root/minimax/.runtime/workdir",
+    "exit_code": 0,
+    "passed": 7,
+    "failed": 0,
+    "errors": 0,
+    "duration_s": 0.176,
+    "started_at": "2026-11-09T14:53:37Z",
+    "summary": "7 passed"
+  },
+  "regression": {
+    "command": "/root/mm-probe/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_pricing.py tests/test_reservation.py",
+    "targets": [
+      "tests/test_pricing.py",
+      "tests/test_reservation.py"
+    ],
+    "workdir": "/root/minimax/.runtime/workdir",
+    "exit_code": 0,
+    "passed": 10,
+    "failed": 0,
+    "errors": 0,
+    "duration_s": 0.179,
+    "started_at": "2026-11-09T14:53:37Z",
+    "summary": "10 passed"
+  },
+  "success": true,
+  "recorded_at": "2026-11-09T14:53:37Z"
+}

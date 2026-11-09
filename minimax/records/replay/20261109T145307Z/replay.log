@@ -14,14 +14,14 @@ tables          sdd_documents, sdd_items, sdd_imports, sdd_document_history
 fulltext index  ix_sdd_item_search (created)
 
 == 2. start PowerContext (SQLite backed, port from .runtime/powercontext.env)
-starting PowerContext on http://127.0.0.1:8139
+starting PowerContext on http://127.0.0.1:8140
   POWERCONTEXT_HOME=/root/minimax/.runtime/powercontext
   database kind=sqlite
-ready (pid 1350556)
+ready (pid 1353817)
 sdd context     0.1.0
 home            /root/minimax/.runtime
 seekdb          embedded-seekdb:/root/minimax/.runtime/seekdb · server 5.7.25-OceanBase seekdb-v1.4.0.0 · ready
-powercontext    http://127.0.0.1:8139 · ready
+powercontext    http://127.0.0.1:8140 · ready
 minimax         NO API KEY · MiniMax-M3 @ https://api.minimaxi.com/v1
 sample          /root/minimax/sample-project (ok)
 
@@ -47,7 +47,7 @@ change journal  {'added': 10, 'changed': 0, 'removed': 0, 'unchanged': 0}
 == 4. build the context pack for the task (specification v1)
 task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
 repository      /root/minimax/.runtime/repo
-index           20261109T141742002881 · spec 1e10174f8aaa
+index           20261109T145317452744 · spec 1e10174f8aaa
 specs           4
    0.56  docs/specs/reservation.md#RSV-3
    0.50  docs/specs/pricing.md#PRC-3
@@ -68,19 +68,19 @@ task state      skipped (--no-state)
 source checks   {'ok': 13}
 pack            artifacts/context-pack-v1.json
 markdown        artifacts/context-pack-v1.md
-pc source       sdd-context-coupon-policy-20261109T141742002881 (accepted)
+pc source       sdd-context-coupon-policy-20261109T145317452744 (accepted)
 
 == 5. save the task state into PowerContext (first write, from empty state)
 saved           coupon-policy revision 1 (587 bytes, entry version 1)
 memory          memory @1
-scope           scp_62xfjqk2p277nd1tpsc46rdd4c
+scope           scp_0ebn7828sxf5nw0q803gqcs9ew
 
 == 6. restart the module as a new process and read the state back
 task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
 status          in_progress
 revision        1
-updated         2026-11-09T14:17:43Z
-scope           scp_62xfjqk2p277nd1tpsc46rdd4c
+updated         2026-11-09T14:53:19Z
+scope           scp_0ebn7828sxf5nw0q803gqcs9ew
 done            2
   - Read PRC-3, PRC-4 and RSV-3
   - Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted
@@ -91,7 +91,7 @@ verifications   0
 next step       Send the context pack to MiniMax and review the patch
 task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
 repository      /root/minimax/.runtime/repo
-index           20261109T141742002881 · spec 1e10174f8aaa
+index           20261109T145317452744 · spec 1e10174f8aaa
 specs           4
    0.56  docs/specs/reservation.md#RSV-3
    0.50  docs/specs/pricing.md#PRC-3
@@ -111,21 +111,21 @@ tests           4
 task state      revision 1 · in_progress · done 2 · todo 2 · verifications 0
 next step       Send the context pack to MiniMax and review the patch
 source checks   {'ok': 13}
-pack            /root/minimax/records/replay/20261109T141731Z/context-with-state.json
-markdown        /root/minimax/records/replay/20261109T141731Z/context-with-state.md
+pack            /root/minimax/records/replay/20261109T145307Z/context-with-state.json
+markdown        /root/minimax/records/replay/20261109T145307Z/context-with-state.md
 state reuse after module restart: OK
 
 == 7. restart PowerContext itself and read the state again
-stopped PowerContext (pid 1350556)
-starting PowerContext on http://127.0.0.1:8139
+stopped PowerContext (pid 1353817)
+starting PowerContext on http://127.0.0.1:8140
   POWERCONTEXT_HOME=/root/minimax/.runtime/powercontext
   database kind=sqlite
-ready (pid 1350939)
+ready (pid 1354182)
 task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
 status          in_progress
 revision        1
-updated         2026-11-09T14:17:43Z
-scope           scp_62xfjqk2p277nd1tpsc46rdd4c
+updated         2026-11-09T14:53:19Z
+scope           scp_0ebn7828sxf5nw0q803gqcs9ew
 done            2
   - Read PRC-3, PRC-4 and RSV-3
   - Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted
@@ -138,16 +138,15 @@ state survives a PowerContext restart: OK
 
 == 8. baseline: the acceptance tests fail on the untouched snapshot
 tests           1 passed, 6 failed (exit 1)
-log             /root/minimax/records/runs/coupon-policy-20261109T141750Z/tests.log
+log             /root/minimax/records/runs/coupon-policy-20261109T145326Z/tests.log
 state           revision 2 · status in_progress
 baseline exit code 1 (expected: the acceptance tests fail because the behavior is missing)
 
 == 9. apply the recorded MiniMax patch and re-run acceptance + regression tests
-note: patches/recorded-coupon-policy.patch is missing, replaying /root/minimax/patches/reference-coupon-policy.patch instead
- src/evently/pricing.py | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ src/evently/pricing.py | 36 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 31 insertions(+), 5 deletions(-)
 tests           17 passed (exit 0)
-log             /root/minimax/records/runs/coupon-policy-20261109T141751Z/tests.log
+log             /root/minimax/records/runs/coupon-policy-20261109T145326Z/tests.log
 state           revision 3 · status verified
 
 == 10. specification update: replace pricing.md with v2 and re-import
@@ -161,7 +160,7 @@ change journal  {'added': 0, 'changed': 1, 'removed': 0, 'unchanged': 9}
   changed  docs/specs/pricing.md  a5c3344e1b75 -> 1fc2126f0081
 task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
 repository      /root/minimax/.runtime/repo
-index           20261109T141752697580 · spec 18471ec47752
+index           20261109T145328133231 · spec 18471ec47752
 specs           4
    0.56  docs/specs/reservation.md#RSV-3
    0.50  docs/specs/pricing.md#PRC-3
@@ -197,5 +196,5 @@ specs       : docs/specs/reservation.md#RSV-3, docs/specs/pricing.md#PRC-3, docs
 code        : src/evently/pricing.py#apply_coupon, src/evently/reservation.py#ReservationService, src/evently/reservation.py#ReservationService.reserve, src/evently/pricing.py#find_coupon, src/evently/errors.py#ExpiredCouponError
 tests       : tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively, tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation, tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total, tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored
 
-replay finished. Logs: /root/minimax/records/replay/20261109T141731Z
+replay finished. Logs: /root/minimax/records/replay/20261109T145307Z
 artifacts: artifacts/context-pack-v1.json, artifacts/context-pack-v2.json, artifacts/code.diff

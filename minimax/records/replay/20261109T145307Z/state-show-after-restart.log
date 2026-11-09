@@ -1,8 +1,8 @@
 task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
 status          in_progress
 revision        1
-updated         2026-11-09T14:17:43Z
-scope           scp_62xfjqk2p277nd1tpsc46rdd4c
+updated         2026-11-09T14:53:19Z
+scope           scp_0ebn7828sxf5nw0q803gqcs9ew
 done            2
   - Read PRC-3, PRC-4 and RSV-3
   - Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted

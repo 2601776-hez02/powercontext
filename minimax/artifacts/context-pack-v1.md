@@ -1,9 +1,9 @@
 # Development context: Apply coupon codes case-insensitively and reject expired codes
 
 - Task id: `coupon-policy`
-- Generated: 2026-11-09T14:17:43Z
+- Generated: 2026-11-09T14:53:19Z
 - Repository: `/root/minimax/.runtime/repo`
-- Index: import `20261109T141742002881` · spec revision `1e10174f8aaa` · code revision `0655c6f81590` · 50 items
+- Index: import `20261109T145317452744` · spec revision `1e10174f8aaa` · code revision `0655c6f81590` · 50 items
 - Storage: embedded-seekdb:/root/minimax/.runtime/seekdb (seekdb 5.7.25-OceanBase seekdb-v1.4.0.0)
 
 ## Task

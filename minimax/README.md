@@ -62,7 +62,25 @@ context follows the re-imported specification: OK
 replay finished.
 ```
 
-## 3. 现场用 MiniMax 跑一次（真实参与）
+## 3. MiniMax 参与方式（真实调用）
+
+**本作品实际采用**：MiniMax 网页版 / App 手动会话，模型 `MiniMax-M3.1-Flash`。
+参赛账号只有积分、API 余额为 0（计费端点返回 `1008 insufficient balance`），因此用网页版完成同一次
+代码修改，再用 `sdd adopt` 把会话落盘、在真实仓库上应用并验证。完整记录见
+[docs/minimax-dev-record.md](docs/minimax-dev-record.md)：
+
+```
+records/minimax/coupon-policy/
+├── prompt-web.md                # 发给模型的完整上下文（13,793 B，与 API 版逐字相同）
+├── web-answer.md                # 模型原始回答（3,177 B）
+├── web.patch                    # 提取出的 unified diff（1,878 B）
+├── web-run.json                 # 改前 1 passed/6 failed → 应用后 7 passed；回归 10 passed
+└── tests-before/after/regression-web.log
+```
+
+复现网页版结果（无需 Key）：`./scripts/replay.sh`。
+
+### 3.1 API 通道（额度到账后等价可用）
 
 ```bash
 cd minimax
@@ -128,7 +146,7 @@ CLI（`python -m sdd_context`）：
 | 运行说明 | 本文件（第 1–5 节） |
 | 验证样例 | `samples/tasks/task-01-coupon-policy.json`、`docs/validation-sample.md`、`samples/specs-v2/` |
 | 代码与测试 | `sample-project/`、`patches/`、`artifacts/code.diff`、`records/runs/*/tests.log` |
-| 技术使用记录 | `docs/records.md` + `records/`（seekdb 查询、PowerContext 写入/复用、测试日志） |
+| 技术使用记录 | `docs/records.md`、`docs/minimax-dev-record.md` + `records/`（MiniMax 会话、seekdb 查询、PowerContext 写入/复用、测试日志） |
 | 一页技术说明 | `docs/technical-note.md` |
 
 ## 5. 数据初始化与重置
@@ -147,7 +165,7 @@ rm -rf .runtime                         # 删除索引、工作副本、PowerCon
 | --- | --- | --- |
 | **seekdb**（嵌入式 `pylibseekdb` 1.4.0） | 存全部工程资料（`sdd_documents` / `sdd_items`）并建 FULLTEXT 索引；上下文包的每条材料都来自 `MATCH ... AGAINST` 或精确 symbol/path 查询 | `sdd db stats`、`records/replay/*/replay.log` 中的 `retrieval.queries`、`sdd db query` |
 | **PowerContext**（1.2.0，HTTP API） | 保存任务状态（done/todo/验证结果）与每次上下文包对应的 Source；重启后读回并参与上下文 | `records/powercontext/state-*.json`、`sdd state show`、PowerContext 自带 SQLite 数据目录 |
-| **MiniMax**（`MiniMax-M3`） | 根据上下文包生成 unified diff，完成业务代码修改 | `records/minimax/<task>/attempt-*-prompt.json` / `response.json` / `*.patch`、`artifacts/code.diff` |
+| **MiniMax**（`MiniMax-M3.1-Flash`，网页版会话） | 根据上下文包生成 unified diff，完成业务代码修改 | `records/minimax/<task>/prompt-web.md`、`web-answer.md`、`web.patch`、`web-run.json`、`artifacts/code.diff` |
 
 ## 7. 目录结构
 

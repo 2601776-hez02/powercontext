@@ -79,7 +79,23 @@ sdd db query --sql "SELECT path, change_kind, revision_before, revision_after FR
 OpenAI 兼容端点 `{base}/chat/completions` 作为回退），温度 0.2，`max_tokens=8000`。
 输入是 `context-pack.md`（约 13 KB）+ 固定 system prompt；要求只输出 unified diff。
 
-**记录内容**（每次尝试一个目录，`records/minimax/coupon-policy/`）：
+**本次实际采用的接入方式**：MiniMax 网页版 / App 手动会话（模型 `MiniMax-M3.1-Flash`，会话 6 分 21 秒）。
+参赛账号只有积分、API 余额为 0，`POST /v1/text/chatcompletion_v2` 返回
+`base_resp.status_code=1008 insufficient balance`，因此改用网页版完成同一次修改，
+并用 `sdd adopt` 把会话内容落成记录、在真实仓库上应用并验证。详见
+[minimax-dev-record.md](minimax-dev-record.md)。
+
+**网页版会话记录**（`records/minimax/coupon-policy/`）：
+
+| 文件 | 内容 |
+| --- | --- |
+| `prompt-web.md` | 实际发送的 system + user 消息（13,793 B，与 API 版逐字相同） |
+| `web-answer.md` | 模型原始回答（3,177 B） |
+| `web.patch` | 从回答中提取的 unified diff（1,878 B） |
+| `web-run.json` | 会话标签、改前测试、应用后目标/回归测试、补丁长度、成功标记 |
+| `tests-before-web.log` / `tests-after-web.log` / `tests-regression-web.log` | 三次 pytest 的完整输出 |
+
+**API 通道记录内容**（额度到账后用 `./scripts/live-run.sh` 生成，同一目录）：
 
 | 文件 | 内容 |
 | --- | --- |
@@ -90,22 +106,13 @@ OpenAI 兼容端点 `{base}/chat/completions` 作为回退），温度 0.2，`ma
 | `agent-run.json` | 改前测试、每次尝试的测试结果、最终目标/回归测试结果、耗时 |
 
 **与代码差异的对应**：最终 `git diff` 存为 `artifacts/code.diff`；`patches/recorded-coupon-policy.patch`
-是同一补丁的独立副本，`scripts/replay.sh` 用它复现"改前失败 → 改后通过"。
+与 `web.patch` 逐字节相同，`scripts/replay.sh` 用它复现"改前失败 → 改后通过"。
 
-> 现场运行方式见 README 第 3 节（`export MINIMAX_API_KEY=... && ./scripts/live-run.sh`）。
-> `scripts/replay.sh` 不需要 Key，用记录下来的补丁完成同样的改前/改后验证。
+> 现场运行方式见 README 第 3 节。`scripts/replay.sh` 不需要 Key，用记录下来的补丁完成同样的改前/改后验证。
 >
-> **备用接入（账户无 API 余额、只有网页版额度时）**：`sdd prompt --task ... --out FILE`
-> 会把 API 版本**完全相同**的 system+user 消息导出成文本
-> （`records/minimax/coupon-policy/prompt-web.md`，13.8 KB ≈ 3.4k tokens）。
-> 把它粘贴到 MiniMax 网页版/App，再把模型回答原样贴回，即可用同一份上下文完成修改；
-> 开发记录会注明「网页版」、使用时间与模型版本，后续 apply / 测试 / 记录流程不变。
->
-> 2026-11-09T14:15Z 用参赛账号的 Key 实测：鉴权通过（`GET /v1/models` 正常返回），
-> 但 `POST /v1/text/chatcompletion_v2` 返回 `base_resp.status_code=1008 insufficient balance`
-> —— 该账号/M Plan 权益尚未到账，因此这一次调用没有产出补丁。Key 无效或模型名过期时
-> 的报错分别是 `2049 invalid api key` 与 `2069 model no longer available`，与余额问题可区分。
-> 额度到账后只需重跑 `scripts/live-run.sh` 即可补齐本节。
+> **API 与网页版是同一份上下文**：`sdd prompt --task ... --out FILE` 会把 API 版本**完全相同**的
+> system+user 消息导出成文本；网页版回答用 `sdd adopt --answer FILE` 收编，后续 apply / 测试 /
+> 记录流程与 API 通道一致。额度到账后重跑 `scripts/live-run.sh` 即可补齐 API 侧记录。
 
 ## 4. 一条命令复核全部记录
 

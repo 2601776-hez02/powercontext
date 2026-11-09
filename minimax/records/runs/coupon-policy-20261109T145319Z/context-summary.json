@@ -1,7 +1,7 @@
 {
   "task": "coupon-policy",
-  "pack": "/root/minimax/records/replay/20261109T141731Z/context-with-state.json",
-  "markdown": "/root/minimax/records/replay/20261109T141731Z/context-with-state.md",
+  "pack": "artifacts/context-pack-v1.json",
+  "markdown": "artifacts/context-pack-v1.md",
   "selected": {
     "specs": [
       {
@@ -98,37 +98,17 @@
     },
     "stale_sources": []
   },
-  "state": {
-    "created_at": "2026-11-09T14:17:43Z",
-    "done": [
-      "Read PRC-3, PRC-4 and RSV-3",
-      "Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted"
-    ],
-    "next_step": "Send the context pack to MiniMax and review the patch",
-    "revision": 1,
-    "schema": "sdd-task-state/v1",
-    "status": "in_progress",
-    "task_id": "coupon-policy",
-    "title": "Apply coupon codes case-insensitively and reject expired codes",
-    "todo": [
-      "Normalize coupon codes before the catalog lookup",
-      "Reject expired coupons with ExpiredCouponError before capacity is consumed"
-    ],
-    "updated_at": "2026-11-09T14:17:43Z",
-    "verifications": [],
-    "_citation": {
-      "memory_ref": {
-        "family": "memory",
-        "artifact_id": "memory",
-        "revision": 1
-      },
-      "entry_id": "mem_ent_da45697c142448069437dcb5be8e8e60",
-      "entry_version_id": "mem_ver_6fa176e42c43410d8207f52dae91e9e6"
-    },
-    "_score": 0.01639344262295082
-  },
+  "state": null,
   "state_error": "",
-  "capture": null,
+  "capture": {
+    "source_id": "sdd-context-coupon-policy-20261109T145317452744",
+    "status": "accepted",
+    "source": {
+      "name": "content",
+      "source_id": "sdd-context-coupon-policy-20261109T145317452744"
+    },
+    "position": 1
+  },
   "db": {
     "target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
     "server_version": "5.7.25-OceanBase seekdb-v1.4.0.0",
@@ -153,9 +133,9 @@
     "data_path": "/root/minimax/.runtime/seekdb"
   },
   "index": {
-    "import_id": "20261109T141742002881",
-    "started_at": "2026-11-09T14:17:42Z",
-    "finished_at": "2026-11-09T14:17:42Z",
+    "import_id": "20261109T145317452744",
+    "started_at": "2026-11-09T14:53:17Z",
+    "finished_at": "2026-11-09T14:53:17Z",
     "repo_path": "/root/minimax/.runtime/repo",
     "seekdb_target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
     "spec_revision": "1e10174f8aaa5bc1cb55072400e5da69",

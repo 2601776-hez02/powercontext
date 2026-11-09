@@ -1,6 +1,6 @@
 {
   "schema": "sdd-context-pack/v1",
-  "generated_at": "2026-11-09T14:17:43Z",
+  "generated_at": "2026-11-09T14:53:19Z",
   "repo": "/root/minimax/.runtime/repo",
   "task": {
     "task_id": "coupon-policy",
@@ -74,9 +74,9 @@
     "data_path": "/root/minimax/.runtime/seekdb"
   },
   "index": {
-    "import_id": "20261109T141742002881",
-    "started_at": "2026-11-09T14:17:42Z",
-    "finished_at": "2026-11-09T14:17:42Z",
+    "import_id": "20261109T145317452744",
+    "started_at": "2026-11-09T14:53:17Z",
+    "finished_at": "2026-11-09T14:53:17Z",
     "repo_path": "/root/minimax/.runtime/repo",
     "seekdb_target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
     "spec_revision": "1e10174f8aaa5bc1cb55072400e5da69",

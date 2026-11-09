@@ -1,6 +1,6 @@
-$ /root/minimax/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py
+$ /root/mm-probe/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py
 # cwd: /root/minimax/.runtime/workdir
-# started: 2026-11-09T14:17:50Z  duration: 0.19s
+# started: 2026-11-09T14:53:37Z  duration: 0.19s
 # exit code: 1  summary: 1 passed, 6 failed
 
 FFFFFF.                                                                                                          [100%]

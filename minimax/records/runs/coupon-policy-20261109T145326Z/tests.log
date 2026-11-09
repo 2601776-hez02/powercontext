@@ -1,6 +1,6 @@
 $ /root/minimax/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py tests/test_pricing.py tests/test_reservation.py
 # cwd: /root/minimax/.runtime/workdir
-# started: 2026-11-09T14:17:50Z  duration: 0.18s
+# started: 2026-11-09T14:53:26Z  duration: 0.18s
 # exit code: 0  summary: 17 passed
 
 .................                                                                                                [100%]

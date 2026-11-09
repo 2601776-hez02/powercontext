@@ -1,0 +1,48 @@
+diff --git a/src/evently/pricing.py b/src/evently/pricing.py
+--- a/src/evently/pricing.py
++++ b/src/evently/pricing.py
+@@ -16,13 +16,39 @@
++import datetime as dt
++from .errors import ExpiredCouponError
++
++
++def _normalize_code(code: str) -> str:
++    """Return the canonical form of ``code`` used for catalog lookups."""
++    if not isinstance(code, str):
++        return ""
++    return code.strip().replace("-", "").upper()
++
++
++def _valid_until(coupon: Coupon) -> dt.date | None:
++    """Return the last date on which ``coupon`` may be used, if it has one."""
++    for field in ("valid_until", "valid_until_date", "expires_on", "expires_at"):
++        value = getattr(coupon, field, None)
++        if value is not None:
++            return value.date() if isinstance(value, dt.datetime) else value
++    return None
++
++
+ def find_coupon(code: str) -> Coupon:
+-    """Return the catalog entry the customer typed in."""
++    """Return the catalog entry matching ``code``, ignoring case and padding."""
+-    try:
+-        return CATALOG[code]
+-    except KeyError:
+-        raise UnknownCouponError(f"unknown coupon code: {code!r}") from None
++    key = _normalize_code(code)
++    for catalog_code, coupon in CATALOG.items():
++        if _normalize_code(catalog_code) == key:
++            return coupon
++    raise UnknownCouponError(f"unknown coupon code: {code!r}")
+ 
+ 
+ def apply_coupon(code: str, amount_cents: int) -> int:
+     """Return ``amount_cents`` after applying the coupon for ``code``."""
+     coupon = find_coupon(code)
++    valid_until = _valid_until(coupon)
++    if valid_until is not None and valid_until < dt.datetime.now(dt.timezone.utc).date():
++        raise ExpiredCouponError(
++            f"coupon {coupon.code!r} expired on {valid_until.isoformat()}"
++        )
+     discount = amount_cents * coupon.percent_off // 100
+     return amount_cents - discount
