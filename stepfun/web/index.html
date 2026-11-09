@@ -39,8 +39,8 @@
             <label>
               精度 / 量化
               <select id="select-dtype">
-                <option value="q8">INT8（model_quantized.onnx）</option>
-                <option value="fp16">FP16（model_fp16.onnx）</option>
+                <option value="fp16" selected>FP16（model_fp16.onnx，WebGPU 默认）</option>
+                <option value="q8">INT8（model_quantized.onnx，WASM 默认）</option>
                 <option value="fp32">FP32（model.onnx，基线）</option>
               </select>
             </label>
