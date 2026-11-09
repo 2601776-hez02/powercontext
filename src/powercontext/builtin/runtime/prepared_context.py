@@ -464,12 +464,16 @@ class PreparedContextBuilder:
     ) -> PreparedContextBuild:
         """Select query-relevant literal spans from Memory candidates within the byte budget.
 
-        Selection is ranked across the candidate abstracts instead of taking the globally
-        highest-overlap sentences first: every abstract contributes its best sentence before
-        any abstract contributes a second one, so evidence in a later candidate is not crowded
-        out by repeated matches in an earlier one. Rare query terms weigh more than common
-        ones, and the neighbours of each best sentence follow, because annotated evidence
-        usually covers a short contiguous span rather than one isolated sentence.
+        Each abstract is scored by its two strongest sentences, because a relevant abstract
+        usually holds one or two passages that answer the claim, while total overlap would let a
+        long off-topic abstract accumulate scattered matches. Rare query terms weigh more than
+        common ones, and grammar words weigh least, so a claim is matched on what it is about.
+
+        The winner spends the budget on one contiguous span: the span holding the most query
+        evidence when its matches are spread out, otherwise the widest window around its best
+        sentence. A second abstract is covered only when it is a real second answer (the same
+        query terms, or the other half of a multi-part question), because a second citation costs
+        bytes that the first answer can use.
         """
         query_tokens = _tokenize(request.query)
         entries: list[tuple[MemoryEntryAddress, str]] = []
