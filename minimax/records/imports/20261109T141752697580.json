@@ -1,6 +1,6 @@
 {
   "repo": "/root/minimax/.runtime/repo",
-  "import_id": "20261109T133225022549",
+  "import_id": "20261109T141752697580",
   "documents": 10,
   "items": 50,
   "items_by_kind": {
@@ -21,17 +21,17 @@
   },
   "changed_documents": [
     {
-      "import_id": "20261109T133225022549",
+      "import_id": "20261109T141752697580",
       "path": "docs/specs/pricing.md",
       "kind": "spec",
       "before": "a5c3344e1b75",
       "after": "1fc2126f0081",
       "change": "changed",
-      "imported_at": "2026-11-09T13:32:25Z"
+      "imported_at": "2026-11-09T14:17:52Z"
     }
   ],
   "seekdb_target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
   "seekdb_version": "5.7.25-OceanBase seekdb-v1.4.0.0",
-  "duration_s": 1.581,
-  "imported_at": "2026-11-09T13:32:25Z"
+  "duration_s": 1.593,
+  "imported_at": "2026-11-09T14:17:52Z"
 }

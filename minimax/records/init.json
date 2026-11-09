@@ -13,7 +13,7 @@
       "database": "test"
     },
     "powercontext_url": "http://127.0.0.1:8137",
-    "minimax_model": "MiniMax-M2",
+    "minimax_model": "MiniMax-M3",
     "minimax_base_url": "https://api.minimaxi.com/v1"
   },
   "seekdb": {

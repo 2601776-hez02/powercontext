@@ -1,6 +1,6 @@
 task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
 repository      /root/minimax/.runtime/repo
-index           20261109T133225022549 · spec 18471ec47752
+index           20261109T141752697580 · spec 18471ec47752
 specs           4
    0.56  docs/specs/reservation.md#RSV-3
    0.50  docs/specs/pricing.md#PRC-3

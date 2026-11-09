@@ -10,7 +10,7 @@
 | 主机 | 阿里云 ECS，Alibaba Cloud Linux 3，x86_64，4 vCPU / 16 GiB | `records/replay/*/replay.log` |
 | Python | 3.12.16（venv） | `records/events.jsonl` |
 | seekdb | 嵌入式 `pylibseekdb`，`5.7.25-OceanBase seekdb-v1.4.0.0` | `records/init.json` |
-| PowerContext | `powercontext[cli,server]==1.2.0`，SQLite 后端，`http://127.0.0.1:8138`（默认端口被占用时自动顺延） | `records/replay/*/doctor.log` |
+| PowerContext | `powercontext[cli,server]==1.2.0`，SQLite 后端，`http://127.0.0.1:8139`（默认 8137 被占用时自动顺延，实际端口见 `records/replay/*/doctor.log`） | `records/replay/*/doctor.log` |
 | MiniMax | `MiniMax-M3`，`https://api.minimaxi.com/v1` | `sdd_context/config.py` |
 
 ## 1. seekdb 使用记录
@@ -63,7 +63,7 @@ sdd db query --sql "SELECT path, change_kind, revision_before, revision_after FR
 
 | 动作 | 请求要点 | 结果 | 记录 |
 | --- | --- | --- | --- |
-| Scope 解析 | `{"allow_default": true}` | `scope_id=scp_25dxjx8wdp1j6h2a7983v7x7y9` | `records/powercontext/*.json` |
+| Scope 解析 | `{"allow_default": true}` | `scope_id=scp_62xfjqk2p277nd1tpsc46rdd4c` | `records/powercontext/*.json` |
 | 写任务状态 | `kind="sdd-task-state"`，正文 587 B | `memory.revision` 1 → 3（每次更新 +1），`entry.version` 1 | `state-coupon-policy-r1.json`、`verification-*-r2/r3.json` |
 | 存上下文包 | `source_id="sdd-context-coupon-policy-<import_id>"` | `status=accepted`，`position=2` | `records/events.jsonl` 第 2 行 |
 | 重启后读状态 | 新进程 `POST /v1/memory/search` `query="SDD task state coupon-policy"` | 读回 revision 1，`done/todo` 完整 | `records/replay/*/state-show.log` |
@@ -94,6 +94,12 @@ OpenAI 兼容端点 `{base}/chat/completions` 作为回退），温度 0.2，`ma
 
 > 现场运行方式见 README 第 3 节（`export MINIMAX_API_KEY=... && ./scripts/live-run.sh`）。
 > `scripts/replay.sh` 不需要 Key，用记录下来的补丁完成同样的改前/改后验证。
+>
+> 2026-11-09T14:15Z 用参赛账号的 Key 实测：鉴权通过（`GET /v1/models` 正常返回），
+> 但 `POST /v1/text/chatcompletion_v2` 返回 `base_resp.status_code=1008 insufficient balance`
+> —— 该账号/M Plan 权益尚未到账，因此这一次调用没有产出补丁。Key 无效或模型名过期时
+> 的报错分别是 `2049 invalid api key` 与 `2069 model no longer available`，与余额问题可区分。
+> 额度到账后只需重跑 `scripts/live-run.sh` 即可补齐本节。
 
 ## 4. 一条命令复核全部记录
 

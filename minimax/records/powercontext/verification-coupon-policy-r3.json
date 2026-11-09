@@ -1,6 +1,6 @@
 {
   "state": {
-    "created_at": "2026-11-09T13:32:16Z",
+    "created_at": "2026-11-09T14:17:43Z",
     "done": [
       "Read PRC-3, PRC-4 and RSV-3",
       "Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted"
@@ -15,17 +15,17 @@
       "Normalize coupon codes before the catalog lookup",
       "Reject expired coupons with ExpiredCouponError before capacity is consumed"
     ],
-    "updated_at": "2026-11-09T13:32:23Z",
+    "updated_at": "2026-11-09T14:17:51Z",
     "verifications": [
       {
         "command": "/root/minimax/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py",
-        "duration_s": 0.196,
+        "duration_s": 0.193,
         "errors": 0,
         "exit_code": 1,
         "failed": 6,
-        "log": "/root/minimax/records/runs/coupon-policy-20261109T133223Z/tests.log",
+        "log": "/root/minimax/records/runs/coupon-policy-20261109T141750Z/tests.log",
         "passed": 1,
-        "started_at": "2026-11-09T13:32:22Z",
+        "started_at": "2026-11-09T14:17:50Z",
         "summary": "1 passed, 6 failed",
         "targets": [
           "tests/test_coupon_policy.py"
@@ -44,10 +44,10 @@
         "passed": 17,
         "failed": 0,
         "errors": 0,
-        "duration_s": 0.188,
-        "started_at": "2026-11-09T13:32:23Z",
+        "duration_s": 0.183,
+        "started_at": "2026-11-09T14:17:50Z",
         "summary": "17 passed",
-        "log": "/root/minimax/records/runs/coupon-policy-20261109T133223Z/tests.log"
+        "log": "/root/minimax/records/runs/coupon-policy-20261109T141751Z/tests.log"
       }
     ]
   },
@@ -57,7 +57,7 @@
     "revision": 3
   },
   "entry_version": 1,
-  "scope_id": "scp_25dxjx8wdp1j6h2a7983v7x7y9",
+  "scope_id": "scp_62xfjqk2p277nd1tpsc46rdd4c",
   "tests": {
     "command": "/root/minimax/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py tests/test_pricing.py tests/test_reservation.py",
     "targets": [
@@ -70,9 +70,9 @@
     "passed": 17,
     "failed": 0,
     "errors": 0,
-    "duration_s": 0.188,
-    "started_at": "2026-11-09T13:32:23Z",
+    "duration_s": 0.183,
+    "started_at": "2026-11-09T14:17:50Z",
     "summary": "17 passed"
   },
-  "log": "/root/minimax/records/runs/coupon-policy-20261109T133223Z/tests.log"
+  "log": "/root/minimax/records/runs/coupon-policy-20261109T141751Z/tests.log"
 }

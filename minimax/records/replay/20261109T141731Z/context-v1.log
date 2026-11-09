@@ -1,6 +1,6 @@
 task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
 repository      /root/minimax/.runtime/repo
-index           20261109T133214296735 · spec 1e10174f8aaa
+index           20261109T141742002881 · spec 1e10174f8aaa
 specs           4
    0.56  docs/specs/reservation.md#RSV-3
    0.50  docs/specs/pricing.md#PRC-3
@@ -21,4 +21,4 @@ task state      skipped (--no-state)
 source checks   {'ok': 13}
 pack            artifacts/context-pack-v1.json
 markdown        artifacts/context-pack-v1.md
-pc source       sdd-context-coupon-policy-20261109T133214296735 (accepted)
+pc source       sdd-context-coupon-policy-20261109T141742002881 (accepted)

@@ -7,71 +7,71 @@
       {
         "ref": "docs/specs/reservation.md#RSV-3",
         "score": 0.563,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       },
       {
         "ref": "docs/specs/pricing.md#PRC-3",
         "score": 0.496,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       },
       {
         "ref": "docs/specs/pricing.md#PRC-4",
         "score": 0.478,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       },
       {
         "ref": "docs/specs/reservation.md#RSV-2",
         "score": 0.463,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       }
     ],
     "code": [
       {
         "ref": "src/evently/pricing.py#apply_coupon",
         "score": 0.447,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       },
       {
         "ref": "src/evently/reservation.py#ReservationService",
         "score": 0.439,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       },
       {
         "ref": "src/evently/reservation.py#ReservationService.reserve",
         "score": 0.433,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       },
       {
         "ref": "src/evently/pricing.py#find_coupon",
         "score": 0.417,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       },
       {
         "ref": "src/evently/errors.py#ExpiredCouponError",
         "score": 0.414,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       }
     ],
     "tests": [
       {
         "ref": "tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively",
         "score": 0.857,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       },
       {
         "ref": "tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation",
         "score": 0.857,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       },
       {
         "ref": "tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total",
         "score": 0.824,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       },
       {
         "ref": "tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored",
         "score": 0.824,
-        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+        "why": "fulltext match; exact symbol/path match"
       }
     ]
   },
@@ -101,11 +101,11 @@
   "state": null,
   "state_error": "",
   "capture": {
-    "source_id": "sdd-context-coupon-policy-20261109T133214296735",
+    "source_id": "sdd-context-coupon-policy-20261109T141742002881",
     "status": "accepted",
     "source": {
       "name": "content",
-      "source_id": "sdd-context-coupon-policy-20261109T133214296735"
+      "source_id": "sdd-context-coupon-policy-20261109T141742002881"
     },
     "position": 1
   },
@@ -133,9 +133,9 @@
     "data_path": "/root/minimax/.runtime/seekdb"
   },
   "index": {
-    "import_id": "20261109T133214296735",
-    "started_at": "2026-11-09T13:32:14Z",
-    "finished_at": "2026-11-09T13:32:14Z",
+    "import_id": "20261109T141742002881",
+    "started_at": "2026-11-09T14:17:42Z",
+    "finished_at": "2026-11-09T14:17:42Z",
     "repo_path": "/root/minimax/.runtime/repo",
     "seekdb_target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
     "spec_revision": "1e10174f8aaa5bc1cb55072400e5da69",

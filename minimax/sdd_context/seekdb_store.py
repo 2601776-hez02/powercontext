@@ -361,7 +361,7 @@ class SeekDBStore:
             "ORDER BY score DESC, item_ref LIMIT %s"
         )
         rows = self.query(sql, (query, query, limit), purpose=f"fulltext:{query}")
-        return [self._hit(row, f"fulltext match for: {' '.join(terms[:6])}") for row in rows]
+        return [self._hit(row, "fulltext match") for row in rows]
 
     def exact_search(self, terms: Sequence[str], *, limit: int = 40) -> list[dict[str, Any]]:
         """Exact identifier lookup, so ``apply_coupon`` or ``pricing.py`` is never missed."""

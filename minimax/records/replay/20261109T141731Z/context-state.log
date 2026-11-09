@@ -1,6 +1,6 @@
 task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
 repository      /root/minimax/.runtime/repo
-index           20261109T133214296735 · spec 1e10174f8aaa
+index           20261109T141742002881 · spec 1e10174f8aaa
 specs           4
    0.56  docs/specs/reservation.md#RSV-3
    0.50  docs/specs/pricing.md#PRC-3
@@ -20,5 +20,5 @@ tests           4
 task state      revision 1 · in_progress · done 2 · todo 2 · verifications 0
 next step       Send the context pack to MiniMax and review the patch
 source checks   {'ok': 13}
-pack            /root/minimax/records/replay/20261109T133203Z/context-with-state.json
-markdown        /root/minimax/records/replay/20261109T133203Z/context-with-state.md
+pack            /root/minimax/records/replay/20261109T141731Z/context-with-state.json
+markdown        /root/minimax/records/replay/20261109T141731Z/context-with-state.md

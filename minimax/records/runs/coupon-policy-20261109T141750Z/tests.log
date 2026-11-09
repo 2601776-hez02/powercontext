@@ -1,0 +1,148 @@
+$ /root/minimax/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py
+# cwd: /root/minimax/.runtime/workdir
+# started: 2026-11-09T14:17:50Z  duration: 0.19s
+# exit code: 1  summary: 1 passed, 6 failed
+
+FFFFFF.                                                                                                          [100%]
+======================================================= FAILURES =======================================================
+______________________________________ test_codes_are_matched_case_insensitively _______________________________________
+
+    def test_codes_are_matched_case_insensitively() -> None:
+        """PRC-3: matching is case-insensitive."""
+>       assert find_coupon("vip20").code == "VIP20"
+               ^^^^^^^^^^^^^^^^^^^^
+
+tests/test_coupon_policy.py:24: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = 'vip20'
+
+    def find_coupon(code: str) -> Coupon:
+        """Return the catalog entry the customer typed in."""
+        try:
+            return CATALOG[code]
+        except KeyError:
+>           raise UnknownCouponError(f"unknown coupon code: {code!r}") from None
+E           evently.errors.UnknownCouponError: unknown coupon code: 'vip20'
+
+src/evently/pricing.py:21: UnknownCouponError
+________________________________________ test_surrounding_whitespace_is_ignored ________________________________________
+
+    def test_surrounding_whitespace_is_ignored() -> None:
+        """PRC-3: surrounding whitespace is stripped before matching."""
+>       assert find_coupon("  vip20\n").code == "VIP20"
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_coupon_policy.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = '  vip20\n'
+
+    def find_coupon(code: str) -> Coupon:
+        """Return the catalog entry the customer typed in."""
+        try:
+            return CATALOG[code]
+        except KeyError:
+>           raise UnknownCouponError(f"unknown coupon code: {code!r}") from None
+E           evently.errors.UnknownCouponError: unknown coupon code: '  vip20\n'
+
+src/evently/pricing.py:21: UnknownCouponError
+___________________________________________ test_expired_coupon_is_rejected ____________________________________________
+
+    def test_expired_coupon_is_rejected() -> None:
+        """PRC-4: an expired coupon raises ExpiredCouponError."""
+>       with pytest.raises(ExpiredCouponError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE <class 'evently.errors.ExpiredCouponError'>
+
+tests/test_coupon_policy.py:36: Failed
+____________________________________ test_expired_coupon_does_not_change_the_total _____________________________________
+
+    def test_expired_coupon_does_not_change_the_total() -> None:
+        """PRC-4: the failure must not be reported as a discounted total."""
+        with pytest.raises(ExpiredCouponError):
+>           apply_coupon("spring10", 25_000)
+
+tests/test_coupon_policy.py:43: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/evently/pricing.py:26: in apply_coupon
+    coupon = find_coupon(code)
+             ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = 'spring10'
+
+    def find_coupon(code: str) -> Coupon:
+        """Return the catalog entry the customer typed in."""
+        try:
+            return CATALOG[code]
+        except KeyError:
+>           raise UnknownCouponError(f"unknown coupon code: {code!r}") from None
+E           evently.errors.UnknownCouponError: unknown coupon code: 'spring10'
+
+src/evently/pricing.py:21: UnknownCouponError
+_____________________________________ test_lowercase_coupon_applies_to_reservation _____________________________________
+
+    def test_lowercase_coupon_applies_to_reservation() -> None:
+        """PRC-3 + RSV-3: normalized codes apply inside the reservation flow."""
+>       reservation = service().reserve("gig-1", 2, "vip20")
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_coupon_policy.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/evently/reservation.py:46: in reserve
+    total = apply_coupon(coupon_code, total)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/evently/pricing.py:26: in apply_coupon
+    coupon = find_coupon(code)
+             ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = 'vip20'
+
+    def find_coupon(code: str) -> Coupon:
+        """Return the catalog entry the customer typed in."""
+        try:
+            return CATALOG[code]
+        except KeyError:
+>           raise UnknownCouponError(f"unknown coupon code: {code!r}") from None
+E           evently.errors.UnknownCouponError: unknown coupon code: 'vip20'
+
+src/evently/pricing.py:21: UnknownCouponError
+____________________________________ test_expired_coupon_does_not_consume_capacity _____________________________________
+
+    def test_expired_coupon_does_not_consume_capacity() -> None:
+        """RSV-3: coupon validation happens before the seat counter is updated."""
+        svc = service()
+        with pytest.raises(ExpiredCouponError):
+>           svc.reserve("gig-1", 1, "spring10")
+
+tests/test_coupon_policy.py:56: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+src/evently/reservation.py:46: in reserve
+    total = apply_coupon(coupon_code, total)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/evently/pricing.py:26: in apply_coupon
+    coupon = find_coupon(code)
+             ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+code = 'spring10'
+
+    def find_coupon(code: str) -> Coupon:
+        """Return the catalog entry the customer typed in."""
+        try:
+            return CATALOG[code]
+        except KeyError:
+>           raise UnknownCouponError(f"unknown coupon code: {code!r}") from None
+E           evently.errors.UnknownCouponError: unknown coupon code: 'spring10'
+
+src/evently/pricing.py:21: UnknownCouponError
+=============================================== short test summary info ================================================
+FAILED tests/test_coupon_policy.py::test_codes_are_matched_case_insensitively - evently.errors.UnknownCouponError: un...
+FAILED tests/test_coupon_policy.py::test_surrounding_whitespace_is_ignored - evently.errors.UnknownCouponError: unkno...
+FAILED tests/test_coupon_policy.py::test_expired_coupon_is_rejected - Failed: DID NOT RAISE <class 'evently.errors.Ex...
+FAILED tests/test_coupon_policy.py::test_expired_coupon_does_not_change_the_total - evently.errors.UnknownCouponError...
+FAILED tests/test_coupon_policy.py::test_lowercase_coupon_applies_to_reservation - evently.errors.UnknownCouponError:...
+FAILED tests/test_coupon_policy.py::test_expired_coupon_does_not_consume_capacity - evently.errors.UnknownCouponError...
+6 failed, 1 passed in 0.02s

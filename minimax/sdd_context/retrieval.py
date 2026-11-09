@@ -186,7 +186,7 @@ def _score(hit: dict[str, Any], terms: Sequence[str], keyword_terms: Sequence[st
         # The whole-file item is a fallback: it duplicates every symbol below it.
         score *= 0.45
         reasons.append("whole-file fallback")
-    return ScoredItem(hit=hit, score=score, reasons=reasons)
+    return ScoredItem(hit=hit, score=score, reasons=list(dict.fromkeys(reasons)))
 
 
 def select_materials(

@@ -1,9 +1,9 @@
 # Development context: Apply coupon codes case-insensitively and reject expired codes
 
 - Task id: `coupon-policy`
-- Generated: 2026-11-09T13:32:16Z
+- Generated: 2026-11-09T14:17:43Z
 - Repository: `/root/minimax/.runtime/repo`
-- Index: import `20261109T133214296735` · spec revision `1e10174f8aaa` · code revision `0655c6f81590` · 50 items
+- Index: import `20261109T141742002881` · spec revision `1e10174f8aaa` · code revision `0655c6f81590` · 50 items
 - Storage: embedded-seekdb:/root/minimax/.runtime/seekdb (seekdb 5.7.25-OceanBase seekdb-v1.4.0.0)
 
 ## Task
@@ -19,7 +19,7 @@ Behavior that must be preserved:
 ## Applicable specification items
 
 ### `docs/specs/reservation.md#RSV-3` (Coupon application and capacity safety)
-- Revision: `845db18e9ab5` · score 0.563 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; exact symbol/path match; identifier coverage 0.33; keyword coverage 0.58; text coverage 0.30
+- Revision: `845db18e9ab5` · score 0.563 · fulltext match; exact symbol/path match; identifier coverage 0.33; keyword coverage 0.58; text coverage 0.30
 
 ```text
 ## RSV-3 Coupon application and capacity safety
@@ -35,7 +35,7 @@ is updated.
 ```
 
 ### `docs/specs/pricing.md#PRC-3` (Coupon matching)
-- Revision: `a5c3344e1b75` · score 0.496 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.42; text coverage 0.30
+- Revision: `a5c3344e1b75` · score 0.496 · fulltext match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.42; text coverage 0.30
 
 ```text
 ## PRC-3 Coupon matching
@@ -50,7 +50,7 @@ create new entries.
 ```
 
 ### `docs/specs/pricing.md#PRC-4` (Coupon validity)
-- Revision: `a5c3344e1b75` · score 0.478 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.33; text coverage 0.28
+- Revision: `a5c3344e1b75` · score 0.478 · fulltext match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.33; text coverage 0.28
 
 ```text
 ## PRC-4 Coupon validity
@@ -64,7 +64,7 @@ code, because support tooling treats the two cases differently.
 ```
 
 ### `docs/specs/reservation.md#RSV-2` (Capacity)
-- Revision: `845db18e9ab5` · score 0.463 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; exact symbol/path match; identifier coverage 0.25; keyword coverage 0.25; text coverage 0.13
+- Revision: `845db18e9ab5` · score 0.463 · fulltext match; exact symbol/path match; identifier coverage 0.25; keyword coverage 0.25; text coverage 0.13
 
 ```text
 ## RSV-2 Capacity
@@ -79,7 +79,7 @@ A successful reservation consumes exactly the reserved quantity.
 ## Code to change
 
 ### `src/evently/pricing.py#apply_coupon` (lines 24-28)
-- Revision: `42054ffe235d` · score 0.447 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.33; text coverage 0.11
+- Revision: `42054ffe235d` · score 0.447 · fulltext match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.33; text coverage 0.11
 
 ```python
 def apply_coupon(code: str, amount_cents: int) -> int:
@@ -90,7 +90,7 @@ def apply_coupon(code: str, amount_cents: int) -> int:
 ```
 
 ### `src/evently/reservation.py#ReservationService` (lines 21-50)
-- Revision: `03b71ba982dd` · score 0.439 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; exact symbol/path match; identifier coverage 0.08; keyword coverage 0.33; text coverage 0.19
+- Revision: `03b71ba982dd` · score 0.439 · fulltext match; exact symbol/path match; identifier coverage 0.08; keyword coverage 0.33; text coverage 0.19
 
 ```python
 class ReservationService:
@@ -126,7 +126,7 @@ class ReservationService:
 ```
 
 ### `src/evently/reservation.py#ReservationService.reserve` (lines 34-50)
-- Revision: `03b71ba982dd` · score 0.433 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.25; text coverage 0.13
+- Revision: `03b71ba982dd` · score 0.433 · fulltext match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.25; text coverage 0.13
 
 ```python
     def reserve(self, event_id: str, quantity: int, coupon_code: str | None = None) -> Reservation:
@@ -149,7 +149,7 @@ class ReservationService:
 ```
 
 ### `src/evently/pricing.py#find_coupon` (lines 16-21)
-- Revision: `42054ffe235d` · score 0.417 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.17; text coverage 0.13
+- Revision: `42054ffe235d` · score 0.417 · fulltext match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.17; text coverage 0.13
 
 ```python
 def find_coupon(code: str) -> Coupon:
@@ -161,7 +161,7 @@ def find_coupon(code: str) -> Coupon:
 ```
 
 ### `src/evently/errors.py#ExpiredCouponError` (lines 38-41)
-- Revision: `faa9b5e69a6f` · score 0.414 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.17; text coverage 0.11
+- Revision: `faa9b5e69a6f` · score 0.414 · fulltext match; exact symbol/path match; identifier coverage 0.17; keyword coverage 0.17; text coverage 0.11
 
 ```python
 class ExpiredCouponError(DomainError):
@@ -173,7 +173,7 @@ class ExpiredCouponError(DomainError):
 ## Tests for verification
 
 ### `tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively`
-- Revision: `65220d8d8b33` · score 0.857 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; imports evently.errors, evently.pricing; exact symbol/path match; test imports a selected symbol; identifier coverage 0.25; keyword coverage 0.50; text coverage 0.21; declared acceptance test for this task
+- Revision: `65220d8d8b33` · score 0.857 · fulltext match; exact symbol/path match; imports evently.errors, evently.pricing; test imports a selected symbol; identifier coverage 0.25; keyword coverage 0.50; text coverage 0.21; declared acceptance test for this task
 
 ```python
 def test_codes_are_matched_case_insensitively() -> None:
@@ -183,7 +183,7 @@ def test_codes_are_matched_case_insensitively() -> None:
 ```
 
 ### `tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation`
-- Revision: `65220d8d8b33` · score 0.857 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; imports evently.errors, evently.pricing; exact symbol/path match; test imports a selected symbol; identifier coverage 0.25; keyword coverage 0.50; text coverage 0.21; declared acceptance test for this task
+- Revision: `65220d8d8b33` · score 0.857 · fulltext match; exact symbol/path match; imports evently.errors, evently.pricing; test imports a selected symbol; identifier coverage 0.25; keyword coverage 0.50; text coverage 0.21; declared acceptance test for this task
 
 ```python
 def test_lowercase_coupon_applies_to_reservation() -> None:
@@ -193,7 +193,7 @@ def test_lowercase_coupon_applies_to_reservation() -> None:
 ```
 
 ### `tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total`
-- Revision: `65220d8d8b33` · score 0.824 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; imports evently.errors, evently.pricing; exact symbol/path match; test imports a selected symbol; identifier coverage 0.17; keyword coverage 0.42; text coverage 0.19; declared acceptance test for this task
+- Revision: `65220d8d8b33` · score 0.824 · fulltext match; exact symbol/path match; imports evently.errors, evently.pricing; test imports a selected symbol; identifier coverage 0.17; keyword coverage 0.42; text coverage 0.19; declared acceptance test for this task
 
 ```python
 def test_expired_coupon_does_not_change_the_total() -> None:
@@ -203,7 +203,7 @@ def test_expired_coupon_does_not_change_the_total() -> None:
 ```
 
 ### `tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored`
-- Revision: `65220d8d8b33` · score 0.824 · fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match; imports evently.errors, evently.pricing; exact symbol/path match; test imports a selected symbol; identifier coverage 0.17; keyword coverage 0.42; text coverage 0.19
+- Revision: `65220d8d8b33` · score 0.824 · fulltext match; exact symbol/path match; imports evently.errors, evently.pricing; test imports a selected symbol; identifier coverage 0.17; keyword coverage 0.42; text coverage 0.19
 
 ```python
 def test_surrounding_whitespace_is_ignored() -> None:
