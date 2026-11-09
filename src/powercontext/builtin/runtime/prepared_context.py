@@ -571,7 +571,7 @@ class PreparedContextBuilder:
             )
             if _EVIDENCE_WINDOW_MODE == "centered":
                 use_bestsum = False
-            if use_bestsum and len(spans) <= 60:
+            if use_bestsum and len(spans) <= 200:
                 # Pick the contiguous span that holds the most query evidence instead of the widest
                 # one around the peak; a claim whose evidence sits in two nearby passages is then
                 # covered by a single span that reaches both.
