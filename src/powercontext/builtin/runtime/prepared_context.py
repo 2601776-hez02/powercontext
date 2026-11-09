@@ -645,6 +645,16 @@ class PreparedContextBuilder:
             union = leading_terms | trailing_terms
             jaccard = len(leading_terms & trailing_terms) / len(union) if union else 0.0
             shared = jaccard >= _EVIDENCE_SHARED_TERMS
+            if not shared and _EVIDENCE_MULTIPART_SPLIT:
+                # A multi-part question whose halves land in different abstracts: the two term
+                # sets are disjoint yet together cover the query, so both are real answers.
+                if (
+                    not (leading_terms & trailing_terms)
+                    and len(leading_terms) >= 2
+                    and len(trailing_terms) >= 2
+                    and len(union) >= _EVIDENCE_MULTIPART_COVERAGE * len(query_tokens)
+                ):
+                    shared = True
         if shared:
             pair = shared_pair(1)
             if pair is not None:
@@ -955,6 +965,9 @@ _TOKEN_PATTERN = re.compile(r"[a-z]+|\d+")
 _EVIDENCE_SHARED_TERMS = 1.0
 # Window selection: "centered", "bestsum", or "hybrid" (bestsum only for split evidence).
 _EVIDENCE_WINDOW_MODE = "hybrid"
+# Cover a multi-part question split across abstracts when the halves fill most of the query.
+_EVIDENCE_MULTIPART_SPLIT = True
+_EVIDENCE_MULTIPART_COVERAGE = 0.8
 # A claim is about its content words; grammar words match every abstract equally well.
 _EVIDENCE_COMMON_WORD_FACTOR = 0.2
 _EVIDENCE_COMMON_WORDS = frozenset(
