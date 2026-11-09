@@ -59,7 +59,7 @@ def cmd_init(args: argparse.Namespace, settings: Settings) -> int:
         info = store.info()
         print(f"✓ seekdb 已就绪：{info.server_version}")
         print(f"  数据目录：{settings.db_path}")
-        print(f"  服务端口：{info.port}（嵌入式实例，随机端口）")
+        print(f"  连接方式：{info.transport}（嵌入式实例，单进程独占）")
 
         stats = ingest(store, settings.corpus_dir, rebuild=args.rebuild)
         print(

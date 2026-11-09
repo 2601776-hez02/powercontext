@@ -169,7 +169,8 @@ CREATE TABLE zx_chunks (
   |0 |VECTOR INDEX SCAN|c(vk_embedding)|77      |194         |
   ```
 
-- **基准**：6 条真实查询 × 5 轮 = 30 次取样，中位 **8.6 ms**、P95 **17.1 ms**（随机器负载波动，`export-site` 每次重新测量）。
+- **基准**：6 条真实查询 × 5 轮 = 30 次取样，Windows 本机中位 **8.6 ms**、P95 **17.1 ms**；同一份代码在阿里云 ECS（Alinux 3 / 4C16G / Python 3.12）上中位 **2.0 ms**（`export-site` 每次重新测量）。
+- **跨平台**：Windows 11 + Python 3.13 与 Alibaba Cloud Linux 3 + Python 3.12 均完整跑通「init → doctor → ask → digest → pytest → export-site」；Linux 上嵌入式引擎走 Unix socket，Windows 上走本地 TCP 端口，代码自动适配。
 - **数据规模**：16 篇资料 → 77 个片段；12 个任务、12 条任务事件。
 - **证据包**：1800 字节预算下典型输出 1200–1650 字节，`content_bytes` 严格 ≤ 预算。
 - **站点一致性**：`site/data/demo.json` 由 `export-site` 从同一数据库导出，站点不手写任何结果。
@@ -229,7 +230,7 @@ qoder/
 | 代码仓库 | <https://github.com/2601776-hez02/powercontext> |
 | 分支 | `2026-competition-ecosystem` |
 | Commit | 见仓库最新提交（站点页脚展示完整 SHA） |
-| 作品链接 | Qoder Sites 公网地址（发布后填写） |
+| 作品链接 | **<https://zhixu-desk-8p0uv3vik0h.qoder.website>**（Qoder Sites 公网发布，页面底部带 Made with Qoder 标识） |
 
 ## 11. 边界与后续
 

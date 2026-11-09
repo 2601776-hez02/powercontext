@@ -128,6 +128,7 @@ class StoreInfo:
     server_version: str
     port: int
     schema_version: str
+    transport: str = ""
 
 
 class Store:
@@ -250,11 +251,15 @@ class Store:
     def info(self) -> StoreInfo:
         meta = self.fetch_one("SELECT v FROM zx_meta WHERE k = %s", ("schema_version",))
         options = dict(self._instance.connection_options())
+        port = int(options.get("port") or 0)
+        socket = str(options.get("unix_socket") or "")
+        transport = socket if socket else f"127.0.0.1:{port}"
         return StoreInfo(
             path=str(self._path),
             server_version=getattr(self, "_server_version", "unknown"),
-            port=int(options.get("port", 0)),
+            port=port,
             schema_version=(meta or {}).get("v", "unknown"),
+            transport=transport,
         )
 
     def count(self, table: str) -> int:
