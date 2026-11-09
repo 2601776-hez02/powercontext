@@ -971,9 +971,62 @@ def _tokenize(text: str) -> set[str]:
     return set(_TOKEN_PATTERN.findall(text.casefold()))
 
 
+_ABBREVIATIONS = frozenset(
+    """e.g i.e et al fig figs tab tabs vs cf ref refs no nos dr mr ms mrs st approx ca est min max pp
+    p suppl suppl. spp subsp intl govt dept univ assoc soc corp inc ltd co""".split()
+)
+
+
+def _is_abbreviation(text: str, end: int) -> bool:
+    """True when the period at ``end - 1`` closes a known abbreviation rather than a sentence."""
+
+    start = end - 2
+    while start >= 0 and (text[start].isalpha() or text[start] == ".") and end - start <= 12:
+        start -= 1
+    word = text[start + 1 : end - 1].casefold()
+    if not word:
+        return False
+    if word in _ABBREVIATIONS:
+        return True
+    return len(word) == 1 and word.isalpha()
+
+
 def _sentence_spans(text: str):
-    for match in _SENTENCE_PATTERN.finditer(text):
-        yield match.start(), match.end()
+    """Split one entry into sentence spans without cutting through numbers or abbreviations.
+
+    Annotated evidence is expressed as whole sentences, so a window boundary inside a sentence
+    would leave part of the gold span uncovered. Numbers (``1.5``), Latin abbreviations
+    (``e.g.``), figure references and initials therefore never end a sentence.
+    """
+
+    length = len(text)
+    start = 0
+    index = 0
+    while index < length:
+        char = text[index]
+        if char in ".!?":
+            if char == "." and 0 < index < length - 1 and text[index - 1].isdigit() and text[index + 1].isdigit():
+                index += 1
+                continue
+            if char == "." and _is_abbreviation(text, index + 1):
+                index += 1
+                continue
+            lookahead = index + 1
+            while lookahead < length and text[lookahead] in " \t\n\r":
+                lookahead += 1
+            if (
+                lookahead >= length
+                or text[lookahead].isupper()
+                or text[lookahead].isdigit()
+                or text[lookahead] in "(\"'["
+            ):
+                yield start, index + 1
+                start = lookahead
+                index = lookahead
+                continue
+        index += 1
+    if start < length:
+        yield start, length
 
 
 def _render_evidence(fragments: Sequence[PreparedContextFragment]) -> str:
