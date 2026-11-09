@@ -570,9 +570,6 @@ class PreparedContextBuilder:
             start, end = spans[best]
             return query_tokens & _tokenize(text[start:end])
 
-        def best_peak(rank: int) -> float:
-            return sum(weights[token] for token in best_terms(rank))
-
         def shared_pair(rank: int) -> tuple[PreparedContextFragment, PreparedContextFragment] | None:
             trailing = best_sentence(rank)
             leading = widest_window(0, (trailing,))
@@ -585,20 +582,17 @@ class PreparedContextBuilder:
             return leading, trailing
 
         selected: list[PreparedContextFragment] = []
-        # Two candidates can both answer the query, either with the same terms (two findings about
-        # one topic) or with equally strong answers to different parts of a multi-part query. In
-        # both cases cover both with one sentence each; a single window would drop the second
-        # answer from the context entirely. A distractor that merely matches as many generic terms
-        # as the leader answers neither of these, so it does not split the budget.
+        # Two abstracts can answer the same question with the same terms (two findings about one
+        # topic); then cover both with one sentence each, because a single window would drop the
+        # second answer from the context entirely. A distractor that merely matches as many generic
+        # terms as the leader is not such a pair, so it does not split the budget.
         shared = False
         if len(prepared) >= 2 and prepared[0][4] != prepared[1][4]:
             leading_terms = best_terms(0)
             trailing_terms = best_terms(1)
             union = leading_terms | trailing_terms
             jaccard = len(leading_terms & trailing_terms) / len(union) if union else 0.0
-            leading_peak = best_peak(0)
-            near_tie = leading_peak > 0 and best_peak(1) >= _EVIDENCE_SHARED_PEAK * leading_peak
-            shared = jaccard >= _EVIDENCE_SHARED_TERMS or near_tie
+            shared = jaccard >= _EVIDENCE_SHARED_TERMS
         if shared:
             pair = shared_pair(1)
             if pair is not None:
@@ -907,8 +901,6 @@ _SENTENCE_PATTERN = re.compile(r"[^.!?\n]+[.!?\n]*")
 _TOKEN_PATTERN = re.compile(r"[a-z]+|\d+")
 # Share the budget with a second abstract when both best sentences match the same query terms.
 _EVIDENCE_SHARED_TERMS = 0.5
-# ... or when its answer is nearly as strong, covering multi-part queries with disjoint terms.
-_EVIDENCE_SHARED_PEAK = 0.9
 # A claim is about its content words; grammar words match every abstract equally well.
 _EVIDENCE_COMMON_WORD_FACTOR = 0.2
 _EVIDENCE_COMMON_WORDS = frozenset(
