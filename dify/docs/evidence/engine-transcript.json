@@ -1,0 +1,1945 @@
+[
+  {
+    "step": "start",
+    "scene": "渡口起了雾。你推开忘川酒馆的门，门轴响了一声，柜台上那盏灯跟着晃了一下。阿箬没抬头，只把账本往身前挪了半寸；老陶的醒木停在半空；小满从后厨探出半个脑袋，又缩回去。",
+    "tavern_memory": {
+      "available": false,
+      "hits": [],
+      "mode": "none",
+      "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
+    }
+  },
+  {
+    "step": 1,
+    "utterance": "我在靠窗那张桌子坐下，先打量一圈。",
+    "result": {
+      "ok": true,
+      "guest": "无名客",
+      "turn": 1,
+      "location": "大堂",
+      "utterance": "我在靠窗那张桌子坐下，先打量一圈。",
+      "action": {
+        "verb": "look",
+        "verb_cn": "打量",
+        "target": "aruo",
+        "item": "",
+        "tone": "plain",
+        "location": "",
+        "item_name": "",
+        "target_name": "阿箬"
+      },
+      "outcome": {
+        "verdict": "observed",
+        "detail": "你把屋里扫了一圈。",
+        "emotion": "淡",
+        "witnesses": [],
+        "coin_delta": 0,
+        "affinity_delta": {},
+        "reputation_delta": 0,
+        "wanted_delta": 0,
+        "gain_item": "",
+        "lose_item": "",
+        "secret": "",
+        "roll": 0.0,
+        "reason": "look"
+      },
+      "deltas": {
+        "coins": 0,
+        "reputation": 0,
+        "wanted": 0
+      },
+      "player": {
+        "coins": 20,
+        "reputation": 0,
+        "wanted": 0,
+        "status": "open"
+      },
+      "npc": {
+        "id": "aruo",
+        "name": "阿箬",
+        "mood": "平和",
+        "affinity": 40,
+        "voice": "话少，句短，先算账再说话。称客人「客人」，真动气时只丢一句「记账上」。"
+      },
+      "present": [
+        {
+          "id": "aruo",
+          "name": "阿箬",
+          "mood": "平和"
+        },
+        {
+          "id": "laotao",
+          "name": "老陶",
+          "mood": "平和"
+        }
+      ],
+      "recalls": [
+        {
+          "memory_id": 1,
+          "npc": "aruo",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "十年前，姓沈的客人说去渡口接人，把一枚玉佩押在柜台上，说天亮就回来。他没回来。",
+          "emotion": "淡",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.0,
+          "channels": [
+            "ambient"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "ambient",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 5,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听说，是他从水里爬出来时数的。",
+          "emotion": "沉",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.0,
+          "channels": [
+            "ambient"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "ambient",
+          "npc_name": "老陶"
+        }
+      ],
+      "memory_written": [],
+      "status_line": "> 铜板 20｜风评 0｜被记账 0｜大堂",
+      "tavern_memory": {
+        "available": true,
+        "mode": "text",
+        "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1",
+        "hits": [
+          {
+            "text": "无名客在忘川酒馆待了10回合，结局常客；偷玉佩被阿箬抓住，替小满端过碗，给老陶讲过一个故事。",
+            "kind": "tavern-legend",
+            "artifact_id": "art_ce65cca4b7b74fc08060177bb1f82837",
+            "revision": 1,
+            "score": 0.0164,
+            "matched_by": [
+              "text"
+            ]
+          },
+          {
+            "text": "无名客 在忘川酒馆待了 11 回合，结局「常客」；铜板剩 15，风评 12，被记账 1 次。做过的事：第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。；第11回合·阿箬收下 3 个铜板，把桂花酿推到你面前。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+            "kind": "tavern-legend",
+            "artifact_id": "art_84800ce9494e4a3fa7f9e34849290bf6",
+            "revision": 1,
+            "score": 0.0161,
+            "matched_by": [
+              "text"
+            ]
+          },
+          {
+            "text": "无名客 在忘川酒馆待了 10 回合，结局「常客」；铜板剩 18，风评 10，被记账 1 次。做过的事：第5回合·你低了头。阿箬盯着你看了半晌，才说：「下不为例。」；第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+            "kind": "tavern-legend",
+            "artifact_id": "art_013d4edd9efa468c9f2a5ee433c3a5a7",
+            "revision": 1,
+            "score": 0.0159,
+            "matched_by": [
+              "text"
+            ]
+          }
+        ],
+        "status": 200
+      },
+      "mind": null,
+      "hints": [
+        "你可以 一碟花生、一碗阳春面、酢茶 中的任一样，也可以请人喝一碗（5 个铜板）。",
+        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "想听故事就找老陶；想打听消息，得先让人愿意开口。",
+        "大堂里现在有：阿箬、老陶。"
+      ],
+      "ending": null
+    }
+  },
+  {
+    "step": 2,
+    "utterance": "要一壶桂花酿，铜板放在柜台上。",
+    "result": {
+      "ok": true,
+      "guest": "无名客",
+      "turn": 2,
+      "location": "大堂",
+      "utterance": "要一壶桂花酿，铜板放在柜台上。",
+      "action": {
+        "verb": "buy",
+        "verb_cn": "买酒",
+        "target": "aruo",
+        "item": "wine_guihua",
+        "tone": "plain",
+        "location": "",
+        "item_name": "桂花酿",
+        "target_name": "阿箬"
+      },
+      "outcome": {
+        "verdict": "success",
+        "detail": "阿箬收下 3 个铜板，把桂花酿推到你面前。",
+        "emotion": "淡",
+        "witnesses": [],
+        "coin_delta": -3,
+        "affinity_delta": {
+          "aruo": 5
+        },
+        "reputation_delta": 2,
+        "wanted_delta": 0,
+        "gain_item": "",
+        "lose_item": "",
+        "secret": "",
+        "roll": 0.0,
+        "reason": "paid"
+      },
+      "deltas": {
+        "coins": -3,
+        "reputation": 2,
+        "wanted": 0
+      },
+      "player": {
+        "coins": 17,
+        "reputation": 2,
+        "wanted": 0,
+        "status": "open"
+      },
+      "npc": {
+        "id": "aruo",
+        "name": "阿箬",
+        "mood": "平和",
+        "affinity": 45,
+        "voice": "话少，句短，先算账再说话。称客人「客人」，真动气时只丢一句「记账上」。"
+      },
+      "present": [
+        {
+          "id": "aruo",
+          "name": "阿箬",
+          "mood": "平和"
+        },
+        {
+          "id": "laotao",
+          "name": "老陶",
+          "mood": "平和"
+        }
+      ],
+      "recalls": [
+        {
+          "memory_id": 1000037,
+          "npc": "aruo",
+          "turn": 2,
+          "kind": "亲历",
+          "text": "他要了桂花酿，铜板数得很慢，一个也没少给。",
+          "emotion": "淡",
+          "source": "亲历",
+          "importance": 4,
+          "score": 0.1516,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.3445,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1,
+          "npc": "aruo",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "十年前，姓沈的客人说去渡口接人，把一枚玉佩押在柜台上，说天亮就回来。他没回来。",
+          "emotion": "淡",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.0378,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.076,
+          "relevant": true,
+          "origin": "world",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 3,
+          "npc": "aruo",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "柜台第三块砖有点松，脚一踩会响；那是她自己撬开又按回去的。",
+          "emotion": "静",
+          "source": "设定",
+          "importance": 6,
+          "score": 0.0329,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.034,
+          "relevant": true,
+          "origin": "world",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000038,
+          "npc": "laotao",
+          "turn": 2,
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.1324,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 5,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听说，是他从水里爬出来时数的。",
+          "emotion": "沉",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.0145,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 7,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "有人用一首诗换走他半条命，那诗他只记得最后一句：灯在，人就还在。",
+          "emotion": "酸",
+          "source": "设定",
+          "importance": 8,
+          "score": 0.0136,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0011,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
+        }
+      ],
+      "memory_written": [
+        {
+          "npc": "阿箬",
+          "kind": "亲历",
+          "text": "他要了桂花酿，铜板数得很慢，一个也没少给。"
+        },
+        {
+          "npc": "老陶",
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。"
+        }
+      ],
+      "status_line": "> 铜板 17｜风评 2｜被记账 0｜大堂",
+      "tavern_memory": {
+        "available": false,
+        "hits": [],
+        "mode": "none"
+      },
+      "mind": null,
+      "hints": [
+        "你可以 一碟花生、一碗阳春面、酢茶 中的任一样，也可以请人喝一碗（5 个铜板）。",
+        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "想听故事就找老陶；想打听消息，得先让人愿意开口。",
+        "大堂里现在有：阿箬、老陶。"
+      ],
+      "ending": null
+    }
+  },
+  {
+    "step": 3,
+    "utterance": "我问阿箬：柜台后头那盏灯，为什么夜里从来不灭？",
+    "result": {
+      "ok": true,
+      "guest": "无名客",
+      "turn": 3,
+      "location": "大堂",
+      "utterance": "我问阿箬：柜台后头那盏灯，为什么夜里从来不灭？",
+      "action": {
+        "verb": "ask",
+        "verb_cn": "打听",
+        "target": "aruo",
+        "item": "lantern",
+        "tone": "plain",
+        "location": "",
+        "item_name": "旧灯笼",
+        "target_name": "阿箬"
+      },
+      "outcome": {
+        "verdict": "observed",
+        "detail": "你把话头递过去，阿箬没有立刻接。",
+        "emotion": "淡",
+        "witnesses": [],
+        "coin_delta": 0,
+        "affinity_delta": {},
+        "reputation_delta": 0,
+        "wanted_delta": 0,
+        "gain_item": "",
+        "lose_item": "",
+        "secret": "",
+        "roll": 0.0,
+        "reason": "asked"
+      },
+      "deltas": {
+        "coins": 0,
+        "reputation": 0,
+        "wanted": 0
+      },
+      "player": {
+        "coins": 17,
+        "reputation": 2,
+        "wanted": 0,
+        "status": "open"
+      },
+      "npc": {
+        "id": "aruo",
+        "name": "阿箬",
+        "mood": "平和",
+        "affinity": 45,
+        "voice": "话少，句短，先算账再说话。称客人「客人」，真动气时只丢一句「记账上」。"
+      },
+      "present": [
+        {
+          "id": "aruo",
+          "name": "阿箬",
+          "mood": "平和"
+        },
+        {
+          "id": "laotao",
+          "name": "老陶",
+          "mood": "平和"
+        }
+      ],
+      "recalls": [
+        {
+          "memory_id": 1,
+          "npc": "aruo",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "十年前，姓沈的客人说去渡口接人，把一枚玉佩押在柜台上，说天亮就回来。他没回来。",
+          "emotion": "淡",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.0366,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.0337,
+          "relevant": true,
+          "origin": "world",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 2,
+          "npc": "aruo",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "酒馆的灯芯夜里从不灭——渡口的风一起，灯灭了就会有船找不到岸。",
+          "emotion": "淡",
+          "source": "设定",
+          "importance": 7,
+          "score": 0.0356,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.1483,
+          "relevant": true,
+          "origin": "world",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 3,
+          "npc": "aruo",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "柜台第三块砖有点松，脚一踩会响；那是她自己撬开又按回去的。",
+          "emotion": "静",
+          "source": "设定",
+          "importance": 6,
+          "score": 0.0336,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.0461,
+          "relevant": true,
+          "origin": "world",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000038,
+          "npc": "laotao",
+          "turn": 2,
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0786,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0473,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 5,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听说，是他从水里爬出来时数的。",
+          "emotion": "沉",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.0147,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0354,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 7,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "有人用一首诗换走他半条命，那诗他只记得最后一句：灯在，人就还在。",
+          "emotion": "酸",
+          "source": "设定",
+          "importance": 8,
+          "score": 0.0136,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0003,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
+        }
+      ],
+      "memory_written": [],
+      "status_line": "> 铜板 17｜风评 2｜被记账 0｜大堂",
+      "tavern_memory": {
+        "available": false,
+        "hits": [],
+        "mode": "none"
+      },
+      "mind": null,
+      "hints": [
+        "你可以 一碟花生、一碗阳春面、酢茶 中的任一样，也可以请人喝一碗（5 个铜板）。",
+        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "想听故事就找老陶；想打听消息，得先让人愿意开口。",
+        "大堂里现在有：阿箬、老陶。"
+      ],
+      "ending": null
+    }
+  },
+  {
+    "step": 4,
+    "utterance": "趁她低头算账，把柜台上的玉佩塞进袖子。",
+    "result": {
+      "ok": true,
+      "guest": "无名客",
+      "turn": 4,
+      "location": "大堂",
+      "utterance": "趁她低头算账，把柜台上的玉佩塞进袖子。",
+      "action": {
+        "verb": "steal",
+        "verb_cn": "偷",
+        "target": "aruo",
+        "item": "jade_pei",
+        "tone": "sneaky",
+        "location": "",
+        "item_name": "玉佩",
+        "target_name": "阿箬"
+      },
+      "outcome": {
+        "verdict": "fail",
+        "detail": "阿箬的手先按住了你的手腕：「客人，这个不卖。」",
+        "emotion": "恼",
+        "witnesses": [
+          "laotao"
+        ],
+        "coin_delta": 0,
+        "affinity_delta": {
+          "aruo": -25
+        },
+        "reputation_delta": -6,
+        "wanted_delta": 1,
+        "gain_item": "",
+        "lose_item": "",
+        "secret": "",
+        "roll": 0.941,
+        "reason": "caught"
+      },
+      "deltas": {
+        "coins": 0,
+        "reputation": -2,
+        "wanted": 1
+      },
+      "player": {
+        "coins": 17,
+        "reputation": 0,
+        "wanted": 1,
+        "status": "open"
+      },
+      "npc": {
+        "id": "aruo",
+        "name": "阿箬",
+        "mood": "冷淡",
+        "affinity": 20,
+        "voice": "话少，句短，先算账再说话。称客人「客人」，真动气时只丢一句「记账上」。"
+      },
+      "present": [
+        {
+          "id": "aruo",
+          "name": "阿箬",
+          "mood": "冷淡"
+        },
+        {
+          "id": "laotao",
+          "name": "老陶",
+          "mood": "平和"
+        }
+      ],
+      "recalls": [
+        {
+          "memory_id": 1000039,
+          "npc": "aruo",
+          "turn": 4,
+          "kind": "亲历",
+          "text": "他把手伸向玉佩，被我按住了。这笔账我记着。",
+          "emotion": "恼",
+          "source": "亲历",
+          "importance": 9,
+          "score": 0.1576,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.1569,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1,
+          "npc": "aruo",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "十年前，姓沈的客人说去渡口接人，把一枚玉佩押在柜台上，说天亮就回来。他没回来。",
+          "emotion": "淡",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.0378,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.1527,
+          "relevant": true,
+          "origin": "world",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 3,
+          "npc": "aruo",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "柜台第三块砖有点松，脚一踩会响；那是她自己撬开又按回去的。",
+          "emotion": "静",
+          "source": "设定",
+          "importance": 6,
+          "score": 0.0329,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.038,
+          "relevant": true,
+          "origin": "world",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000040,
+          "npc": "laotao",
+          "turn": 4,
+          "kind": "目击",
+          "text": "我听见动静，回头看见阿箬按着他的手腕。",
+          "emotion": "惊",
+          "source": "目击",
+          "importance": 6,
+          "score": 0.1335,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0495,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000038,
+          "npc": "laotao",
+          "turn": 2,
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0483,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 7,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "有人用一首诗换走他半条命，那诗他只记得最后一句：灯在，人就还在。",
+          "emotion": "酸",
+          "source": "设定",
+          "importance": 8,
+          "score": 0.0143,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0386,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
+        }
+      ],
+      "memory_written": [
+        {
+          "npc": "阿箬",
+          "kind": "亲历",
+          "text": "他把手伸向玉佩，被我按住了。这笔账我记着。"
+        },
+        {
+          "npc": "老陶",
+          "kind": "目击",
+          "text": "我听见动静，回头看见阿箬按着他的手腕。"
+        },
+        {
+          "npc": "小满",
+          "kind": "传闻",
+          "text": "我听说无名客动过柜台上的东西——阿箬亲口讲的，你信么？"
+        }
+      ],
+      "status_line": "> 铜板 17｜风评 0｜被记账 1｜大堂",
+      "tavern_memory": {
+        "available": false,
+        "hits": [],
+        "mode": "none"
+      },
+      "mind": null,
+      "hints": [
+        "你可以 一碟花生、一碗阳春面、酢茶 中的任一样，也可以请人喝一碗（5 个铜板）。",
+        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "想听故事就找老陶；想打听消息，得先让人愿意开口。",
+        "大堂里现在有：阿箬、老陶。"
+      ],
+      "ending": null
+    }
+  },
+  {
+    "step": 5,
+    "utterance": "我低头跟阿箬道歉，说刚才手滑了。",
+    "result": {
+      "ok": true,
+      "guest": "无名客",
+      "turn": 5,
+      "location": "大堂",
+      "utterance": "我低头跟阿箬道歉，说刚才手滑了。",
+      "action": {
+        "verb": "apologize",
+        "verb_cn": "道歉",
+        "target": "aruo",
+        "item": "",
+        "tone": "plain",
+        "location": "",
+        "item_name": "",
+        "target_name": "阿箬"
+      },
+      "outcome": {
+        "verdict": "success",
+        "detail": "你低了头。阿箬盯着你看了半晌，才说：「下不为例。」",
+        "emotion": "缓",
+        "witnesses": [],
+        "coin_delta": 0,
+        "affinity_delta": {
+          "aruo": 8
+        },
+        "reputation_delta": 1,
+        "wanted_delta": 0,
+        "gain_item": "",
+        "lose_item": "",
+        "secret": "",
+        "roll": 0.0,
+        "reason": "apologized"
+      },
+      "deltas": {
+        "coins": 0,
+        "reputation": 1,
+        "wanted": 0
+      },
+      "player": {
+        "coins": 17,
+        "reputation": 1,
+        "wanted": 1,
+        "status": "open"
+      },
+      "npc": {
+        "id": "aruo",
+        "name": "阿箬",
+        "mood": "冷淡",
+        "affinity": 28,
+        "voice": "话少，句短，先算账再说话。称客人「客人」，真动气时只丢一句「记账上」。"
+      },
+      "present": [
+        {
+          "id": "aruo",
+          "name": "阿箬",
+          "mood": "冷淡"
+        },
+        {
+          "id": "laotao",
+          "name": "老陶",
+          "mood": "平和"
+        }
+      ],
+      "recalls": [
+        {
+          "memory_id": 1000042,
+          "npc": "aruo",
+          "turn": 5,
+          "kind": "亲历",
+          "text": "他低了头说上次是他不对。我认这句话。",
+          "emotion": "缓",
+          "source": "亲历",
+          "importance": 5,
+          "score": 0.1331,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.1983,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000039,
+          "npc": "aruo",
+          "turn": 4,
+          "kind": "亲历",
+          "text": "他把手伸向玉佩，被我按住了。这笔账我记着。",
+          "emotion": "恼",
+          "source": "亲历",
+          "importance": 9,
+          "score": 0.0796,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0004,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000040,
+          "npc": "laotao",
+          "turn": 4,
+          "kind": "目击",
+          "text": "我听见动静，回头看见阿箬按着他的手腕。",
+          "emotion": "惊",
+          "source": "目击",
+          "importance": 6,
+          "score": 0.0791,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0001,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000038,
+          "npc": "laotao",
+          "turn": 2,
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0325,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0448,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000037,
+          "npc": "aruo",
+          "turn": 2,
+          "kind": "亲历",
+          "text": "他要了桂花酿，铜板数得很慢，一个也没少给。",
+          "emotion": "淡",
+          "source": "亲历",
+          "importance": 4,
+          "score": 0.0321,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 5,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听说，是他从水里爬出来时数的。",
+          "emotion": "沉",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.0138,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0027,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
+        }
+      ],
+      "memory_written": [
+        {
+          "npc": "阿箬",
+          "kind": "亲历",
+          "text": "他低了头说上次是他不对。我认这句话。"
+        },
+        {
+          "npc": "小满",
+          "kind": "传闻",
+          "text": "阿箬说，无名客认过错，也不知真假，我只说给你听。"
+        }
+      ],
+      "status_line": "> 铜板 17｜风评 1｜被记账 1｜大堂",
+      "tavern_memory": {
+        "available": false,
+        "hits": [],
+        "mode": "none"
+      },
+      "mind": null,
+      "hints": [
+        "你可以 一碟花生、一碗阳春面、酢茶 中的任一样，也可以请人喝一碗（5 个铜板）。",
+        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "想听故事就找老陶；想打听消息，得先让人愿意开口。",
+        "大堂里现在有：阿箬、老陶。"
+      ],
+      "ending": null
+    }
+  },
+  {
+    "step": 6,
+    "utterance": "给老陶讲一个故事：有个客人偷了灯，灯却没有灭。",
+    "result": {
+      "ok": true,
+      "guest": "无名客",
+      "turn": 6,
+      "location": "大堂",
+      "utterance": "给老陶讲一个故事：有个客人偷了灯，灯却没有灭。",
+      "action": {
+        "verb": "tell_story",
+        "verb_cn": "讲了个故事",
+        "target": "laotao",
+        "item": "",
+        "tone": "plain",
+        "location": "",
+        "item_name": "",
+        "target_name": "老陶"
+      },
+      "outcome": {
+        "verdict": "success",
+        "detail": "老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」",
+        "emotion": "喜",
+        "witnesses": [],
+        "coin_delta": 2,
+        "affinity_delta": {
+          "laotao": 10
+        },
+        "reputation_delta": 3,
+        "wanted_delta": 0,
+        "gain_item": "",
+        "lose_item": "",
+        "secret": "",
+        "roll": 0.0,
+        "reason": "story_told"
+      },
+      "deltas": {
+        "coins": 2,
+        "reputation": 3,
+        "wanted": 0
+      },
+      "player": {
+        "coins": 19,
+        "reputation": 4,
+        "wanted": 1,
+        "status": "open"
+      },
+      "npc": {
+        "id": "laotao",
+        "name": "老陶",
+        "mood": "平和",
+        "affinity": 50,
+        "voice": "评书腔，爱打比方，一句话里三个「话说」。说完总要一个故事当酒钱。"
+      },
+      "present": [
+        {
+          "id": "aruo",
+          "name": "阿箬",
+          "mood": "冷淡"
+        },
+        {
+          "id": "laotao",
+          "name": "老陶",
+          "mood": "平和"
+        }
+      ],
+      "recalls": [
+        {
+          "memory_id": 1000044,
+          "npc": "laotao",
+          "turn": 6,
+          "kind": "亲历",
+          "text": "他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+          "emotion": "喜",
+          "source": "亲历",
+          "importance": 6,
+          "score": 0.1544,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.3149,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000037,
+          "npc": "aruo",
+          "turn": 2,
+          "kind": "亲历",
+          "text": "他要了桂花酿，铜板数得很慢，一个也没少给。",
+          "emotion": "淡",
+          "source": "亲历",
+          "importance": 4,
+          "score": 0.0426,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.0396,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1,
+          "npc": "aruo",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "十年前，姓沈的客人说去渡口接人，把一枚玉佩押在柜台上，说天亮就回来。他没回来。",
+          "emotion": "淡",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.0378,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.0321,
+          "relevant": true,
+          "origin": "world",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000042,
+          "npc": "aruo",
+          "turn": 5,
+          "kind": "亲历",
+          "text": "他低了头说上次是他不对。我认这句话。",
+          "emotion": "缓",
+          "source": "亲历",
+          "importance": 5,
+          "score": 0.0779,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0011,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000040,
+          "npc": "laotao",
+          "turn": 4,
+          "kind": "目击",
+          "text": "我听见动静，回头看见阿箬按着他的手腕。",
+          "emotion": "惊",
+          "source": "目击",
+          "importance": 6,
+          "score": 0.0494,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000038,
+          "npc": "laotao",
+          "turn": 2,
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0234,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        }
+      ],
+      "memory_written": [
+        {
+          "npc": "老陶",
+          "kind": "亲历",
+          "text": "他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。"
+        }
+      ],
+      "status_line": "> 铜板 19｜风评 4｜被记账 1｜大堂",
+      "tavern_memory": {
+        "available": false,
+        "hits": [],
+        "mode": "none"
+      },
+      "mind": null,
+      "hints": [
+        "你可以 一碟花生、一碗阳春面、酢茶 中的任一样，也可以请人喝一碗（5 个铜板）。",
+        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "想听故事就找老陶；想打听消息，得先让人愿意开口。",
+        "大堂里现在有：阿箬、老陶。"
+      ],
+      "ending": null
+    }
+  },
+  {
+    "step": 7,
+    "utterance": "去后厨，替小满把那一摞碗端出来。",
+    "result": {
+      "ok": true,
+      "guest": "无名客",
+      "turn": 7,
+      "location": "后厨",
+      "utterance": "去后厨，替小满把那一摞碗端出来。",
+      "action": {
+        "verb": "help",
+        "verb_cn": "帮忙",
+        "target": "xiaoman",
+        "item": "",
+        "tone": "plain",
+        "location": "后厨",
+        "item_name": "",
+        "target_name": "小满"
+      },
+      "outcome": {
+        "verdict": "success",
+        "detail": "你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。",
+        "emotion": "沉",
+        "witnesses": [],
+        "coin_delta": 1,
+        "affinity_delta": {
+          "xiaoman": 10
+        },
+        "reputation_delta": 4,
+        "wanted_delta": 0,
+        "gain_item": "",
+        "lose_item": "",
+        "secret": "后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。",
+        "roll": 0.0,
+        "reason": "helped"
+      },
+      "deltas": {
+        "coins": 1,
+        "reputation": 4,
+        "wanted": 0
+      },
+      "player": {
+        "coins": 20,
+        "reputation": 8,
+        "wanted": 1,
+        "status": "open"
+      },
+      "npc": {
+        "id": "xiaoman",
+        "name": "小满",
+        "mood": "平和",
+        "affinity": 50,
+        "voice": "一声「哎呀」开头，句子跑得比人快；被问什么都先答「我什么都没看见」。"
+      },
+      "present": [
+        {
+          "id": "xiaoman",
+          "name": "小满",
+          "mood": "平和"
+        }
+      ],
+      "recalls": [
+        {
+          "memory_id": 1000046,
+          "npc": "xiaoman",
+          "turn": 7,
+          "kind": "秘密",
+          "text": "后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。",
+          "emotion": "沉",
+          "source": "亲历",
+          "importance": 10,
+          "score": 0.158,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.0448,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "小满"
+        },
+        {
+          "memory_id": 1000045,
+          "npc": "xiaoman",
+          "turn": 7,
+          "kind": "亲历",
+          "text": "他帮我把活计收拾了，手上利落，不像是白帮忙的人。",
+          "emotion": "暖",
+          "source": "亲历",
+          "importance": 5,
+          "score": 0.1531,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.0701,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "小满"
+        },
+        {
+          "memory_id": 9,
+          "npc": "xiaoman",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "三年前有人给了她一块桂花糖，糖纸她留着，夹在后厨的柴火堆里。",
+          "emotion": "暖",
+          "source": "设定",
+          "importance": 6,
+          "score": 0.0338,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.0567,
+          "relevant": true,
+          "origin": "world",
+          "npc_name": "小满"
+        }
+      ],
+      "memory_written": [
+        {
+          "npc": "小满",
+          "kind": "亲历",
+          "text": "他帮我把活计收拾了，手上利落，不像是白帮忙的人。"
+        },
+        {
+          "npc": "小满",
+          "kind": "秘密",
+          "text": "后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。"
+        }
+      ],
+      "status_line": "> 铜板 20｜风评 8｜被记账 1｜后厨",
+      "tavern_memory": {
+        "available": false,
+        "hits": [],
+        "mode": "none"
+      },
+      "mind": null,
+      "hints": [
+        "你可以 一碟花生、一碗阳春面、酢茶 中的任一样，也可以请人喝一碗（5 个铜板）。",
+        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "想听故事就找老陶；想打听消息，得先让人愿意开口。",
+        "后厨里现在有：小满。"
+      ],
+      "ending": null
+    }
+  },
+  {
+    "step": 8,
+    "utterance": "读心，看看小满现在在想什么。",
+    "result": {
+      "ok": true,
+      "guest": "无名客",
+      "turn": 8,
+      "location": "后厨",
+      "utterance": "读心，看看小满现在在想什么。",
+      "action": {
+        "verb": "read_mind",
+        "verb_cn": "读心",
+        "target": "xiaoman",
+        "item": "",
+        "tone": "plain",
+        "location": "",
+        "item_name": "",
+        "target_name": "小满"
+      },
+      "outcome": {
+        "verdict": "observed",
+        "detail": "你盯着小满的眼睛，看见了一些不该看见的。",
+        "emotion": "淡",
+        "witnesses": [],
+        "coin_delta": 0,
+        "affinity_delta": {},
+        "reputation_delta": 0,
+        "wanted_delta": 0,
+        "gain_item": "",
+        "lose_item": "",
+        "secret": "",
+        "roll": 0.0,
+        "reason": "mind_read"
+      },
+      "deltas": {
+        "coins": 0,
+        "reputation": 0,
+        "wanted": 0
+      },
+      "player": {
+        "coins": 20,
+        "reputation": 8,
+        "wanted": 1,
+        "status": "open"
+      },
+      "npc": {
+        "id": "xiaoman",
+        "name": "小满",
+        "mood": "平和",
+        "affinity": 50,
+        "voice": "一声「哎呀」开头，句子跑得比人快；被问什么都先答「我什么都没看见」。"
+      },
+      "present": [
+        {
+          "id": "xiaoman",
+          "name": "小满",
+          "mood": "平和"
+        }
+      ],
+      "recalls": [
+        {
+          "memory_id": 1000046,
+          "npc": "xiaoman",
+          "turn": 7,
+          "kind": "秘密",
+          "text": "后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。",
+          "emotion": "沉",
+          "source": "亲历",
+          "importance": 10,
+          "score": 0.0799,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0009,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "小满"
+        },
+        {
+          "memory_id": 1000045,
+          "npc": "xiaoman",
+          "turn": 7,
+          "kind": "亲历",
+          "text": "他帮我把活计收拾了，手上利落，不像是白帮忙的人。",
+          "emotion": "暖",
+          "source": "亲历",
+          "importance": 5,
+          "score": 0.0784,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "小满"
+        },
+        {
+          "memory_id": 1000043,
+          "npc": "xiaoman",
+          "turn": 5,
+          "kind": "传闻",
+          "text": "阿箬说，无名客认过错，也不知真假，我只说给你听。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0321,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "小满"
+        }
+      ],
+      "memory_written": [],
+      "status_line": "> 铜板 20｜风评 8｜被记账 1｜后厨",
+      "tavern_memory": {
+        "available": false,
+        "hits": [],
+        "mode": "none"
+      },
+      "mind": {
+        "npc": "小满",
+        "memories": [
+          {
+            "turn": 7,
+            "kind": "秘密",
+            "source": "亲历",
+            "text": "后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。"
+          },
+          {
+            "turn": 7,
+            "kind": "亲历",
+            "source": "亲历",
+            "text": "他帮我把活计收拾了，手上利落，不像是白帮忙的人。"
+          },
+          {
+            "turn": 5,
+            "kind": "传闻",
+            "source": "传闻",
+            "text": "阿箬说，无名客认过错，也不知真假，我只说给你听。"
+          },
+          {
+            "turn": 4,
+            "kind": "传闻",
+            "source": "传闻",
+            "text": "我听说无名客动过柜台上的东西——阿箬亲口讲的，你信么？"
+          }
+        ]
+      },
+      "hints": [
+        "你可以 一碟花生、一碗阳春面、酢茶 中的任一样，也可以请人喝一碗（5 个铜板）。",
+        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "想听故事就找老陶；想打听消息，得先让人愿意开口。",
+        "后厨里现在有：小满。"
+      ],
+      "ending": null
+    }
+  },
+  {
+    "step": 9,
+    "utterance": "回大堂，再要一壶烧刀子，我要跟老陶喝一杯。",
+    "result": {
+      "ok": true,
+      "guest": "无名客",
+      "turn": 9,
+      "location": "大堂",
+      "utterance": "回大堂，再要一壶烧刀子，我要跟老陶喝一杯。",
+      "action": {
+        "verb": "buy",
+        "verb_cn": "买酒",
+        "target": "aruo",
+        "item": "wine_shaodao",
+        "tone": "plain",
+        "location": "大堂",
+        "item_name": "烧刀子",
+        "target_name": "阿箬"
+      },
+      "outcome": {
+        "verdict": "success",
+        "detail": "你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。",
+        "emotion": "淡",
+        "witnesses": [],
+        "coin_delta": -2,
+        "affinity_delta": {
+          "aruo": 5
+        },
+        "reputation_delta": 2,
+        "wanted_delta": 0,
+        "gain_item": "",
+        "lose_item": "",
+        "secret": "",
+        "roll": 0.0,
+        "reason": "paid"
+      },
+      "deltas": {
+        "coins": -2,
+        "reputation": 2,
+        "wanted": 0
+      },
+      "player": {
+        "coins": 18,
+        "reputation": 10,
+        "wanted": 1,
+        "status": "open"
+      },
+      "npc": {
+        "id": "aruo",
+        "name": "阿箬",
+        "mood": "冷淡",
+        "affinity": 33,
+        "voice": "话少，句短，先算账再说话。称客人「客人」，真动气时只丢一句「记账上」。"
+      },
+      "present": [
+        {
+          "id": "aruo",
+          "name": "阿箬",
+          "mood": "冷淡"
+        },
+        {
+          "id": "laotao",
+          "name": "老陶",
+          "mood": "平和"
+        }
+      ],
+      "recalls": [
+        {
+          "memory_id": 1000047,
+          "npc": "aruo",
+          "turn": 9,
+          "kind": "亲历",
+          "text": "他要了烧刀子，铜板数得很慢，一个也没少给。",
+          "emotion": "淡",
+          "source": "亲历",
+          "importance": 4,
+          "score": 0.1519,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.2944,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000044,
+          "npc": "laotao",
+          "turn": 6,
+          "kind": "亲历",
+          "text": "他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+          "emotion": "喜",
+          "source": "亲历",
+          "importance": 6,
+          "score": 0.0323,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0006,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000042,
+          "npc": "aruo",
+          "turn": 5,
+          "kind": "亲历",
+          "text": "他低了头说上次是他不对。我认这句话。",
+          "emotion": "缓",
+          "source": "亲历",
+          "importance": 5,
+          "score": 0.023,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000039,
+          "npc": "aruo",
+          "turn": 4,
+          "kind": "亲历",
+          "text": "他把手伸向玉佩，被我按住了。这笔账我记着。",
+          "emotion": "恼",
+          "source": "亲历",
+          "importance": 9,
+          "score": 0.0203,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0181,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000040,
+          "npc": "laotao",
+          "turn": 4,
+          "kind": "目击",
+          "text": "我听见动静，回头看见阿箬按着他的手腕。",
+          "emotion": "惊",
+          "source": "目击",
+          "importance": 6,
+          "score": 0.0191,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 5,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听说，是他从水里爬出来时数的。",
+          "emotion": "沉",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.015,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0267,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
+        }
+      ],
+      "memory_written": [
+        {
+          "npc": "阿箬",
+          "kind": "亲历",
+          "text": "他要了烧刀子，铜板数得很慢，一个也没少给。"
+        },
+        {
+          "npc": "小满",
+          "kind": "传闻",
+          "text": "我听说无名客喝过一碗酒——阿箬亲口讲的，你信么？"
+        }
+      ],
+      "status_line": "> 铜板 18｜风评 10｜被记账 1｜大堂",
+      "tavern_memory": {
+        "available": false,
+        "hits": [],
+        "mode": "none"
+      },
+      "mind": null,
+      "hints": [
+        "你可以 一碟花生、一碗阳春面、酢茶 中的任一样，也可以请人喝一碗（5 个铜板）。",
+        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "想听故事就找老陶；想打听消息，得先让人愿意开口。",
+        "大堂里现在有：阿箬、老陶。"
+      ],
+      "ending": null
+    }
+  },
+  {
+    "step": 10,
+    "utterance": "打烊了，我该走了。",
+    "result": {
+      "ok": true,
+      "guest": "无名客",
+      "turn": 10,
+      "location": "大堂",
+      "utterance": "打烊了，我该走了。",
+      "action": {
+        "verb": "close",
+        "verb_cn": "告辞",
+        "target": "aruo",
+        "item": "",
+        "tone": "plain",
+        "location": "",
+        "item_name": "",
+        "target_name": "阿箬"
+      },
+      "outcome": {
+        "verdict": "closed",
+        "detail": "你把碗推开，起身。",
+        "emotion": "淡",
+        "witnesses": [],
+        "coin_delta": 0,
+        "affinity_delta": {},
+        "reputation_delta": 0,
+        "wanted_delta": 0,
+        "gain_item": "",
+        "lose_item": "",
+        "secret": "",
+        "roll": 0.0,
+        "reason": "closed"
+      },
+      "deltas": {
+        "coins": 0,
+        "reputation": 0,
+        "wanted": 0
+      },
+      "player": {
+        "coins": 18,
+        "reputation": 10,
+        "wanted": 1,
+        "status": "closed"
+      },
+      "npc": {
+        "id": "aruo",
+        "name": "阿箬",
+        "mood": "冷淡",
+        "affinity": 33,
+        "voice": "话少，句短，先算账再说话。称客人「客人」，真动气时只丢一句「记账上」。"
+      },
+      "present": [
+        {
+          "id": "aruo",
+          "name": "阿箬",
+          "mood": "冷淡"
+        },
+        {
+          "id": "laotao",
+          "name": "老陶",
+          "mood": "平和"
+        }
+      ],
+      "recalls": [
+        {
+          "memory_id": 1000047,
+          "npc": "aruo",
+          "turn": 9,
+          "kind": "亲历",
+          "text": "他要了烧刀子，铜板数得很慢，一个也没少给。",
+          "emotion": "淡",
+          "source": "亲历",
+          "importance": 4,
+          "score": 0.0776,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0008,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000044,
+          "npc": "laotao",
+          "turn": 6,
+          "kind": "亲历",
+          "text": "他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+          "emotion": "喜",
+          "source": "亲历",
+          "importance": 6,
+          "score": 0.0245,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0163,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000042,
+          "npc": "aruo",
+          "turn": 5,
+          "kind": "亲历",
+          "text": "他低了头说上次是他不对。我认这句话。",
+          "emotion": "缓",
+          "source": "亲历",
+          "importance": 5,
+          "score": 0.0185,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0008,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000039,
+          "npc": "aruo",
+          "turn": 4,
+          "kind": "亲历",
+          "text": "他把手伸向玉佩，被我按住了。这笔账我记着。",
+          "emotion": "恼",
+          "source": "亲历",
+          "importance": 9,
+          "score": 0.0168,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0015,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000040,
+          "npc": "laotao",
+          "turn": 4,
+          "kind": "目击",
+          "text": "我听见动静，回头看见阿箬按着他的手腕。",
+          "emotion": "惊",
+          "source": "目击",
+          "importance": 6,
+          "score": 0.0166,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 5,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听说，是他从水里爬出来时数的。",
+          "emotion": "沉",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.0143,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
+        }
+      ],
+      "memory_written": [],
+      "status_line": "> 铜板 18｜风评 10｜被记账 1｜大堂",
+      "tavern_memory": {
+        "available": false,
+        "hits": [],
+        "mode": "none"
+      },
+      "mind": null,
+      "hints": [
+        "你可以 一碟花生、一碗阳春面、酢茶 中的任一样，也可以请人喝一碗（5 个铜板）。",
+        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "想听故事就找老陶；想打听消息，得先让人愿意开口。",
+        "大堂里现在有：阿箬、老陶。"
+      ],
+      "ending": {
+        "ending": "常客",
+        "epitaph": "阿箬在账本上你的名字后面画了个圈——她说，圈是留给会再来的人的。",
+        "session_no": 1,
+        "summary": "无名客 在忘川酒馆待了 10 回合，结局「常客」；铜板剩 18，风评 10，被记账 1 次。做过的事：第5回合·你低了头。阿箬盯着你看了半晌，才说：「下不为例。」；第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+        "powercontext": {
+          "available": true,
+          "written": true,
+          "status": 200,
+          "artifact_id": "art_6534e4a1724140bf97aae82eec49fe21",
+          "revision": 1,
+          "kind": "tavern-legend",
+          "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
+        }
+      }
+    }
+  },
+  {
+    "step": "reenter",
+    "scene": "渡口起了雾。你推开忘川酒馆的门，门轴响了一声，柜台上那盏灯跟着晃了一下。阿箬没抬头，只把账本往身前挪了半寸；老陶的醒木停在半空；小满从后厨探出半个脑袋，又缩回去。\n（账本上还有你上一回的记录：无名客在忘川酒馆待了10回合，结局常客；偷玉佩被阿箬抓住，替小满端过碗，给老陶讲过一个故事。；无名客 在忘川酒馆待了 11 回合，结局「常客」；铜板剩 15，风评 12，被记账 1 次。做过的事：第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。；第11回合·阿箬收下 3 个铜板，把桂花酿推到你面前。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。）",
+    "tavern_memory": {
+      "available": true,
+      "mode": "text",
+      "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1",
+      "hits": [
+        {
+          "text": "无名客在忘川酒馆待了10回合，结局常客；偷玉佩被阿箬抓住，替小满端过碗，给老陶讲过一个故事。",
+          "kind": "tavern-legend",
+          "artifact_id": "art_ce65cca4b7b74fc08060177bb1f82837",
+          "revision": 1,
+          "score": 0.0164,
+          "matched_by": [
+            "text"
+          ]
+        },
+        {
+          "text": "无名客 在忘川酒馆待了 11 回合，结局「常客」；铜板剩 15，风评 12，被记账 1 次。做过的事：第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。；第11回合·阿箬收下 3 个铜板，把桂花酿推到你面前。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+          "kind": "tavern-legend",
+          "artifact_id": "art_84800ce9494e4a3fa7f9e34849290bf6",
+          "revision": 1,
+          "score": 0.0161,
+          "matched_by": [
+            "text"
+          ]
+        },
+        {
+          "text": "无名客 在忘川酒馆待了 10 回合，结局「常客」；铜板剩 18，风评 10，被记账 1 次。做过的事：第5回合·你低了头。阿箬盯着你看了半晌，才说：「下不为例。」；第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+          "kind": "tavern-legend",
+          "artifact_id": "art_013d4edd9efa468c9f2a5ee433c3a5a7",
+          "revision": 1,
+          "score": 0.0159,
+          "matched_by": [
+            "text"
+          ]
+        }
+      ],
+      "status": 200
+    }
+  }
+]

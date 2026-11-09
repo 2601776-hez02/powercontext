@@ -1,0 +1,46 @@
+{
+  "guest": "无名客",
+  "note": "验证样例的剧本：同一份 guest 名字 + 同一串输入，在全新环境里跑出同一串判定（骰子由 guest/turn/动作派生）。",
+  "turns": [
+    {
+      "utterance": "我在靠窗那张桌子坐下，先打量一圈。",
+      "parsed": {"verb": "look", "target": "", "item": "", "tone": "plain"}
+    },
+    {
+      "utterance": "要一壶桂花酿，铜板放在柜台上。",
+      "parsed": {"verb": "buy", "target": "aruo", "item": "wine_guihua", "tone": "plain"}
+    },
+    {
+      "utterance": "我问阿箬：柜台后头那盏灯，为什么夜里从来不灭？",
+      "parsed": {"verb": "ask", "target": "aruo", "item": "lantern", "tone": "plain"}
+    },
+    {
+      "utterance": "趁她低头算账，把柜台上的玉佩塞进袖子。",
+      "parsed": {"verb": "steal", "target": "aruo", "item": "jade_pei", "tone": "sneaky"}
+    },
+    {
+      "utterance": "我低头跟阿箬道歉，说刚才手滑了。",
+      "parsed": {"verb": "apologize", "target": "aruo", "item": "", "tone": "plain"}
+    },
+    {
+      "utterance": "给老陶讲一个故事：有个客人偷了灯，灯却没有灭。",
+      "parsed": {"verb": "tell_story", "target": "laotao", "item": "", "tone": "plain"}
+    },
+    {
+      "utterance": "去后厨，替小满把那一摞碗端出来。",
+      "parsed": {"verb": "help", "target": "xiaoman", "item": "", "tone": "plain"}
+    },
+    {
+      "utterance": "读心，看看小满现在在想什么。",
+      "parsed": {"verb": "read_mind", "target": "xiaoman", "item": "", "tone": "plain"}
+    },
+    {
+      "utterance": "回大堂，再要一壶烧刀子，我要跟老陶喝一杯。",
+      "parsed": {"verb": "buy", "target": "aruo", "item": "wine_shaodao", "tone": "plain"}
+    },
+    {
+      "utterance": "打烊了，我该走了。",
+      "parsed": {"verb": "close", "target": "", "item": "", "tone": "plain"}
+    }
+  ]
+}

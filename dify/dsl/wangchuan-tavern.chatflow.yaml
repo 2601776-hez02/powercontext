@@ -1,0 +1,537 @@
+app:
+  description: 渡口最后一盏灯，什么都记得。三个 NPC 会记住你干过的每一件事——偷玉佩、讲故事、道歉，都写进 seekdb 里带全文与向量索引的记忆表；下一局进门，PowerContext 把你的「传说」念回来。
+  icon: 🏮
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: 忘川酒馆
+  use_icon_as_answer_icon: false
+dependencies: []
+kind: app
+version: 0.7.0
+workflow:
+  conversation_variables: []
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions: []
+      allowed_file_types: []
+      allowed_file_upload_methods: []
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 15
+        image_file_size_limit: 10
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+    opening_statement: '渡口起了雾，你推开「忘川酒馆」的门。
+
+      柜台后是阿箬，她手边摊着一本账，连半块铜板都标着日期；靠窗的老陶正在说一段渡口旧事，醒木停在半空；后厨传来一声「哎呀」——那是小满。
+
+      这里的规矩只有三条：一杯酒换一个秘密；酒钱不能欠；动手的人，记账上。
+
+      你可以直接说一句你想做的事。比如：
+
+      · 要一壶桂花酿，铜板放柜台上
+
+      · 问问阿箬，柜台后头那盏灯为什么夜里不灭
+
+      · 给老陶讲个故事
+
+      · 去后厨，替小满把碗端出来
+
+      · 读心，看看阿箬现在在想什么
+
+      · 打烊了，我该走了
+
+      '
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: e-start-parse
+      source: start
+      sourceHandle: source
+      target: llm_parse
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: if-else
+      id: e-parse-if
+      source: llm_parse
+      sourceHandle: source
+      target: branch_mind
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: http-request
+      id: e-if-mind
+      source: branch_mind
+      sourceHandle: 'true'
+      target: http_mind
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: http-request
+      id: e-if-act
+      source: branch_mind
+      sourceHandle: 'false'
+      target: http_act
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: llm
+      id: e-mind-llm
+      source: http_mind
+      sourceHandle: source
+      target: llm_mind
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: llm
+      id: e-act-llm
+      source: http_act
+      sourceHandle: source
+      target: llm_narrate
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: e-mind-answer
+      source: llm_mind
+      sourceHandle: source
+      target: answer_mind
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: e-act-answer
+      source: llm_narrate
+      sourceHandle: source
+      target: answer_turn
+      targetHandle: target
+      type: custom
+    nodes:
+    - data:
+        desc: 酒客的名字决定 seekdb 里的账本行，也决定 PowerContext 的 scope
+        selected: false
+        title: 开始
+        type: start
+        variables:
+        - label: 你的名字
+          max_length: 48
+          options: []
+          required: false
+          type: text-input
+          variable: guest
+          default: 无名客
+      height: 116
+      id: start
+      position:
+        x: 40
+        y: 320
+      positionAbsolute:
+        x: 40
+        y: 320
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 把玩家一句话翻成结构化动作 JSON
+        model:
+          completion_params:
+            max_tokens: 256
+            temperature: 0.1
+          mode: chat
+          name: deepseek-flash
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        prompt_template:
+        - role: system
+          text: '你是《忘川酒馆》的动作解析器。玩家会用一句中文描述他想做的事，你把它翻成一个 JSON 对象，**只输出这个 JSON**，不要解释、不要代码块、不要多余文字。
+
+
+            字段：
+
+            - verb：只能取 steal（偷/摸走/顺走）、buy（买/点/来一杯）、gift（送/请/递）、tell_story（讲个故事/编一段）、threaten（威胁/拍桌/拔刀）、help（帮/端/收拾/跑腿）、apologize（道歉/认错）、read_mind（读心/看他在想什么）、ask（问/打听）、close（打烊/告辞/结账/走了）、move（去某处）、look（打量/看看）
+
+            - target：aruo（阿箬·老板娘）/ laotao（老陶·说书人）/ xiaoman（小满·打杂）/ ""
+
+            - item：wine_guihua / wine_shaodao / tea_zuo / dish_peanut / soup_noodle / sugar / jade_pei / letter / sword / lantern / cat / ""
+
+            - tone：sneaky（偷偷） / loud（大声） / plain
+
+
+            规则：
+
+            1. 只按玩家的字面意思判断，不要替他补全剧情。
+
+            2. 「读心」「看看他在想什么」→ read_mind，target 填被看的人。
+
+            3. 一句话里既有挪步又有动作（如「去后厨替小满端碗」），verb 填动作 help，不要填 move。
+
+            4. 完全看不出意图时 verb 填 look。
+
+
+            示例
+
+            玩家：趁她低头算账，把柜台上的玉佩塞进袖子。
+
+            {"verb":"steal","target":"aruo","item":"jade_pei","tone":"sneaky"}
+
+            玩家：给老陶讲一个渡口的故事
+
+            {"verb":"tell_story","target":"laotao","item":"","tone":"plain"}
+
+            玩家：读心，看看小满现在在想什么
+
+            {"verb":"read_mind","target":"xiaoman","item":"","tone":"plain"}
+
+            '
+        - role: user
+          text: 玩家：{{#sys.query#}}
+        selected: false
+        title: 拆动作
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 98
+      id: llm_parse
+      position:
+        x: 330
+        y: 320
+      positionAbsolute:
+        x: 330
+        y: 320
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: contains
+            id: c-1
+            value: read_mind
+            varType: string
+            variable_selector:
+            - llm_parse
+            - text
+          id: 'true'
+          logical_operator: and
+        desc: 读心走一条专属链路：直接读 NPC 脑子里的记忆行
+        selected: false
+        title: 是不是读心
+        type: if-else
+      height: 200
+      id: branch_mind
+      position:
+        x: 620
+        y: 320
+      positionAbsolute:
+        x: 620
+        y: 320
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          type: x-www-form-urlencoded
+          data:
+          - key: guest
+            type: text
+            value: '{{#start.guest#}}'
+          - key: q
+            type: text
+            value: '{{#sys.query#}}'
+          - key: limit
+            type: text
+            value: '4'
+        desc: 读心接口（表单提交，中文参数不用自己拼 URL）
+        headers: ''
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: 读心接口
+        type: http-request
+        url: http://172.17.0.1:9100/mind/form
+        variables: []
+      height: 98
+      id: http_mind
+      position:
+        x: 910
+        y: 180
+      positionAbsolute:
+        x: 910
+        y: 180
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 把真实记忆行写成「他此刻在想什么」
+        model:
+          completion_params:
+            max_tokens: 512
+            temperature: 0.7
+          mode: chat
+          name: deepseek-flash
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        prompt_template:
+        - role: system
+          text: '你是《忘川酒馆》的旁白。玩家要看穿某个 NPC 此刻在想什么。
+
+            给你的是引擎从 seekdb 里读出的真实记忆行（mind.memories），按时间倒序。
+
+            写成 80~160 字：先写 NPC 的眼神或小动作，再把他脑子里的两三件事用「他想着……」的方式陈列出来，最后一句留给玩家的感觉。
+
+            铁律：只能用给出的记忆，不许编造；不要出现「数据库」「系统」「JSON」这类词；不要替玩家做决定。
+
+            最后单独一行原样复制 JSON 里的 status_line。
+
+
+            【记忆行】
+
+            {{#http_mind.body#}}
+
+            '
+        - role: user
+          text: 玩家：{{#sys.query#}}
+        selected: false
+        title: 读心旁白
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 98
+      id: llm_mind
+      position:
+        x: 1200
+        y: 180
+      positionAbsolute:
+        x: 1200
+        y: 180
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '{{#llm_mind.text#}}'
+        desc: ''
+        selected: false
+        title: 回答（读心）
+        type: answer
+        variables: []
+      height: 103
+      id: answer_mind
+      position:
+        x: 1490
+        y: 180
+      positionAbsolute:
+        x: 1490
+        y: 180
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          type: x-www-form-urlencoded
+          data:
+          - key: guest
+            type: text
+            value: '{{#start.guest#}}'
+          - key: utterance
+            type: text
+            value: '{{#sys.query#}}'
+        desc: 酒馆引擎：判定 + 事务落库 + 记忆混合检索（表单提交，玩家打引号也不会破坏 JSON）
+        headers: ''
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: 酒馆引擎 /act
+        type: http-request
+        url: http://172.17.0.1:9100/act/form
+        variables: []
+      height: 98
+      id: http_act
+      position:
+        x: 910
+        y: 480
+      positionAbsolute:
+        x: 910
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: 按引擎给出的事实写小说体叙事，必须引用 NPC 想起的旧事
+        model:
+          completion_params:
+            max_tokens: 900
+            temperature: 0.85
+          mode: chat
+          name: deepseek-flash
+          provider: langgenius/openai_api_compatible/openai_api_compatible
+        prompt_template:
+        - role: system
+          text: '你是《忘川酒馆》的说书人。玩家是刚进店的客人；你要把「引擎判定的事实」写成一小段中文小说，并让在场 NPC 用他们自己的口吻说话。
+
+
+            【铁律】
+
+            1. 事实以引擎 JSON 为准：outcome.verdict / outcome.detail / player / deltas / recalls 不许改，不许加戏改变结果。失败就是失败。
+
+            2. recalls 是 NPC 此刻真实想起来的旧事。**至少引用一条 relevant=true 的**，用 NPC 的原话或叙述带出来，让玩家感觉到「它记得」。
+
+            3. 每个在场 NPC 至多一句台词，符合他的 voice 与 mood；mood=警觉或冷淡时不要主动亲近。
+
+            4. 数字必须与 JSON 一致（铜板、风评、被记账次数）。
+
+            5. 不要出现「系统」「数据」「JSON」「AI」「引擎」这类词；不要替玩家做决定。
+
+            6. 若 outcome.secret 非空，让对应 NPC 把这句话说出来——这是他守了多年的事，语气要重。
+
+            7. 若 tavern_memory.hits 非空，开头用一句 NPC 的话点出「你上次来过」。
+
+            8. 正文 120~240 字，最后单独一行**原样复制** JSON 里的 status_line（不要自己算数）
+
+
+            【输出格式】
+
+            第一段：场景与结果，带细节。
+
+            第二段：NPC 台词，用「阿箬：……」这种格式。
+
+            最后一行：原样复制 status_line。
+
+
+            【引擎数据】
+
+            {{#http_act.body#}}
+
+            '
+        - role: user
+          text: 玩家：{{#sys.query#}}
+        selected: false
+        title: 叙事
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 98
+      id: llm_narrate
+      position:
+        x: 1200
+        y: 480
+      positionAbsolute:
+        x: 1200
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '{{#llm_narrate.text#}}'
+        desc: ''
+        selected: false
+        title: 回答
+        type: answer
+        variables: []
+      height: 103
+      id: answer_turn
+      position:
+        x: 1490
+        y: 480
+      positionAbsolute:
+        x: 1490
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 0
+      y: 0
+      zoom: 0.7

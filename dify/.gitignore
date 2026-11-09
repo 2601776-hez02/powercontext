@@ -1,0 +1,16 @@
+# 本地运行产物（不要提交）
+.venv/
+.venv-pc/
+.cache/
+.powercontext/
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# Dify 的部署副本（由 scripts/02_dify.sh 生成，体积大且是上游代码）
+deploy/dify/
+.cache/dify-src/
+
+# 运行日志与临时文件
+*.log
+!docs/evidence/*.log

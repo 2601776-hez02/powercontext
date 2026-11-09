@@ -1,0 +1,241 @@
+{
+  "world": {
+    "name": "忘川酒馆",
+    "tagline": "渡口最后一盏灯，什么都记得。",
+    "opening": "渡口起了雾。你推开忘川酒馆的门，门轴响了一声，柜台上那盏灯跟着晃了一下。阿箬没抬头，只把账本往身前挪了半寸；老陶的醒木停在半空；小满从后厨探出半个脑袋，又缩回去。",
+    "rules": [
+      "一杯酒换一个秘密；酒钱不能欠。",
+      "动手的人记账上；记到第三次，就不必再来了。",
+      "账本不撒谎：你说过的话、做过的事，都会留在某个人的记忆里。"
+    ],
+    "locations": [
+      "大堂",
+      "后厨",
+      "门外"
+    ],
+    "location_hint": {
+      "大堂": "三张旧桌，靠窗那张的漆掉得最多；柜台后头是账本和一排酒坛。",
+      "后厨": "灶还温着，柴火堆上压着一张皱糖纸，三花猫蹲在柴上。",
+      "门外": "渡口的雾漫到门槛，隐约有船桨声。"
+    }
+  },
+  "npcs": [
+    {
+      "id": "aruo",
+      "name": "阿箬",
+      "title": "老板娘",
+      "location": "大堂",
+      "attention": 70,
+      "secret_threshold": 65,
+      "voice": "话少，句短，先算账再说话。称客人「客人」，真动气时只丢一句「记账上」。",
+      "secret": "柜台后第三块砖下压着一封十年前没寄出去的信，信封上只写了一个「沈」字。"
+    },
+    {
+      "id": "laotao",
+      "name": "老陶",
+      "title": "说书人",
+      "location": "大堂",
+      "attention": 40,
+      "secret_threshold": 60,
+      "voice": "评书腔，爱打比方，一句话里三个「话说」。说完总要一个故事当酒钱。",
+      "secret": "他眼里是透亮的——瞎子是他自己要当的，只为不再讲那桩事。"
+    },
+    {
+      "id": "xiaoman",
+      "name": "小满",
+      "title": "打杂",
+      "location": "后厨",
+      "attention": 55,
+      "secret_threshold": 50,
+      "voice": "一声「哎呀」开头，句子跑得比人快；被问什么都先答「我什么都没看见」。",
+      "secret": "后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。"
+    }
+  ],
+  "items": [
+    {
+      "id": "wine_guihua",
+      "name": "桂花酿",
+      "price": 3,
+      "kind": "酒",
+      "owner": "aruo",
+      "description": "甜香压着酒气，碗底沉着两瓣桂花。",
+      "lore": "阿箬每年秋天自己酿，只卖给不闹事的人。"
+    },
+    {
+      "id": "wine_shaodao",
+      "name": "烧刀子",
+      "price": 2,
+      "kind": "酒",
+      "owner": "aruo",
+      "description": "一口下去喉咙发紧，像有人拿砂纸擦了擦。",
+      "lore": "渡口的船工都喝这个，说是能压住水汽。"
+    },
+    {
+      "id": "tea_zuo",
+      "name": "酢茶",
+      "price": 1,
+      "kind": "茶",
+      "owner": "aruo",
+      "description": "酸得人一激灵，醒酒。",
+      "lore": "阿箬说，喝多了还知道自己是谁，才叫喝酒。"
+    },
+    {
+      "id": "dish_peanut",
+      "name": "一碟花生",
+      "price": 1,
+      "kind": "小食",
+      "owner": "aruo",
+      "description": "油炸得过了头，有几颗发苦。",
+      "lore": "老陶说书时最爱这个，一颗花生能拖半句话。"
+    },
+    {
+      "id": "soup_noodle",
+      "name": "一碗阳春面",
+      "price": 4,
+      "kind": "小食",
+      "owner": "aruo",
+      "description": "清汤，两片葱，面码得整整齐齐。",
+      "lore": "小满端面时总要把碗转半圈，说这样葱在正中间。"
+    },
+    {
+      "id": "sugar",
+      "name": "桂花糖",
+      "price": 0,
+      "kind": "旧物",
+      "owner": "xiaoman",
+      "description": "糖纸皱得像被人反复捏过，糖早化了。",
+      "lore": "三年前有人给过她一块，她把糖纸留到了现在。"
+    },
+    {
+      "id": "jade_pei",
+      "name": "玉佩",
+      "price": 0,
+      "kind": "旧物",
+      "owner": "aruo",
+      "description": "绳结磨得发白，玉上有一道旧裂。",
+      "lore": "十年前姓沈的客人把它押在柜台上，说天亮就回来。"
+    },
+    {
+      "id": "letter",
+      "name": "未寄出的信",
+      "price": 0,
+      "kind": "旧物",
+      "owner": "aruo",
+      "description": "信封上只写了一个「沈」字，封口没粘。",
+      "lore": "压在柜台后第三块砖下面，砖一踩会响。"
+    },
+    {
+      "id": "sword",
+      "name": "押在柜台的剑",
+      "price": 0,
+      "kind": "旧物",
+      "owner": "aruo",
+      "description": "剑鞘上有个缺口，像是被什么咬的。",
+      "lore": "三年前有人喝完酒把剑押下换了一夜住宿。"
+    },
+    {
+      "id": "lantern",
+      "name": "旧灯笼",
+      "price": 0,
+      "kind": "旧物",
+      "owner": "aruo",
+      "description": "灯芯剪得齐整，油星子很新。",
+      "lore": "渡口的风一起，灯灭了就会有船找不到岸。"
+    },
+    {
+      "id": "cat",
+      "name": "三花猫",
+      "price": 0,
+      "kind": "活物",
+      "owner": "xiaoman",
+      "description": "它蹲在柴火堆上，一声不吭。",
+      "lore": "小满说它只是怕生。"
+    }
+  ],
+  "backstory": [
+    {
+      "npc": "aruo",
+      "kind": "旧事",
+      "emotion": "淡",
+      "importance": 9,
+      "body": "十年前，姓沈的客人说去渡口接人，把一枚玉佩押在柜台上，说天亮就回来。他没回来。"
+    },
+    {
+      "npc": "aruo",
+      "kind": "旧事",
+      "emotion": "淡",
+      "importance": 7,
+      "body": "酒馆的灯芯夜里从不灭——渡口的风一起，灯灭了就会有船找不到岸。"
+    },
+    {
+      "npc": "aruo",
+      "kind": "旧事",
+      "emotion": "静",
+      "importance": 6,
+      "body": "柜台第三块砖有点松，脚一踩会响；那是她自己撬开又按回去的。"
+    },
+    {
+      "npc": "aruo",
+      "kind": "旧事",
+      "emotion": "静",
+      "importance": 5,
+      "body": "账本上连半块铜板都标着日期，谁欠她一分，她记得比谁都清楚。"
+    },
+    {
+      "npc": "laotao",
+      "kind": "旧事",
+      "emotion": "沉",
+      "importance": 9,
+      "body": "二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听说，是他从水里爬出来时数的。"
+    },
+    {
+      "npc": "laotao",
+      "kind": "旧事",
+      "emotion": "淡",
+      "importance": 6,
+      "body": "他听脚步认人：走三步停一下的，多半心里有事。"
+    },
+    {
+      "npc": "laotao",
+      "kind": "旧事",
+      "emotion": "酸",
+      "importance": 8,
+      "body": "有人用一首诗换走他半条命，那诗他只记得最后一句：灯在，人就还在。"
+    },
+    {
+      "npc": "laotao",
+      "kind": "旧事",
+      "emotion": "戒备",
+      "importance": 6,
+      "body": "他讨厌别人替他倒酒——从前有人趁倒酒往他碗里放过东西。"
+    },
+    {
+      "npc": "xiaoman",
+      "kind": "旧事",
+      "emotion": "暖",
+      "importance": 6,
+      "body": "三年前有人给了她一块桂花糖，糖纸她留着，夹在后厨的柴火堆里。"
+    },
+    {
+      "npc": "xiaoman",
+      "kind": "旧事",
+      "emotion": "怕",
+      "importance": 7,
+      "body": "她怕黑，可夜里总是她提着灯去开后门——阿箬姐说，后门不能空着。"
+    },
+    {
+      "npc": "xiaoman",
+      "kind": "旧事",
+      "emotion": "软",
+      "importance": 7,
+      "body": "她把剩菜悄悄送去渡口给一个乞丐，那人只在她放下碗的时候咳一声。"
+    },
+    {
+      "npc": "xiaoman",
+      "kind": "旧事",
+      "emotion": "认真",
+      "importance": 5,
+      "body": "她数得清柜台上有几个铜板，但从不多拿一个。"
+    }
+  ]
+}
