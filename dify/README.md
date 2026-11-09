@@ -335,6 +335,8 @@ python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
 
 ## 10. 复用与出处
 
+* `deploy/dify/` 是 `scripts/02_dify.sh` 现场下载的上游 `docker/` 副本（约 900 KB，已 gitignore），
+  仓库里不重复提交；第一次跑 02 脚本时会自动生成。
 * Dify 的 `docker/` 目录来自上游 <https://github.com/langgenius/dify> 的 **1.19.0** tag，`scripts/02_dify.sh` 原样取用，未改动其编排逻辑；只通过 `.env` / `envs/security.env` 配置。
 * seekdb 镜像 `oceanbase/seekdb:latest`（Dify 1.19.0 compose 里自带的 `seekdb` profile，官方支持它作为 Dify 的向量存储）。
 * PowerContext 使用 PyPI 上的 `powercontext==1.5.0`（与比赛仓库 `oceanbase/powercontext` 同源），只调用它的 HTTP Memory API。

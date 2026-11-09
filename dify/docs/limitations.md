@@ -82,3 +82,17 @@ DSL 里 HTTP Request 节点的地址是 `http://172.17.0.1:9100/...`（Linux 上
 
 `wanted >= 3` 逐客、`reputation >= 25` 传说、`>= 8` 常客。10 回合的验证剧本拿不到「传说」，
 需要玩得更久——这是设计意图（一局 10 回合是「常客」，多来几夜才是传说）。
+
+## 9. 国内拉镜像可能很慢
+
+官方 compose 要拉 10 个镜像、约 4 GiB。国内主机直连 Docker Hub 常超时，建议给 dockerd 配
+`registry-mirrors`（`/etc/docker/daemon.json`）。本次实测可用的镜像源按速度大致是：
+
+| 镜像源 | 大镜像（dify-api 2.7 GB） | 小镜像（busybox 4 MB） |
+| --- | --- | --- |
+| `docker.m.daocloud.io` | 约 50 分钟，稳定 | 7 秒 |
+| `docker.1panel.live` | 可用 | 30 秒 |
+| `docker.1ms.run` | 不稳（多次卡住） | 较慢 |
+
+个别镜像卡住时，可以单独 `docker pull <mirror>/<image>:<tag>` 再 `docker tag` 成官方名字，
+compose 就会直接用本地镜像。
