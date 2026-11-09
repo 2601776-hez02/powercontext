@@ -507,6 +507,7 @@ class PreparedContextBuilder:
             token: _term_weight(token, total_documents, count) for token, count in document_frequency.items()
         }
 
+        window_scores: dict[int, list[float]] = {}
         prepared: list[tuple[float, int, int, MemoryEntryAddress, str, list[tuple[int, int]]]] = []
         for index, ((address, text), tokens) in enumerate(zip(entries, tokenized, strict=True)):
             spans = [(start, end) for start, end in _sentence_spans(text) if text[start:end].strip()]
@@ -521,6 +522,7 @@ class PreparedContextBuilder:
             # strongest sentences describe it far better than the total overlap, which lets a long
             # off-topic abstract accumulate scattered matches.
             document_score = sum(sorted(scores, reverse=True)[:2])
+            window_scores[index] = scores
             prepared.append((document_score, best, index, address, text, spans))
         if not prepared:
             return PreparedContextBuild(context=self.empty(), origins=(), omissions=PreparedContextOmissions())
@@ -550,7 +552,50 @@ class PreparedContextBuilder:
             return _evidence_rendered_bytes((*others, candidate)) <= request.max_bytes
 
         def widest_window(rank: int, others: tuple[PreparedContextFragment, ...]) -> PreparedContextFragment | None:
-            _score, _best, _index, _address, _text, spans = prepared[rank]
+            _score, _best, entry_index, _address, _text, spans = prepared[rank]
+            sentence_scores: list[float] = window_scores.get(entry_index, [])
+            hot_clusters = 0
+            if sentence_scores:
+                peak = max(sentence_scores)
+                previous = -3
+                for position, value in enumerate(sentence_scores):
+                    if value < 0.5 * peak:
+                        continue
+                    if position - previous > 1:
+                        hot_clusters += 1
+                    previous = position
+            use_bestsum = _EVIDENCE_WINDOW_MODE == "bestsum" or (
+                _EVIDENCE_WINDOW_MODE == "hybrid" and hot_clusters >= 2
+            )
+            if _EVIDENCE_WINDOW_MODE == "centered":
+                use_bestsum = False
+            if use_bestsum and len(spans) <= 60:
+                # Pick the contiguous span that holds the most query evidence instead of the widest
+                # one around the peak; a claim whose evidence sits in two nearby passages is then
+                # covered by a single span that reaches both.
+                sentence_scores: list[float] = window_scores.get(entry_index, [])
+                if sentence_scores:
+                    prefix = [0.0]
+                    for value in sentence_scores:
+                        prefix.append(prefix[-1] + value)
+                    best_gain: float | None = None
+                    best_span: PreparedContextFragment | None = None
+                    for start_index in range(len(spans)):
+                        for end_index in range(start_index, len(spans)):
+                            start, end = spans[start_index][0], spans[end_index][1]
+                            candidate = PreparedContextFragment(
+                                address=_address, start=start, end=end, text=_text[start:end]
+                            )
+                            if _evidence_rendered_bytes((*others, candidate)) > request.max_bytes:
+                                break
+                            if not candidate.text.strip():
+                                continue
+                            gain = prefix[end_index + 1] - prefix[start_index]
+                            if best_gain is None or gain > best_gain:
+                                best_gain = gain
+                                best_span = candidate
+                    if best_span is not None:
+                        return best_span
             # Rendered size only grows with the window radius, so binary search the widest window
             # that fits instead of encoding a candidate for every width.
             low, high = 0, len(spans) - 1
@@ -901,6 +946,8 @@ _SENTENCE_PATTERN = re.compile(r"[^.!?\n]+[.!?\n]*")
 _TOKEN_PATTERN = re.compile(r"[a-z]+|\d+")
 # Share the budget with a second abstract when both best sentences match the same query terms.
 _EVIDENCE_SHARED_TERMS = 0.5
+# Window selection: "centered", "bestsum", or "hybrid" (bestsum only for split evidence).
+_EVIDENCE_WINDOW_MODE = "hybrid"
 # A claim is about its content words; grammar words match every abstract equally well.
 _EVIDENCE_COMMON_WORD_FACTOR = 0.2
 _EVIDENCE_COMMON_WORDS = frozenset(
