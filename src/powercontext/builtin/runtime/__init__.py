@@ -177,6 +177,7 @@ from powercontext.builtin.runtime.prepared_context import (
     PreparedContextBuild,
     PreparedContextBuilder,
     PreparedContextFragment,
+    PreparedContextOmissions,
     PreparedContextOrigin,
     PreparedExperienceCandidates,
     PreparedMemoryCandidates,
