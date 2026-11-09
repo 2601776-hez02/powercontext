@@ -40,7 +40,7 @@
 
 ### 1.3 独门玩法：读心
 
-随时输入「读心，看看阿箬现在在想什么」，引擎会把**这个 NPC 脑子里的真实记忆行**摊开给你看（`GET /mind`）——包括她记下你刚才做的事、以及她听来的传闻。这是玩法，也是「seekdb 真的在存记忆」最直观的证据。
+随时输入「读心，看看阿箬现在在想什么」，引擎会把**这个 NPC 脑子里的真实记忆行**摊开给你看（`POST /mind/form`）——包括她记下你刚才做的事、以及她听来的传闻。这是玩法，也是「seekdb 真的在存记忆」最直观的证据。
 
 ### 1.4 跨会话：「它还记得你」
 
@@ -58,7 +58,7 @@
 │ Dify 1.19.0（Chatflow，advanced-chat）                               │
 │   ① 开场 / 回合 的条件判断（IF/ELSE + 会话变量 opened）               │
 │   ② LLM 节点：把玩家一句话解析成结构化动作 JSON                      │
-│   ③ HTTP Request 节点：调用酒馆引擎 /act                              │
+│   ③ HTTP Request 节点：调用酒馆引擎 /act/form（表单提交）             │
 │   ④ LLM 节点：按引擎给出的事实写小说体叙事（引用 NPC 的回忆）         │
 │   ⑤ Answer 节点：输出正文 + 状态行                                    │
 └───────────────┬──────────────────────────────────────────────────────┘
@@ -100,7 +100,7 @@
 玩家：趁她低头算账，把柜台上的玉佩塞进袖子
   │
   ├─① Dify LLM「拆动作」 → {"verb":"steal","target":"aruo","item":"jade_pei","tone":"sneaky"}
-  ├─② Dify HTTP → POST /act
+  ├─② Dify HTTP → POST /act/form
   │     ├ seekdb：查账本/好感/在场（tw_player/tw_affinity/tw_npc）
   │     ├ 规则判定（骰子 = hash(guest,turn,动作)，可复现）→ 失败，被记账
   │     ├ 一个事务：tw_event + tw_player(wanted+1) + tw_affinity(-25)

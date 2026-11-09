@@ -107,7 +107,7 @@ bash scripts/05_verify.sh               # 清洗玩家 → 回放整局 → 落�
 
 * 输入：`读心，看看小满现在在想什么。`
 * 判定：`observed / mind_read`，响应里额外带一个 `mind` 字段
-* 实际（`POST /mind`，直接读 seekdb）：
+* 实际（`POST /mind`，Dify 分支走 `/mind/form`，直接读 seekdb）：
 
   | turn | kind | 记忆 |
   | --- | --- | --- |
