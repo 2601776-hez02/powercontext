@@ -177,7 +177,7 @@ class ZhixuApp:
             candidate = candidate / "index.html"
         if not candidate.is_file():
             if clean == "/":
-                return 404, "项目网站尚未生成，请先运行 `python -m zhixu export-site`。".encode("utf-8"), "text/plain; charset=utf-8"
+                return 404, "项目网站尚未生成，请先运行 `python run.py export-site`。".encode("utf-8"), "text/plain; charset=utf-8"
             return 404, b"not found", "text/plain; charset=utf-8"
         content_type = mimetypes.guess_type(candidate.name)[0] or "application/octet-stream"
         if content_type.startswith("text/") or content_type in {"application/json", "image/svg+xml"}:

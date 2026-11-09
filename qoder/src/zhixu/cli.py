@@ -1,4 +1,4 @@
-"""命令行入口：``python -m zhixu <command>``。"""
+"""命令行入口：``python run.py <command>``。"""
 
 from __future__ import annotations
 
@@ -79,9 +79,9 @@ def cmd_init(args: argparse.Namespace, settings: Settings) -> int:
         print(f"✓ 当前数据：{docs} 篇资料 / {chunks} 个片段 / {tasks['total']} 个任务")
         print()
         print("下一步：")
-        print("  python -m zhixu ask \"HNSW 的 efSearch 怎么影响召回率\"")
-        print("  python -m zhixu serve            # 打开本地工作台")
-        print("  python -m zhixu export-site      # 生成项目网站数据")
+        print("  python run.py ask \"HNSW 的 efSearch 怎么影响召回率\"")
+        print("  python run.py serve           # 打开本地工作台")
+        print("  python run.py export-site     # 生成项目网站数据")
     return 0
 
 
@@ -106,7 +106,7 @@ def cmd_search(args: argparse.Namespace, settings: Settings) -> int:
             )
             return 0
         if not hits:
-            print("没有找到资料。可以换一个说法，或先运行 `python -m zhixu init`。")
+            print("没有找到资料。可以换一个说法，或先运行 `python run.py init`。")
             return 1
         print(
             f"检索「{args.query}」：{len(hits)} 条结果，{meta.latency_ms:.1f} ms "
@@ -309,7 +309,7 @@ def cmd_doctor(args: argparse.Namespace, settings: Settings) -> int:
 def cmd_export(args: argparse.Namespace, settings: Settings) -> int:
     with _use_store(settings) as store:
         if store.count("zx_documents") == 0:
-            print("资料库为空，先运行 `python -m zhixu init`。")
+            print("资料库为空，先运行 `python run.py init`。")
             return 1
         stats = ingest(store, settings.corpus_dir)
         docs = list_documents(store)
@@ -328,7 +328,7 @@ def cmd_export(args: argparse.Namespace, settings: Settings) -> int:
         )
         bench = result["benchmark"]
         print(f"  检索基准：中位 {bench['median_ms']} ms，P95 {bench['p95_ms']} ms（{bench['samples']} 次）")
-        print("  打开方式：`python -m zhixu serve` 后访问 http://127.0.0.1:8765",
+        print("  打开方式：`python run.py serve` 后访问 http://127.0.0.1:8765",
               )
     return 0
 

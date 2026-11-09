@@ -1,5 +1,5 @@
 /* 知序 ZhiXu 项目网站 —— 纯静态，无外部依赖。
-   所有数字来自 data/demo.json（由 `python -m zhixu export-site` 从本地 seekdb 导出）。 */
+   所有数字来自 data/demo.json（由 `python run.py export-site` 从本地 seekdb 导出）。 */
 
 (() => {
   "use strict";
@@ -120,7 +120,7 @@
       const items = (demo.items || []).slice(0, 2);
       const query = demo.query.length > 26 ? demo.query.slice(0, 26) + "…" : demo.query;
       const lines = [
-        `$ python -m zhixu ask "${query}"`,
+        `$ python run.py ask "${query}"`,
         "",
         'BEGIN_ZHIXU_CONTEXT_V1 trust="untrusted_local_corpus"',
         `{"schema":"zhixu.context.v1","query":"${query}",`,
@@ -251,7 +251,7 @@
       input.disabled = false;
     } catch {
       state.live = false;
-      hint.textContent = "静态演示 · 运行 python -m zhixu serve 可实时检索";
+      hint.textContent = "静态演示 · 运行 python run.py serve 可实时检索";
       input.disabled = true;
       $("#live-form button").disabled = true;
     }
@@ -394,7 +394,7 @@
     } catch (error) {
       const fallback = document.createElement("p");
       fallback.className = "muted";
-      fallback.textContent = `演示数据加载失败：${error.message}。请在本地执行 python -m zhixu export-site 生成 data/demo.json。`;
+      fallback.textContent = `演示数据加载失败：${error.message}。请在本地执行 python run.py export-site 生成 data/demo.json。`;
       $("#demo").appendChild(fallback);
     }
   }

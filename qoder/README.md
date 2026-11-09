@@ -40,7 +40,7 @@
 3. **证据包**：按调用方给的 UTF-8 字节预算逐条装入证据，预算包含信封、JSON、引用与正文；输出 `BEGIN_ZHIXU_CONTEXT_V1 ... END_ZHIXU_CONTEXT_V1`，`content_bytes` 精确等于完整输出字节数。
 4. **任务板**：状态（待开始/进行中/阻塞/已完成）、优先级、截止日、负责人、关联证据片段；每次状态变更写 `zx_task_events`，可追溯「什么时候、从什么状态、变成什么、为什么」。
 5. **周报**：按周期聚合任务事件、新增资料、检索日志，生成 Markdown（概览 / 本周完成 / 进行中 / 风险 / 资料沉淀 / 下周建议），存档到 `zx_digests` 表并落盘到 `.zhixu/reports/`。
-6. **本地工作台**：`python -m zhixu serve` 启动标准库 HTTP 服务，提供 REST API + 项目网站；站点静态发布时读取 `site/data/demo.json`，本地运行时自动切换为实时检索。
+6. **本地工作台**：`python run.py serve` 启动标准库 HTTP 服务，提供 REST API + 项目网站；站点静态发布时读取 `site/data/demo.json`，本地运行时自动切换为实时检索。
 7. **自检与导出**：`doctor` 检查引擎版本、索引、查询计划与检索通道；`export-site` 把真实查询结果导出为站点数据，保证「网站展示内容 = 代码实际输出」。
 
 ## 3. 快速开始
@@ -52,48 +52,54 @@ source .venv/bin/activate            # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 # 2) 初始化：建库建表、导入 16 篇样例资料、播种任务与术语表
-python -m zhixu init
+#    零安装入口：用仓库里的 src 直接运行，不需要 pip install -e .
+python run.py init
 
 # 3) 检索与证据包
-python -m zhixu search "HNSW 的 efSearch 怎么影响召回率和延迟"
-python -m zhixu ask "证据召回率怎么评测，字节预算怎么算"
+python run.py search "HNSW 的 efSearch 怎么影响召回率和延迟"
+python run.py ask "证据召回率怎么评测，字节预算怎么算"
 
 # 4) 任务与周报
-python -m zhixu tasks list
-python -m zhixu digest
+python run.py tasks list
+python run.py digest
 
 # 5) 本地工作台（浏览器打开 http://127.0.0.1:8765）
-python -m zhixu serve
+python run.py serve
 
 # 6) 自检与站点数据
-python -m zhixu doctor
-python -m zhixu export-site
+python run.py doctor
+python run.py export-site
 
 # 7) 测试
 python -m pytest -q
 ```
 
+> 也可以安装成命令行：`pip install -e .` 之后使用 `zhixu init`、`zhixu serve`；
+> 或设置 `PYTHONPATH=src` 后用 `python -m zhixu ...`。三种方式等价。
+
 **Windows 提示**：先 `chcp 65001` 或设置 `PYTHONIOENCODING=utf-8` 避免控制台中文乱码；
 若目标盘剩余空间很小（实测 C 盘 < 4 GB 时 `seekdb_open` 会直接失败），把数据目录指到大盘：
 
 ```powershell
-$env:ZHIXU_DATA_DIR = "E:\zhixu-data"; python -m zhixu init
+$env:ZHIXU_DATA_DIR = "E:\zhixu-data"; python run.py init
 ```
 
 ## 4. 命令一览
 
+以下命令均可用 `python run.py <命令>` 运行（零安装）；执行 `pip install -e .` 后也可用 `zhixu <命令>` 或 `python -m zhixu <命令>`。
+
 | 命令 | 作用 |
 | --- | --- |
-| `python -m zhixu init [--reset] [--rebuild]` | 初始化数据库、导入资料、播种术语表与任务 |
-| `python -m zhixu ingest [--rebuild]` | 只同步语料（按内容哈希幂等） |
-| `python -m zhixu search "问题" [-k 6] [--json]` | 混合检索，输出出处与命中通道 |
-| `python -m zhixu ask "问题" [--budget 1800] [--json] [--pack]` | 生成带字节预算的证据包 |
-| `python -m zhixu tasks list / add / status / show` | 任务板与事件流 |
-| `python -m zhixu digest [--days 7]` | 生成周报并归档 |
-| `python -m zhixu serve [--port 8765]` | 本地工作台（REST API + 站点） |
-| `python -m zhixu doctor [--json]` | 引擎、索引、查询计划、自检 |
-| `python -m zhixu export-site` | 用真实查询结果生成 `site/data/demo.json` |
-| `python -m zhixu demo` | 一次性演示检索与周报 |
+| `python run.py init [--reset] [--rebuild]` | 初始化数据库、导入资料、播种术语表与任务 |
+| `python run.py ingest [--rebuild]` | 只同步语料（按内容哈希幂等） |
+| `python run.py search "问题" [-k 6] [--json]` | 混合检索，输出出处与命中通道 |
+| `python run.py ask "问题" [--budget 1800] [--json] [--pack]` | 生成带字节预算的证据包 |
+| `python run.py tasks list / add / status / show` | 任务板与事件流 |
+| `python run.py digest [--days 7]` | 生成周报并归档 |
+| `python run.py serve [--port 8765]` | 本地工作台（REST API + 站点） |
+| `python run.py doctor [--json]` | 引擎、索引、查询计划、自检 |
+| `python run.py export-site` | 用真实查询结果生成 `site/data/demo.json` |
+| `python run.py demo` | 一次性演示检索与周报 |
 
 ## 5. 架构
 
@@ -197,6 +203,7 @@ qoder/
 ├── tests/                # pytest：24 项
 ├── AGENTS.md             # Qoder 项目约定（Qoder IDE 兼容）
 ├── .qoder/rules/         # Qoder 规则
+├── run.py                # 零安装入口：python run.py <command>
 ├── requirements.txt
 └── pyproject.toml
 ```
@@ -221,7 +228,7 @@ qoder/
   qoder sites update_access_policy --input '{"siteRef":"...","mode":"public","confirmPublic":true}'
   ```
 
-- **内容对应**：站点上的统计、检索结果、任务板、周报与查询计划全部来自 `site/data/demo.json`，该文件由 `python -m zhixu export-site` 从真实数据库导出；提交的 commit 与导出时间都展示在站点页脚。
+- **内容对应**：站点上的统计、检索结果、任务板、周报与查询计划全部来自 `site/data/demo.json`，该文件由 `python run.py export-site` 从真实数据库导出；站点页脚展示数据生成时间与分支。
 
 ## 10. 提交信息
 

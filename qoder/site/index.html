@@ -47,7 +47,7 @@
   <div class="hero-panel">
     <div class="terminal" aria-label="命令行示例">
       <div class="terminal-bar"><i></i><i></i><i></i><em>zhixu ask</em></div>
-      <pre id="hero-terminal">$ python -m zhixu ask "证据召回率怎么评测"
+      <pre id="hero-terminal">$ python run.py ask "证据召回率怎么评测"
 
 BEGIN_ZHIXU_CONTEXT_V1 trust="untrusted_local_corpus"
 {"schema":"zhixu.context.v1","query":"证据召回率怎么评测…",
@@ -100,7 +100,7 @@ END_ZHIXU_CONTEXT_V1
     <p class="eyebrow">在线演示 · 真实数据</p>
     <h2>下面的内容，全部来自本地 seekdb 的实际查询</h2>
     <p class="section-desc">
-      站点数据由 <code>python -m zhixu export-site</code> 导出，没有手写样例。
+      站点数据由 <code>python run.py export-site</code> 导出，没有手写样例。
       生成时间 <span id="generated-at" class="chip">—</span>，数据版本 <span id="demo-version" class="chip">—</span>。
     </p>
   </div>
@@ -228,9 +228,9 @@ END_ZHIXU_CONTEXT_V1
       <h3 class="mt">基准方式</h3>
       <p class="muted small" id="bench-note">—</p>
       <h3 class="mt">可复现命令</h3>
-      <pre class="code">python -m pytest -q                 <span class="cm"># 24 项测试</span>
-python -m zhixu doctor              <span class="cm"># 索引 / 计划 / 自检</span>
-python -m zhixu export-site         <span class="cm"># 重生成本站数据</span></pre>
+      <pre class="code">python -m pytest -q              <span class="cm"># 24 项测试</span>
+python run.py doctor             <span class="cm"># 索引 / 计划 / 自检</span>
+python run.py export-site        <span class="cm"># 重生成本站数据</span></pre>
     </div>
   </div>
 </section>
@@ -244,14 +244,15 @@ python -m zhixu export-site         <span class="cm"># 重生成本站数据</sp
   <div class="start-grid">
     <div class="panel">
       <div class="cmd"><span>1</span><div><b>安装依赖</b><pre class="code">pip install -r requirements.txt</pre></div></div>
-      <div class="cmd"><span>2</span><div><b>初始化并入库</b><pre class="code">python -m zhixu init</pre></div></div>
-      <div class="cmd"><span>3</span><div><b>检索 / 证据包</b><pre class="code">python -m zhixu ask "HNSW 的 efSearch 怎么影响召回率"</pre></div></div>
-      <div class="cmd"><span>4</span><div><b>本地工作台（可选）</b><pre class="code">python -m zhixu serve   # http://127.0.0.1:8765</pre></div></div>
+      <div class="cmd"><span>2</span><div><b>初始化并入库</b><pre class="code">python run.py init</pre></div></div>
+      <div class="cmd"><span>3</span><div><b>检索 / 证据包</b><pre class="code">python run.py ask "HNSW 的 efSearch 怎么影响召回率"</pre></div></div>
+      <div class="cmd"><span>4</span><div><b>本地工作台（可选）</b><pre class="code">python run.py serve   # http://127.0.0.1:8765</pre></div></div>
     </div>
     <div class="panel notes">
       <h3>运行说明</h3>
       <ul>
         <li><b>数据目录</b>：默认 <code>.zhixu/</code>，可用 <code>ZHIXU_DATA_DIR</code> 指到大容量磁盘。</li>
+        <li><b>零安装入口</b>：<code>python run.py &lt;命令&gt;</code> 直接使用仓库里的 <code>src/</code>；也可 <code>pip install -e .</code> 后用 <code>zhixu</code> 命令。</li>
         <li><b>单进程窗口</b>：嵌入式 seekdb 独占数据目录，<code>serve</code> 与写命令不要同时跑。</li>
         <li><b>幂等</b>：建表用 <code>IF NOT EXISTS</code>，入库按内容哈希；重复执行不会重复写入。</li>
         <li><b>离线</b>：向量化是本地字符 n-gram 哈希，不调用任何模型或外部 API。</li>

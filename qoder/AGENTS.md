@@ -20,12 +20,12 @@
 
 ```bash
 pip install -r requirements.txt
-python -m zhixu init
-python -m zhixu ask "证据召回率怎么评测"
-python -m zhixu serve
-python -m zhixu doctor
+python run.py init
+python run.py ask "证据召回率怎么评测"
+python run.py serve
+python run.py doctor
 python -m pytest -q
-python -m zhixu export-site
+python run.py export-site
 ```
 
 ## 代码约定
