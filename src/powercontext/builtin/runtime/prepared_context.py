@@ -547,7 +547,9 @@ class PreparedContextBuilder:
         def accepts(candidate: PreparedContextFragment, others: tuple[PreparedContextFragment, ...]) -> bool:
             if not candidate.text.strip():
                 return False
-            if any(candidate.text == other.text for other in others):
+            # Only the same entry must never be cited twice. The same text under a different
+            # scope is a different identity and has to stay representable on its own.
+            if any(candidate.address == other.address for other in others):
                 return False
             return _evidence_rendered_bytes((*others, candidate)) <= request.max_bytes
 
@@ -632,7 +634,7 @@ class PreparedContextBuilder:
         # second answer from the context entirely. A distractor that merely matches as many generic
         # terms as the leader is not such a pair, so it does not split the budget.
         shared = False
-        if len(prepared) >= 2 and prepared[0][4] != prepared[1][4]:
+        if len(prepared) >= 2:
             leading_terms = best_terms(0)
             trailing_terms = best_terms(1)
             union = leading_terms | trailing_terms
