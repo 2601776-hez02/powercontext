@@ -947,7 +947,7 @@ def _render(entries: Sequence[_PreparedContextEntry]) -> str:
 _SENTENCE_PATTERN = re.compile(r"[^.!?\n]+[.!?\n]*")
 _TOKEN_PATTERN = re.compile(r"[a-z]+|\d+")
 # Share the budget with a second abstract when both best sentences match the same query terms.
-_EVIDENCE_SHARED_TERMS = 0.5
+_EVIDENCE_SHARED_TERMS = 1.0
 # Window selection: "centered", "bestsum", or "hybrid" (bestsum only for split evidence).
 _EVIDENCE_WINDOW_MODE = "hybrid"
 # A claim is about its content words; grammar words match every abstract equally well.
