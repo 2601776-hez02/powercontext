@@ -1,0 +1,6 @@
+{
+  "docs": [
+    { "docId": "edgekb-runbook", "title": "EdgeKB 运维手册", "file": "edgekb-runbook.md" },
+    { "docId": "edgekb-changelog", "title": "EdgeKB 版本记录", "file": "edgekb-changelog.md" }
+  ]
+}

@@ -1,0 +1,2611 @@
+{
+  "label": "wasm-int8-batch1",
+  "device": "wasm",
+  "dtype": "q8",
+  "batchSize": 1,
+  "url": "http://127.0.0.1:5173/?autoload=0",
+  "errors": [],
+  "model": {
+    "type": "init-ok",
+    "device": "wasm",
+    "dtype": "q8",
+    "modelId": "Xenova/bge-small-zh-v1.5",
+    "loadMs": 2496.45,
+    "warmupMs": 199.19,
+    "adapter": {
+      "vendor": "nvidia",
+      "architecture": "ampere",
+      "device": "",
+      "description": "",
+      "features": [
+        "depth32float-stencil8",
+        "rg11b10ufloat-renderable",
+        "texture-formats-tier1",
+        "bgra8unorm-storage",
+        "chromium-experimental-multi-draw-indirect",
+        "texture-compression-bc",
+        "dual-source-blending",
+        "chromium-experimental-sampling-resource-table",
+        "core-features-and-limits",
+        "chromium-experimental-timestamp-query-inside-passes",
+        "float32-filterable",
+        "indirect-first-instance"
+      ],
+      "maxBufferSize": 2147483648
+    },
+    "fallbackFrom": null,
+    "ort": {
+      "numThreads": 4,
+      "simd": null,
+      "proxy": false,
+      "hardwareConcurrency": 16,
+      "crossOriginIsolated": true
+    },
+    "totalMs": 2800.38
+  },
+  "modelBytes": {
+    "total": 24560715,
+    "base": 549873,
+    "onnx": 24010842,
+    "fp32": 95401750,
+    "ratio": 3.8843229930399015,
+    "detail": {
+      "config.json": 716,
+      "tokenizer.json": 439125,
+      "tokenizer_config.json": 367,
+      "special_tokens_map.json": 125,
+      "onnx/model_quantized.onnx": 24010842,
+      "vocab.txt": 109540,
+      "onnx/model.onnx": 94851877
+    }
+  },
+  "import": {
+    "chunks": 26,
+    "inserted": 26,
+    "batches": 1,
+    "writeMs": 1198.923,
+    "refreshMs": 403.438,
+    "docs": 14,
+    "embedMs": 4402
+  },
+  "bench": {
+    "generatedAt": "2026-11-09T15:55:14.458Z",
+    "model": {
+      "type": "init-ok",
+      "device": "wasm",
+      "dtype": "q8",
+      "modelId": "Xenova/bge-small-zh-v1.5",
+      "loadMs": 2496.45,
+      "warmupMs": 199.19,
+      "adapter": {
+        "vendor": "nvidia",
+        "architecture": "ampere",
+        "device": "",
+        "description": "",
+        "features": [
+          "depth32float-stencil8",
+          "rg11b10ufloat-renderable",
+          "texture-formats-tier1",
+          "bgra8unorm-storage",
+          "chromium-experimental-multi-draw-indirect",
+          "texture-compression-bc",
+          "dual-source-blending",
+          "chromium-experimental-sampling-resource-table",
+          "core-features-and-limits",
+          "chromium-experimental-timestamp-query-inside-passes",
+          "float32-filterable",
+          "indirect-first-instance"
+        ],
+        "maxBufferSize": 2147483648
+      },
+      "fallbackFrom": null,
+      "ort": {
+        "numThreads": 4,
+        "simd": null,
+        "proxy": false,
+        "hardwareConcurrency": 16,
+        "crossOriginIsolated": true
+      },
+      "totalMs": 2800.38
+    },
+    "rounds": 5,
+    "results": [
+      {
+        "mode": "hybrid",
+        "queries": 32,
+        "recallAt5": 0.9375,
+        "hitAt1": 0.78125,
+        "mrr": 0.8408854166666666,
+        "queryEmbedMs": 18.5,
+        "dbMs": 22.5505,
+        "e2eMs": 47.5,
+        "e2eP95": 59,
+        "perQuery": [
+          {
+            "q": "seekdb 支持哪些类型的检索索引",
+            "kind": "easy",
+            "gold": [
+              "seekdb-overview"
+            ],
+            "topDocIds": [
+              "seekdb-overview",
+              "seekdb-js-api",
+              "why-db-retrieval",
+              "eval-recall",
+              "hybrid-rrf",
+              "vector-index-hnsw",
+              "fulltext-ngram",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 22,
+            "dbMs": 31.007,
+            "e2eMs": 61,
+            "e2eP95": 267
+          },
+          {
+            "q": "HNSW 的 ef_construction 参数是干什么的",
+            "kind": "easy",
+            "gold": [
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "vector-index-hnsw",
+              "perf-batching",
+              "seekdb-js-api",
+              "browser-inference",
+              "hybrid-rrf",
+              "seekdb-overview",
+              "why-db-retrieval",
+              "fulltext-ngram"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 24,
+            "dbMs": 28.037,
+            "e2eMs": 58,
+            "e2eP95": 67
+          },
+          {
+            "q": "中文没有空格怎么分词做全文检索",
+            "kind": "easy",
+            "gold": [
+              "fulltext-ngram"
+            ],
+            "topDocIds": [
+              "fulltext-ngram",
+              "why-db-retrieval",
+              "hybrid-rrf",
+              "eval-recall",
+              "rag-pipeline",
+              "perf-batching",
+              "privacy-offline",
+              "model-quantization"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 23,
+            "dbMs": 27.767,
+            "e2eMs": 58,
+            "e2eP95": 90
+          },
+          {
+            "q": "RRF 公式里的平滑常数 k 一般取多少",
+            "kind": "easy",
+            "gold": [
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "hybrid-rrf",
+              "eval-recall",
+              "why-db-retrieval",
+              "wasm-threads",
+              "perf-batching",
+              "seekdb-js-api",
+              "model-quantization",
+              "vector-index-hnsw"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 23,
+            "dbMs": 27.085,
+            "e2eMs": 58,
+            "e2eP95": 95
+          },
+          {
+            "q": "混合检索的候选窗口 rank_window_size 怎么选",
+            "kind": "easy",
+            "gold": [
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "hybrid-rrf",
+              "perf-batching",
+              "why-db-retrieval",
+              "seekdb-js-api",
+              "vector-index-hnsw",
+              "fulltext-ngram",
+              "rag-pipeline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 23,
+            "dbMs": 28.94,
+            "e2eMs": 59,
+            "e2eP95": 59
+          },
+          {
+            "q": "浏览器的 embedding 推理由哪个运行时执行",
+            "kind": "easy",
+            "gold": [
+              "browser-inference"
+            ],
+            "topDocIds": [
+              "browser-inference",
+              "seekdb-js-api",
+              "webgpu-vs-wasm",
+              "seekdb-overview",
+              "privacy-offline",
+              "wasm-threads",
+              "why-db-retrieval"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 23,
+            "dbMs": 28.657,
+            "e2eMs": 58,
+            "e2eP95": 62
+          },
+          {
+            "q": "WebGPU 拿不到适配器时怎么降级",
+            "kind": "easy",
+            "gold": [
+              "webgpu-vs-wasm"
+            ],
+            "topDocIds": [
+              "webgpu-vs-wasm",
+              "eval-recall",
+              "browser-inference",
+              "vector-index-hnsw",
+              "wasm-threads",
+              "model-quantization",
+              "privacy-offline",
+              "why-db-retrieval"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 20,
+            "dbMs": 25.803,
+            "e2eMs": 52,
+            "e2eP95": 61
+          },
+          {
+            "q": "INT8 量化后模型体积压缩到多少",
+            "kind": "easy",
+            "gold": [
+              "model-quantization"
+            ],
+            "topDocIds": [
+              "model-quantization",
+              "perf-batching",
+              "eval-recall",
+              "privacy-offline",
+              "browser-inference",
+              "webgpu-vs-wasm",
+              "rag-pipeline",
+              "vector-index-hnsw",
+              "hybrid-rrf"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 22,
+            "dbMs": 26.087,
+            "e2eMs": 55,
+            "e2eP95": 65
+          },
+          {
+            "q": "切块时块与块之间保留多少字符的重叠",
+            "kind": "easy",
+            "gold": [
+              "rag-pipeline"
+            ],
+            "topDocIds": [
+              "rag-pipeline",
+              "fulltext-ngram",
+              "hybrid-rrf",
+              "vector-index-hnsw",
+              "seekdb-overview",
+              "model-quantization",
+              "why-db-retrieval",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 25,
+            "dbMs": 26.117,
+            "e2eMs": 59,
+            "e2eP95": 63
+          },
+          {
+            "q": "seekdb-js 怎么让新写入的数据立刻能检索到",
+            "kind": "easy",
+            "gold": [
+              "seekdb-js-api"
+            ],
+            "topDocIds": [
+              "seekdb-js-api",
+              "seekdb-overview",
+              "perf-batching",
+              "why-db-retrieval",
+              "webgpu-vs-wasm",
+              "hybrid-rrf",
+              "browser-inference",
+              "fulltext-ngram"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 25,
+            "dbMs": 24.646,
+            "e2eMs": 56,
+            "e2eP95": 73
+          },
+          {
+            "q": "用户文档会不会被上传到服务器",
+            "kind": "easy",
+            "gold": [
+              "privacy-offline"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "browser-inference",
+              "webgpu-vs-wasm",
+              "seekdb-overview",
+              "seekdb-js-api",
+              "wasm-threads",
+              "rag-pipeline",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 18,
+            "dbMs": 24.423,
+            "e2eMs": 48,
+            "e2eP95": 50
+          },
+          {
+            "q": "批大小从 1 提到 8 对吞吐有什么影响",
+            "kind": "easy",
+            "gold": [
+              "perf-batching"
+            ],
+            "topDocIds": [
+              "perf-batching",
+              "wasm-threads",
+              "eval-recall",
+              "model-quantization",
+              "privacy-offline",
+              "webgpu-vs-wasm",
+              "vector-index-hnsw",
+              "rag-pipeline",
+              "fulltext-ngram"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 20,
+            "dbMs": 23.473,
+            "e2eMs": 51,
+            "e2eP95": 54
+          },
+          {
+            "q": "Recall@5 这个指标是怎么定义的",
+            "kind": "easy",
+            "gold": [
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "eval-recall",
+              "model-quantization",
+              "browser-inference",
+              "vector-index-hnsw",
+              "rag-pipeline",
+              "seekdb-js-api",
+              "fulltext-ngram",
+              "hybrid-rrf",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 17,
+            "dbMs": 23.16,
+            "e2eMs": 47,
+            "e2eP95": 51
+          },
+          {
+            "q": "为什么不把向量放在 IndexedDB 里自己算相似度",
+            "kind": "easy",
+            "gold": [
+              "why-db-retrieval"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "hybrid-rrf",
+              "browser-inference",
+              "model-quantization",
+              "seekdb-overview",
+              "seekdb-js-api",
+              "webgpu-vs-wasm",
+              "eval-recall",
+              "privacy-offline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 20,
+            "dbMs": 24.417,
+            "e2eMs": 51,
+            "e2eP95": 59
+          },
+          {
+            "q": "SharedArrayBuffer 需要哪些响应头才能启用",
+            "kind": "easy",
+            "gold": [
+              "wasm-threads"
+            ],
+            "topDocIds": [
+              "wasm-threads",
+              "perf-batching",
+              "hybrid-rrf",
+              "seekdb-overview",
+              "webgpu-vs-wasm",
+              "seekdb-js-api"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 18,
+            "dbMs": 26.315,
+            "e2eMs": 49,
+            "e2eP95": 70
+          },
+          {
+            "q": "余弦距离检索的 SQL 怎么写",
+            "kind": "easy",
+            "gold": [
+              "seekdb-overview",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "vector-index-hnsw",
+              "why-db-retrieval",
+              "hybrid-rrf",
+              "webgpu-vs-wasm",
+              "seekdb-overview",
+              "fulltext-ngram",
+              "rag-pipeline",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 13,
+            "dbMs": 18.622,
+            "e2eMs": 38,
+            "e2eP95": 40
+          },
+          {
+            "q": "ngram_token_size 设为 2 会怎么切中文",
+            "kind": "easy",
+            "gold": [
+              "fulltext-ngram"
+            ],
+            "topDocIds": [
+              "fulltext-ngram",
+              "seekdb-js-api",
+              "browser-inference",
+              "hybrid-rrf",
+              "rag-pipeline",
+              "model-quantization",
+              "seekdb-overview"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 15,
+            "dbMs": 20.565,
+            "e2eMs": 41,
+            "e2eP95": 46
+          },
+          {
+            "q": "索引刷新一次大概要多久",
+            "kind": "easy",
+            "gold": [
+              "perf-batching",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "perf-batching",
+              "fulltext-ngram",
+              "vector-index-hnsw",
+              "eval-recall",
+              "browser-inference",
+              "why-db-retrieval",
+              "rag-pipeline",
+              "seekdb-overview",
+              "privacy-offline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 14,
+            "dbMs": 19.387,
+            "e2eMs": 39,
+            "e2eP95": 42
+          },
+          {
+            "q": "端侧推理的隐私优势是什么",
+            "kind": "easy",
+            "gold": [
+              "privacy-offline"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "perf-batching",
+              "model-quantization",
+              "webgpu-vs-wasm",
+              "fulltext-ngram",
+              "browser-inference",
+              "seekdb-js-api",
+              "why-db-retrieval"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 15,
+            "dbMs": 18.512,
+            "e2eMs": 40,
+            "e2eP95": 43
+          },
+          {
+            "q": "量化前后的检索质量怎么对比",
+            "kind": "easy",
+            "gold": [
+              "model-quantization",
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "model-quantization",
+              "eval-recall",
+              "webgpu-vs-wasm",
+              "rag-pipeline",
+              "why-db-retrieval",
+              "hybrid-rrf",
+              "privacy-offline",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 14,
+            "dbMs": 20.605,
+            "e2eMs": 40,
+            "e2eP95": 44
+          },
+          {
+            "q": "我的笔记不想离开自己的电脑，能离线做语义搜索吗",
+            "kind": "hard",
+            "gold": [
+              "privacy-offline"
+            ],
+            "topDocIds": [
+              "webgpu-vs-wasm",
+              "browser-inference",
+              "hybrid-rrf",
+              "perf-batching",
+              "privacy-offline",
+              "why-db-retrieval",
+              "seekdb-overview",
+              "fulltext-ngram",
+              "rag-pipeline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.2,
+            "queryEmbedMs": 21,
+            "dbMs": 20.525,
+            "e2eMs": 45,
+            "e2eP95": 56
+          },
+          {
+            "q": "手机或笔记本上没有独立显卡时还能跑得动吗",
+            "kind": "hard",
+            "gold": [
+              "webgpu-vs-wasm"
+            ],
+            "topDocIds": [
+              "webgpu-vs-wasm",
+              "wasm-threads",
+              "eval-recall",
+              "privacy-offline",
+              "why-db-retrieval",
+              "seekdb-overview",
+              "fulltext-ngram",
+              "hybrid-rrf",
+              "model-quantization"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 19,
+            "dbMs": 19.755,
+            "e2eMs": 44,
+            "e2eP95": 50
+          },
+          {
+            "q": "一段话太长塞进模型里效果不好，应该怎么拆",
+            "kind": "hard",
+            "gold": [
+              "rag-pipeline"
+            ],
+            "topDocIds": [
+              "rag-pipeline",
+              "model-quantization",
+              "browser-inference",
+              "perf-batching",
+              "privacy-offline",
+              "eval-recall",
+              "why-db-retrieval",
+              "webgpu-vs-wasm",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 19,
+            "dbMs": 19.876,
+            "e2eMs": 44,
+            "e2eP95": 45
+          },
+          {
+            "q": "为什么我刚加进去的文件搜不到",
+            "kind": "hard",
+            "gold": [
+              "seekdb-js-api",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "browser-inference",
+              "why-db-retrieval",
+              "rag-pipeline",
+              "perf-batching",
+              "hybrid-rrf",
+              "vector-index-hnsw",
+              "webgpu-vs-wasm",
+              "model-quantization"
+            ],
+            "hitCount": 10,
+            "recallAt5": 0,
+            "hitAt1": 0,
+            "mrr": 0.125,
+            "queryEmbedMs": 14,
+            "dbMs": 21.292,
+            "e2eMs": 42,
+            "e2eP95": 42
+          },
+          {
+            "q": "两种不同的搜索结果该怎么合并成一个排序",
+            "kind": "hard",
+            "gold": [
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "hybrid-rrf",
+              "perf-batching",
+              "seekdb-overview",
+              "fulltext-ngram",
+              "rag-pipeline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 20,
+            "dbMs": 21.856,
+            "e2eMs": 49,
+            "e2eP95": 52
+          },
+          {
+            "q": "模型文件太大加载太慢有什么办法",
+            "kind": "hard",
+            "gold": [
+              "model-quantization",
+              "perf-batching"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "rag-pipeline",
+              "browser-inference",
+              "perf-batching",
+              "eval-recall",
+              "model-quantization",
+              "webgpu-vs-wasm",
+              "why-db-retrieval"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.25,
+            "queryEmbedMs": 15,
+            "dbMs": 17.701,
+            "e2eMs": 38,
+            "e2eP95": 39
+          },
+          {
+            "q": "在浏览器里做矩阵乘法的底层是什么",
+            "kind": "hard",
+            "gold": [
+              "browser-inference",
+              "webgpu-vs-wasm"
+            ],
+            "topDocIds": [
+              "browser-inference",
+              "privacy-offline",
+              "webgpu-vs-wasm",
+              "vector-index-hnsw",
+              "why-db-retrieval",
+              "wasm-threads",
+              "seekdb-js-api",
+              "eval-recall",
+              "hybrid-rrf",
+              "model-quantization"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 16,
+            "dbMs": 21.941,
+            "e2eMs": 43,
+            "e2eP95": 48
+          },
+          {
+            "q": "怎么证明检索是数据库做的而不是前端拼出来的",
+            "kind": "hard",
+            "gold": [
+              "why-db-retrieval",
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "privacy-offline",
+              "hybrid-rrf",
+              "perf-batching",
+              "eval-recall",
+              "webgpu-vs-wasm",
+              "seekdb-overview",
+              "rag-pipeline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 18,
+            "dbMs": 23.446,
+            "e2eMs": 48,
+            "e2eP95": 50
+          },
+          {
+            "q": "测量延迟的时候为什么不能只报平均值",
+            "kind": "hard",
+            "gold": [
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "perf-batching",
+              "eval-recall",
+              "rag-pipeline",
+              "browser-inference",
+              "vector-index-hnsw",
+              "fulltext-ngram",
+              "privacy-offline",
+              "webgpu-vs-wasm",
+              "model-quantization"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 15,
+            "dbMs": 19.031,
+            "e2eMs": 39,
+            "e2eP95": 49
+          },
+          {
+            "q": "向量数量变多以后暴力遍历会有什么问题",
+            "kind": "hard",
+            "gold": [
+              "why-db-retrieval",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "rag-pipeline",
+              "model-quantization",
+              "privacy-offline",
+              "hybrid-rrf",
+              "fulltext-ngram",
+              "perf-batching",
+              "seekdb-overview",
+              "eval-recall",
+              "seekdb-js-api"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 15,
+            "dbMs": 18.903,
+            "e2eMs": 38,
+            "e2eP95": 42
+          },
+          {
+            "q": "同样的语料在不同机器上测出来的数字能直接比吗",
+            "kind": "hard",
+            "gold": [
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "webgpu-vs-wasm",
+              "fulltext-ngram",
+              "seekdb-overview",
+              "vector-index-hnsw",
+              "privacy-offline",
+              "rag-pipeline",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 0,
+            "hitAt1": 0,
+            "mrr": 0,
+            "queryEmbedMs": 16,
+            "dbMs": 17.869,
+            "e2eMs": 39,
+            "e2eP95": 40
+          },
+          {
+            "q": "网页里的脚本怎么读到模型权重文件",
+            "kind": "hard",
+            "gold": [
+              "browser-inference"
+            ],
+            "topDocIds": [
+              "model-quantization",
+              "privacy-offline",
+              "browser-inference",
+              "rag-pipeline",
+              "perf-batching",
+              "seekdb-js-api",
+              "eval-recall",
+              "wasm-threads",
+              "hybrid-rrf"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.3333333333333333,
+            "queryEmbedMs": 14,
+            "dbMs": 16.07,
+            "e2eMs": 35,
+            "e2eP95": 38
+          }
+        ]
+      },
+      {
+        "mode": "vector",
+        "queries": 32,
+        "recallAt5": 0.90625,
+        "hitAt1": 0.625,
+        "mrr": 0.7557291666666667,
+        "queryEmbedMs": 12.5,
+        "dbMs": 3.06,
+        "e2eMs": 19.5,
+        "e2eP95": 22,
+        "perQuery": [
+          {
+            "q": "seekdb 支持哪些类型的检索索引",
+            "kind": "easy",
+            "gold": [
+              "seekdb-overview"
+            ],
+            "topDocIds": [
+              "seekdb-overview",
+              "why-db-retrieval",
+              "seekdb-js-api",
+              "vector-index-hnsw",
+              "perf-batching",
+              "hybrid-rrf",
+              "eval-recall",
+              "fulltext-ngram"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 14,
+            "dbMs": 3.686,
+            "e2eMs": 22,
+            "e2eP95": 33
+          },
+          {
+            "q": "HNSW 的 ef_construction 参数是干什么的",
+            "kind": "easy",
+            "gold": [
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "seekdb-overview",
+              "browser-inference",
+              "perf-batching",
+              "vector-index-hnsw",
+              "hybrid-rrf",
+              "why-db-retrieval",
+              "fulltext-ngram",
+              "seekdb-js-api"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.25,
+            "queryEmbedMs": 13,
+            "dbMs": 3.511,
+            "e2eMs": 21,
+            "e2eP95": 23
+          },
+          {
+            "q": "中文没有空格怎么分词做全文检索",
+            "kind": "easy",
+            "gold": [
+              "fulltext-ngram"
+            ],
+            "topDocIds": [
+              "fulltext-ngram",
+              "rag-pipeline",
+              "why-db-retrieval",
+              "eval-recall",
+              "vector-index-hnsw",
+              "hybrid-rrf",
+              "perf-batching",
+              "seekdb-js-api"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 14,
+            "dbMs": 3.66,
+            "e2eMs": 22,
+            "e2eP95": 23
+          },
+          {
+            "q": "RRF 公式里的平滑常数 k 一般取多少",
+            "kind": "easy",
+            "gold": [
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "hybrid-rrf",
+              "eval-recall",
+              "model-quantization",
+              "vector-index-hnsw",
+              "perf-batching",
+              "why-db-retrieval",
+              "wasm-threads",
+              "webgpu-vs-wasm",
+              "rag-pipeline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 14,
+            "dbMs": 4.378,
+            "e2eMs": 23,
+            "e2eP95": 27
+          },
+          {
+            "q": "混合检索的候选窗口 rank_window_size 怎么选",
+            "kind": "easy",
+            "gold": [
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "hybrid-rrf",
+              "seekdb-js-api",
+              "why-db-retrieval",
+              "perf-batching",
+              "vector-index-hnsw",
+              "eval-recall",
+              "fulltext-ngram"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 14,
+            "dbMs": 3.54,
+            "e2eMs": 22,
+            "e2eP95": 22
+          },
+          {
+            "q": "浏览器的 embedding 推理由哪个运行时执行",
+            "kind": "easy",
+            "gold": [
+              "browser-inference"
+            ],
+            "topDocIds": [
+              "browser-inference",
+              "webgpu-vs-wasm",
+              "seekdb-overview",
+              "seekdb-js-api",
+              "privacy-offline",
+              "why-db-retrieval",
+              "perf-batching",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 12,
+            "dbMs": 3.181,
+            "e2eMs": 19,
+            "e2eP95": 21
+          },
+          {
+            "q": "WebGPU 拿不到适配器时怎么降级",
+            "kind": "easy",
+            "gold": [
+              "webgpu-vs-wasm"
+            ],
+            "topDocIds": [
+              "eval-recall",
+              "model-quantization",
+              "webgpu-vs-wasm",
+              "browser-inference",
+              "seekdb-js-api",
+              "perf-batching",
+              "hybrid-rrf",
+              "fulltext-ngram",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.3333333333333333,
+            "queryEmbedMs": 11,
+            "dbMs": 3.203,
+            "e2eMs": 18,
+            "e2eP95": 19
+          },
+          {
+            "q": "INT8 量化后模型体积压缩到多少",
+            "kind": "easy",
+            "gold": [
+              "model-quantization"
+            ],
+            "topDocIds": [
+              "model-quantization",
+              "eval-recall",
+              "browser-inference",
+              "rag-pipeline",
+              "privacy-offline",
+              "perf-batching",
+              "seekdb-overview",
+              "webgpu-vs-wasm",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 13,
+            "dbMs": 3.049,
+            "e2eMs": 21,
+            "e2eP95": 22
+          },
+          {
+            "q": "切块时块与块之间保留多少字符的重叠",
+            "kind": "easy",
+            "gold": [
+              "rag-pipeline"
+            ],
+            "topDocIds": [
+              "rag-pipeline",
+              "fulltext-ngram",
+              "model-quantization",
+              "why-db-retrieval",
+              "perf-batching",
+              "vector-index-hnsw",
+              "hybrid-rrf",
+              "browser-inference"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 13,
+            "dbMs": 2.891,
+            "e2eMs": 21,
+            "e2eP95": 22
+          },
+          {
+            "q": "seekdb-js 怎么让新写入的数据立刻能检索到",
+            "kind": "easy",
+            "gold": [
+              "seekdb-js-api"
+            ],
+            "topDocIds": [
+              "seekdb-overview",
+              "seekdb-js-api",
+              "perf-batching",
+              "why-db-retrieval",
+              "browser-inference",
+              "webgpu-vs-wasm"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 13,
+            "dbMs": 3.417,
+            "e2eMs": 21,
+            "e2eP95": 23
+          },
+          {
+            "q": "用户文档会不会被上传到服务器",
+            "kind": "easy",
+            "gold": [
+              "privacy-offline"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "browser-inference",
+              "seekdb-js-api",
+              "hybrid-rrf",
+              "why-db-retrieval",
+              "seekdb-overview",
+              "webgpu-vs-wasm",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 10,
+            "dbMs": 3.078,
+            "e2eMs": 18,
+            "e2eP95": 20
+          },
+          {
+            "q": "批大小从 1 提到 8 对吞吐有什么影响",
+            "kind": "easy",
+            "gold": [
+              "perf-batching"
+            ],
+            "topDocIds": [
+              "wasm-threads",
+              "perf-batching",
+              "eval-recall",
+              "rag-pipeline",
+              "model-quantization",
+              "fulltext-ngram",
+              "browser-inference",
+              "vector-index-hnsw"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 13,
+            "dbMs": 3.327,
+            "e2eMs": 22,
+            "e2eP95": 22
+          },
+          {
+            "q": "Recall@5 这个指标是怎么定义的",
+            "kind": "easy",
+            "gold": [
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "eval-recall",
+              "vector-index-hnsw",
+              "fulltext-ngram",
+              "model-quantization",
+              "why-db-retrieval",
+              "rag-pipeline",
+              "hybrid-rrf",
+              "seekdb-overview",
+              "seekdb-js-api"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 11,
+            "dbMs": 3.46,
+            "e2eMs": 19,
+            "e2eP95": 20
+          },
+          {
+            "q": "为什么不把向量放在 IndexedDB 里自己算相似度",
+            "kind": "easy",
+            "gold": [
+              "why-db-retrieval"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "seekdb-overview",
+              "webgpu-vs-wasm",
+              "hybrid-rrf",
+              "rag-pipeline",
+              "model-quantization",
+              "browser-inference",
+              "fulltext-ngram",
+              "eval-recall"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 13,
+            "dbMs": 2.682,
+            "e2eMs": 20,
+            "e2eP95": 21
+          },
+          {
+            "q": "SharedArrayBuffer 需要哪些响应头才能启用",
+            "kind": "easy",
+            "gold": [
+              "wasm-threads"
+            ],
+            "topDocIds": [
+              "browser-inference",
+              "wasm-threads",
+              "webgpu-vs-wasm",
+              "perf-batching",
+              "seekdb-overview",
+              "model-quantization",
+              "eval-recall",
+              "hybrid-rrf"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 10,
+            "dbMs": 3.047,
+            "e2eMs": 18,
+            "e2eP95": 18
+          },
+          {
+            "q": "余弦距离检索的 SQL 怎么写",
+            "kind": "easy",
+            "gold": [
+              "seekdb-overview",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "vector-index-hnsw",
+              "webgpu-vs-wasm",
+              "hybrid-rrf",
+              "fulltext-ngram",
+              "rag-pipeline",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 10,
+            "dbMs": 2.91,
+            "e2eMs": 16,
+            "e2eP95": 17
+          },
+          {
+            "q": "ngram_token_size 设为 2 会怎么切中文",
+            "kind": "easy",
+            "gold": [
+              "fulltext-ngram"
+            ],
+            "topDocIds": [
+              "fulltext-ngram",
+              "rag-pipeline",
+              "seekdb-js-api",
+              "browser-inference",
+              "model-quantization",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 12,
+            "dbMs": 2.81,
+            "e2eMs": 19,
+            "e2eP95": 20
+          },
+          {
+            "q": "索引刷新一次大概要多久",
+            "kind": "easy",
+            "gold": [
+              "perf-batching",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "perf-batching",
+              "vector-index-hnsw",
+              "fulltext-ngram",
+              "rag-pipeline",
+              "why-db-retrieval",
+              "eval-recall",
+              "browser-inference",
+              "hybrid-rrf",
+              "webgpu-vs-wasm"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 10,
+            "dbMs": 2.702,
+            "e2eMs": 17,
+            "e2eP95": 18
+          },
+          {
+            "q": "端侧推理的隐私优势是什么",
+            "kind": "easy",
+            "gold": [
+              "privacy-offline"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "model-quantization",
+              "vector-index-hnsw",
+              "perf-batching",
+              "browser-inference",
+              "webgpu-vs-wasm",
+              "seekdb-js-api",
+              "why-db-retrieval",
+              "rag-pipeline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 9,
+            "dbMs": 2.984,
+            "e2eMs": 16,
+            "e2eP95": 18
+          },
+          {
+            "q": "量化前后的检索质量怎么对比",
+            "kind": "easy",
+            "gold": [
+              "model-quantization",
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "eval-recall",
+              "model-quantization",
+              "why-db-retrieval",
+              "webgpu-vs-wasm",
+              "rag-pipeline",
+              "seekdb-overview",
+              "privacy-offline",
+              "hybrid-rrf",
+              "fulltext-ngram"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 11,
+            "dbMs": 3.103,
+            "e2eMs": 19,
+            "e2eP95": 20
+          },
+          {
+            "q": "我的笔记不想离开自己的电脑，能离线做语义搜索吗",
+            "kind": "hard",
+            "gold": [
+              "privacy-offline"
+            ],
+            "topDocIds": [
+              "webgpu-vs-wasm",
+              "browser-inference",
+              "wasm-threads",
+              "hybrid-rrf",
+              "perf-batching",
+              "seekdb-js-api",
+              "privacy-offline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 0,
+            "hitAt1": 0,
+            "mrr": 0.1,
+            "queryEmbedMs": 14,
+            "dbMs": 3.071,
+            "e2eMs": 20,
+            "e2eP95": 22
+          },
+          {
+            "q": "手机或笔记本上没有独立显卡时还能跑得动吗",
+            "kind": "hard",
+            "gold": [
+              "webgpu-vs-wasm"
+            ],
+            "topDocIds": [
+              "webgpu-vs-wasm",
+              "model-quantization",
+              "wasm-threads",
+              "perf-batching",
+              "browser-inference",
+              "eval-recall",
+              "seekdb-js-api",
+              "hybrid-rrf"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 14,
+            "dbMs": 3.755,
+            "e2eMs": 20,
+            "e2eP95": 27
+          },
+          {
+            "q": "一段话太长塞进模型里效果不好，应该怎么拆",
+            "kind": "hard",
+            "gold": [
+              "rag-pipeline"
+            ],
+            "topDocIds": [
+              "rag-pipeline",
+              "perf-batching",
+              "browser-inference",
+              "model-quantization",
+              "wasm-threads",
+              "privacy-offline",
+              "eval-recall",
+              "fulltext-ngram",
+              "seekdb-js-api"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 12,
+            "dbMs": 3.042,
+            "e2eMs": 19,
+            "e2eP95": 21
+          },
+          {
+            "q": "为什么我刚加进去的文件搜不到",
+            "kind": "hard",
+            "gold": [
+              "seekdb-js-api",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "perf-batching",
+              "privacy-offline",
+              "webgpu-vs-wasm",
+              "hybrid-rrf",
+              "rag-pipeline",
+              "why-db-retrieval",
+              "eval-recall",
+              "seekdb-js-api",
+              "browser-inference"
+            ],
+            "hitCount": 10,
+            "recallAt5": 0,
+            "hitAt1": 0,
+            "mrr": 0.125,
+            "queryEmbedMs": 9,
+            "dbMs": 2.876,
+            "e2eMs": 15,
+            "e2eP95": 21
+          },
+          {
+            "q": "两种不同的搜索结果该怎么合并成一个排序",
+            "kind": "hard",
+            "gold": [
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "hybrid-rrf",
+              "perf-batching",
+              "vector-index-hnsw",
+              "fulltext-ngram",
+              "rag-pipeline",
+              "seekdb-overview"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 11,
+            "dbMs": 2.968,
+            "e2eMs": 19,
+            "e2eP95": 20
+          },
+          {
+            "q": "模型文件太大加载太慢有什么办法",
+            "kind": "hard",
+            "gold": [
+              "model-quantization",
+              "perf-batching"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "browser-inference",
+              "rag-pipeline",
+              "perf-batching",
+              "wasm-threads",
+              "eval-recall",
+              "webgpu-vs-wasm",
+              "seekdb-js-api",
+              "model-quantization"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.25,
+            "queryEmbedMs": 11,
+            "dbMs": 3.02,
+            "e2eMs": 18,
+            "e2eP95": 20
+          },
+          {
+            "q": "在浏览器里做矩阵乘法的底层是什么",
+            "kind": "hard",
+            "gold": [
+              "browser-inference",
+              "webgpu-vs-wasm"
+            ],
+            "topDocIds": [
+              "browser-inference",
+              "why-db-retrieval",
+              "privacy-offline",
+              "vector-index-hnsw",
+              "webgpu-vs-wasm",
+              "hybrid-rrf",
+              "model-quantization",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 11,
+            "dbMs": 2.611,
+            "e2eMs": 17,
+            "e2eP95": 18
+          },
+          {
+            "q": "怎么证明检索是数据库做的而不是前端拼出来的",
+            "kind": "hard",
+            "gold": [
+              "why-db-retrieval",
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "hybrid-rrf",
+              "perf-batching",
+              "privacy-offline",
+              "seekdb-js-api",
+              "seekdb-overview",
+              "rag-pipeline",
+              "eval-recall"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 14,
+            "dbMs": 2.864,
+            "e2eMs": 21,
+            "e2eP95": 22
+          },
+          {
+            "q": "测量延迟的时候为什么不能只报平均值",
+            "kind": "hard",
+            "gold": [
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "eval-recall",
+              "model-quantization",
+              "perf-batching",
+              "wasm-threads",
+              "rag-pipeline",
+              "vector-index-hnsw",
+              "why-db-retrieval",
+              "browser-inference"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 13,
+            "dbMs": 3.596,
+            "e2eMs": 20,
+            "e2eP95": 20
+          },
+          {
+            "q": "向量数量变多以后暴力遍历会有什么问题",
+            "kind": "hard",
+            "gold": [
+              "why-db-retrieval",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "rag-pipeline",
+              "privacy-offline",
+              "eval-recall",
+              "wasm-threads",
+              "hybrid-rrf",
+              "model-quantization",
+              "seekdb-overview",
+              "browser-inference"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 12,
+            "dbMs": 2.781,
+            "e2eMs": 19,
+            "e2eP95": 21
+          },
+          {
+            "q": "同样的语料在不同机器上测出来的数字能直接比吗",
+            "kind": "hard",
+            "gold": [
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "hybrid-rrf",
+              "model-quantization",
+              "fulltext-ngram",
+              "webgpu-vs-wasm",
+              "seekdb-overview",
+              "eval-recall"
+            ],
+            "hitCount": 10,
+            "recallAt5": 0,
+            "hitAt1": 0,
+            "mrr": 0.125,
+            "queryEmbedMs": 13,
+            "dbMs": 2.517,
+            "e2eMs": 20,
+            "e2eP95": 22
+          },
+          {
+            "q": "网页里的脚本怎么读到模型权重文件",
+            "kind": "hard",
+            "gold": [
+              "browser-inference"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "browser-inference",
+              "model-quantization",
+              "rag-pipeline",
+              "eval-recall",
+              "seekdb-js-api",
+              "seekdb-overview",
+              "perf-batching",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 13,
+            "dbMs": 3.758,
+            "e2eMs": 21,
+            "e2eP95": 23
+          }
+        ]
+      },
+      {
+        "mode": "fulltext",
+        "queries": 32,
+        "recallAt5": 0.9375,
+        "hitAt1": 0.5625,
+        "mrr": 0.7101934523809523,
+        "queryEmbedMs": 10,
+        "dbMs": 4.788,
+        "e2eMs": 19,
+        "e2eP95": 22,
+        "perQuery": [
+          {
+            "q": "seekdb 支持哪些类型的检索索引",
+            "kind": "easy",
+            "gold": [
+              "seekdb-overview"
+            ],
+            "topDocIds": [
+              "seekdb-js-api",
+              "seekdb-overview",
+              "why-db-retrieval",
+              "model-quantization",
+              "eval-recall",
+              "fulltext-ngram",
+              "hybrid-rrf"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 10,
+            "dbMs": 5.997,
+            "e2eMs": 19,
+            "e2eP95": 29
+          },
+          {
+            "q": "HNSW 的 ef_construction 参数是干什么的",
+            "kind": "easy",
+            "gold": [
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "seekdb-js-api",
+              "vector-index-hnsw",
+              "perf-batching",
+              "seekdb-overview",
+              "browser-inference",
+              "wasm-threads",
+              "hybrid-rrf"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 10,
+            "dbMs": 5.979,
+            "e2eMs": 20,
+            "e2eP95": 21
+          },
+          {
+            "q": "中文没有空格怎么分词做全文检索",
+            "kind": "easy",
+            "gold": [
+              "fulltext-ngram"
+            ],
+            "topDocIds": [
+              "fulltext-ngram",
+              "why-db-retrieval",
+              "hybrid-rrf",
+              "privacy-offline",
+              "model-quantization",
+              "eval-recall",
+              "perf-batching",
+              "browser-inference"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 10,
+            "dbMs": 3.976,
+            "e2eMs": 19,
+            "e2eP95": 20
+          },
+          {
+            "q": "RRF 公式里的平滑常数 k 一般取多少",
+            "kind": "easy",
+            "gold": [
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "hybrid-rrf",
+              "perf-batching",
+              "seekdb-js-api",
+              "why-db-retrieval",
+              "wasm-threads",
+              "eval-recall"
+            ],
+            "hitCount": 8,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 10,
+            "dbMs": 4.014,
+            "e2eMs": 18,
+            "e2eP95": 20
+          },
+          {
+            "q": "混合检索的候选窗口 rank_window_size 怎么选",
+            "kind": "easy",
+            "gold": [
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "hybrid-rrf",
+              "seekdb-js-api",
+              "perf-batching",
+              "fulltext-ngram",
+              "why-db-retrieval",
+              "vector-index-hnsw",
+              "seekdb-overview",
+              "model-quantization"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 11,
+            "dbMs": 6.243,
+            "e2eMs": 21,
+            "e2eP95": 23
+          },
+          {
+            "q": "浏览器的 embedding 推理由哪个运行时执行",
+            "kind": "easy",
+            "gold": [
+              "browser-inference"
+            ],
+            "topDocIds": [
+              "seekdb-js-api",
+              "browser-inference",
+              "model-quantization",
+              "wasm-threads",
+              "seekdb-overview",
+              "webgpu-vs-wasm",
+              "privacy-offline",
+              "why-db-retrieval"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.25,
+            "queryEmbedMs": 11,
+            "dbMs": 5.521,
+            "e2eMs": 20,
+            "e2eP95": 22
+          },
+          {
+            "q": "WebGPU 拿不到适配器时怎么降级",
+            "kind": "easy",
+            "gold": [
+              "webgpu-vs-wasm"
+            ],
+            "topDocIds": [
+              "webgpu-vs-wasm",
+              "browser-inference",
+              "eval-recall",
+              "privacy-offline",
+              "wasm-threads",
+              "model-quantization",
+              "why-db-retrieval",
+              "vector-index-hnsw"
+            ],
+            "hitCount": 8,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 9,
+            "dbMs": 4.721,
+            "e2eMs": 18,
+            "e2eP95": 22
+          },
+          {
+            "q": "INT8 量化后模型体积压缩到多少",
+            "kind": "easy",
+            "gold": [
+              "model-quantization"
+            ],
+            "topDocIds": [
+              "model-quantization",
+              "perf-batching",
+              "privacy-offline",
+              "vector-index-hnsw",
+              "webgpu-vs-wasm",
+              "eval-recall",
+              "browser-inference",
+              "hybrid-rrf",
+              "seekdb-js-api"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 9,
+            "dbMs": 4.358,
+            "e2eMs": 18,
+            "e2eP95": 20
+          },
+          {
+            "q": "切块时块与块之间保留多少字符的重叠",
+            "kind": "easy",
+            "gold": [
+              "rag-pipeline"
+            ],
+            "topDocIds": [
+              "rag-pipeline",
+              "seekdb-overview",
+              "hybrid-rrf",
+              "fulltext-ngram",
+              "vector-index-hnsw"
+            ],
+            "hitCount": 5,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 11,
+            "dbMs": 5.803,
+            "e2eMs": 20,
+            "e2eP95": 21
+          },
+          {
+            "q": "seekdb-js 怎么让新写入的数据立刻能检索到",
+            "kind": "easy",
+            "gold": [
+              "seekdb-js-api"
+            ],
+            "topDocIds": [
+              "seekdb-js-api",
+              "seekdb-overview",
+              "perf-batching",
+              "hybrid-rrf",
+              "why-db-retrieval",
+              "vector-index-hnsw",
+              "privacy-offline",
+              "webgpu-vs-wasm"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 12,
+            "dbMs": 5.279,
+            "e2eMs": 22,
+            "e2eP95": 23
+          },
+          {
+            "q": "用户文档会不会被上传到服务器",
+            "kind": "easy",
+            "gold": [
+              "privacy-offline"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "webgpu-vs-wasm",
+              "browser-inference",
+              "rag-pipeline",
+              "seekdb-overview",
+              "model-quantization",
+              "perf-batching",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 9,
+            "dbMs": 4.196,
+            "e2eMs": 18,
+            "e2eP95": 21
+          },
+          {
+            "q": "批大小从 1 提到 8 对吞吐有什么影响",
+            "kind": "easy",
+            "gold": [
+              "perf-batching"
+            ],
+            "topDocIds": [
+              "perf-batching",
+              "eval-recall",
+              "privacy-offline",
+              "wasm-threads",
+              "webgpu-vs-wasm",
+              "model-quantization",
+              "vector-index-hnsw"
+            ],
+            "hitCount": 7,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 10,
+            "dbMs": 3.629,
+            "e2eMs": 18,
+            "e2eP95": 19
+          },
+          {
+            "q": "Recall@5 这个指标是怎么定义的",
+            "kind": "easy",
+            "gold": [
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "browser-inference",
+              "model-quantization",
+              "seekdb-js-api",
+              "eval-recall",
+              "wasm-threads",
+              "rag-pipeline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.25,
+            "queryEmbedMs": 9,
+            "dbMs": 4.285,
+            "e2eMs": 17,
+            "e2eP95": 19
+          },
+          {
+            "q": "为什么不把向量放在 IndexedDB 里自己算相似度",
+            "kind": "easy",
+            "gold": [
+              "why-db-retrieval"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "seekdb-js-api",
+              "hybrid-rrf",
+              "browser-inference",
+              "privacy-offline",
+              "model-quantization",
+              "seekdb-overview"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 11,
+            "dbMs": 5.82,
+            "e2eMs": 20,
+            "e2eP95": 21
+          },
+          {
+            "q": "SharedArrayBuffer 需要哪些响应头才能启用",
+            "kind": "easy",
+            "gold": [
+              "wasm-threads"
+            ],
+            "topDocIds": [
+              "wasm-threads",
+              "seekdb-js-api",
+              "hybrid-rrf",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 10,
+            "dbMs": 5.866,
+            "e2eMs": 20,
+            "e2eP95": 26
+          },
+          {
+            "q": "余弦距离检索的 SQL 怎么写",
+            "kind": "easy",
+            "gold": [
+              "seekdb-overview",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "seekdb-overview",
+              "why-db-retrieval",
+              "vector-index-hnsw",
+              "hybrid-rrf",
+              "perf-batching",
+              "fulltext-ngram",
+              "rag-pipeline",
+              "webgpu-vs-wasm"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 9,
+            "dbMs": 3.637,
+            "e2eMs": 16,
+            "e2eP95": 22
+          },
+          {
+            "q": "ngram_token_size 设为 2 会怎么切中文",
+            "kind": "easy",
+            "gold": [
+              "fulltext-ngram"
+            ],
+            "topDocIds": [
+              "fulltext-ngram",
+              "seekdb-js-api",
+              "seekdb-overview",
+              "hybrid-rrf",
+              "wasm-threads",
+              "browser-inference",
+              "model-quantization"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 11,
+            "dbMs": 5.552,
+            "e2eMs": 19,
+            "e2eP95": 22
+          },
+          {
+            "q": "索引刷新一次大概要多久",
+            "kind": "easy",
+            "gold": [
+              "perf-batching",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "fulltext-ngram",
+              "perf-batching",
+              "vector-index-hnsw",
+              "eval-recall",
+              "browser-inference",
+              "seekdb-overview",
+              "why-db-retrieval"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 9,
+            "dbMs": 3.665,
+            "e2eMs": 17,
+            "e2eP95": 17
+          },
+          {
+            "q": "端侧推理的隐私优势是什么",
+            "kind": "easy",
+            "gold": [
+              "privacy-offline"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "fulltext-ngram",
+              "perf-batching",
+              "browser-inference",
+              "model-quantization",
+              "eval-recall",
+              "webgpu-vs-wasm",
+              "seekdb-js-api",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 10,
+            "dbMs": 3.864,
+            "e2eMs": 20,
+            "e2eP95": 21
+          },
+          {
+            "q": "量化前后的检索质量怎么对比",
+            "kind": "easy",
+            "gold": [
+              "model-quantization",
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "model-quantization",
+              "eval-recall",
+              "webgpu-vs-wasm",
+              "hybrid-rrf",
+              "rag-pipeline",
+              "perf-batching",
+              "why-db-retrieval",
+              "privacy-offline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 8,
+            "dbMs": 3.77,
+            "e2eMs": 16,
+            "e2eP95": 21
+          },
+          {
+            "q": "我的笔记不想离开自己的电脑，能离线做语义搜索吗",
+            "kind": "hard",
+            "gold": [
+              "privacy-offline"
+            ],
+            "topDocIds": [
+              "webgpu-vs-wasm",
+              "hybrid-rrf",
+              "browser-inference",
+              "privacy-offline",
+              "seekdb-overview",
+              "perf-batching",
+              "model-quantization",
+              "fulltext-ngram",
+              "why-db-retrieval",
+              "rag-pipeline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.25,
+            "queryEmbedMs": 14,
+            "dbMs": 5.21,
+            "e2eMs": 23,
+            "e2eP95": 23
+          },
+          {
+            "q": "手机或笔记本上没有独立显卡时还能跑得动吗",
+            "kind": "hard",
+            "gold": [
+              "webgpu-vs-wasm"
+            ],
+            "topDocIds": [
+              "webgpu-vs-wasm",
+              "wasm-threads",
+              "privacy-offline",
+              "eval-recall",
+              "why-db-retrieval",
+              "seekdb-overview",
+              "hybrid-rrf",
+              "fulltext-ngram"
+            ],
+            "hitCount": 9,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 13,
+            "dbMs": 5.297,
+            "e2eMs": 21,
+            "e2eP95": 25
+          },
+          {
+            "q": "一段话太长塞进模型里效果不好，应该怎么拆",
+            "kind": "hard",
+            "gold": [
+              "rag-pipeline"
+            ],
+            "topDocIds": [
+              "model-quantization",
+              "rag-pipeline",
+              "privacy-offline",
+              "browser-inference",
+              "eval-recall",
+              "perf-batching",
+              "why-db-retrieval",
+              "webgpu-vs-wasm"
+            ],
+            "hitCount": 9,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 10,
+            "dbMs": 4.243,
+            "e2eMs": 19,
+            "e2eP95": 21
+          },
+          {
+            "q": "为什么我刚加进去的文件搜不到",
+            "kind": "hard",
+            "gold": [
+              "seekdb-js-api",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "browser-inference",
+              "privacy-offline",
+              "hybrid-rrf",
+              "perf-batching",
+              "why-db-retrieval",
+              "webgpu-vs-wasm",
+              "vector-index-hnsw",
+              "model-quantization",
+              "rag-pipeline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 0,
+            "hitAt1": 0,
+            "mrr": 0.14285714285714285,
+            "queryEmbedMs": 9,
+            "dbMs": 3.764,
+            "e2eMs": 17,
+            "e2eP95": 19
+          },
+          {
+            "q": "两种不同的搜索结果该怎么合并成一个排序",
+            "kind": "hard",
+            "gold": [
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "hybrid-rrf",
+              "perf-batching",
+              "seekdb-overview",
+              "seekdb-js-api",
+              "fulltext-ngram"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 11,
+            "dbMs": 5.126,
+            "e2eMs": 20,
+            "e2eP95": 22
+          },
+          {
+            "q": "模型文件太大加载太慢有什么办法",
+            "kind": "hard",
+            "gold": [
+              "model-quantization",
+              "perf-batching"
+            ],
+            "topDocIds": [
+              "privacy-offline",
+              "rag-pipeline",
+              "perf-batching",
+              "browser-inference",
+              "eval-recall",
+              "model-quantization",
+              "hybrid-rrf",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.3333333333333333,
+            "queryEmbedMs": 10,
+            "dbMs": 3.885,
+            "e2eMs": 18,
+            "e2eP95": 19
+          },
+          {
+            "q": "在浏览器里做矩阵乘法的底层是什么",
+            "kind": "hard",
+            "gold": [
+              "browser-inference",
+              "webgpu-vs-wasm"
+            ],
+            "topDocIds": [
+              "browser-inference",
+              "privacy-offline",
+              "webgpu-vs-wasm",
+              "vector-index-hnsw",
+              "seekdb-js-api",
+              "eval-recall",
+              "why-db-retrieval",
+              "wasm-threads"
+            ],
+            "hitCount": 8,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 10,
+            "dbMs": 4.224,
+            "e2eMs": 18,
+            "e2eP95": 20
+          },
+          {
+            "q": "怎么证明检索是数据库做的而不是前端拼出来的",
+            "kind": "hard",
+            "gold": [
+              "why-db-retrieval",
+              "hybrid-rrf"
+            ],
+            "topDocIds": [
+              "why-db-retrieval",
+              "model-quantization",
+              "webgpu-vs-wasm",
+              "eval-recall",
+              "privacy-offline",
+              "fulltext-ngram",
+              "rag-pipeline",
+              "seekdb-overview",
+              "perf-batching"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 1,
+            "mrr": 1,
+            "queryEmbedMs": 12,
+            "dbMs": 5.173,
+            "e2eMs": 21,
+            "e2eP95": 22
+          },
+          {
+            "q": "测量延迟的时候为什么不能只报平均值",
+            "kind": "hard",
+            "gold": [
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "perf-batching",
+              "browser-inference",
+              "fulltext-ngram",
+              "eval-recall",
+              "rag-pipeline",
+              "vector-index-hnsw",
+              "webgpu-vs-wasm",
+              "privacy-offline"
+            ],
+            "hitCount": 9,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.25,
+            "queryEmbedMs": 11,
+            "dbMs": 4.855,
+            "e2eMs": 20,
+            "e2eP95": 20
+          },
+          {
+            "q": "向量数量变多以后暴力遍历会有什么问题",
+            "kind": "hard",
+            "gold": [
+              "why-db-retrieval",
+              "vector-index-hnsw"
+            ],
+            "topDocIds": [
+              "fulltext-ngram",
+              "why-db-retrieval",
+              "rag-pipeline",
+              "model-quantization",
+              "seekdb-js-api",
+              "perf-batching",
+              "wasm-threads",
+              "seekdb-overview",
+              "webgpu-vs-wasm",
+              "hybrid-rrf"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.5,
+            "queryEmbedMs": 11,
+            "dbMs": 5.132,
+            "e2eMs": 21,
+            "e2eP95": 21
+          },
+          {
+            "q": "同样的语料在不同机器上测出来的数字能直接比吗",
+            "kind": "hard",
+            "gold": [
+              "eval-recall"
+            ],
+            "topDocIds": [
+              "webgpu-vs-wasm",
+              "why-db-retrieval",
+              "fulltext-ngram",
+              "vector-index-hnsw",
+              "seekdb-overview",
+              "privacy-offline",
+              "perf-batching",
+              "rag-pipeline"
+            ],
+            "hitCount": 10,
+            "recallAt5": 0,
+            "hitAt1": 0,
+            "mrr": 0,
+            "queryEmbedMs": 13,
+            "dbMs": 5.38,
+            "e2eMs": 21,
+            "e2eP95": 23
+          },
+          {
+            "q": "网页里的脚本怎么读到模型权重文件",
+            "kind": "hard",
+            "gold": [
+              "browser-inference"
+            ],
+            "topDocIds": [
+              "model-quantization",
+              "hybrid-rrf",
+              "privacy-offline",
+              "browser-inference",
+              "perf-batching",
+              "seekdb-js-api",
+              "rag-pipeline",
+              "wasm-threads"
+            ],
+            "hitCount": 10,
+            "recallAt5": 1,
+            "hitAt1": 0,
+            "mrr": 0.25,
+            "queryEmbedMs": 10,
+            "dbMs": 4.32,
+            "e2eMs": 19,
+            "e2eP95": 19
+          }
+        ]
+      }
+    ]
+  },
+  "incremental": {
+    "chunks": 29,
+    "inserted": 3,
+    "batches": 1,
+    "writeMs": 86.072,
+    "refreshMs": 302.518,
+    "docs": 16,
+    "embedMs": 259
+  },
+  "incrementalProbe": {
+    "searchMs": 31.664,
+    "e2eMs": 63,
+    "hits": [
+      {
+        "id": "edgekb-runbook#0",
+        "docId": "edgekb-runbook",
+        "score": 0.0328
+      },
+      {
+        "id": "seekdb-js-api#3",
+        "docId": "seekdb-js-api",
+        "score": 0.0311
+      },
+      {
+        "id": "seekdb-overview#0",
+        "docId": "seekdb-overview",
+        "score": 0.0308
+      }
+    ],
+    "found": true
+  },
+  "screenshot": "bench\\screenshots\\wasm-int8-batch1.png"
+}

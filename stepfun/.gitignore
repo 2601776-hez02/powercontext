@@ -1,0 +1,20 @@
+node_modules/
+.pnpm-store/
+npm-debug.log*
+
+# 本地模型与浏览器运行时（体积大，由 npm run setup 拉取）
+models/
+web/vendor/
+
+# 嵌入式 seekdb 数据目录
+data/seekdb/
+data/seekdb-*/
+
+# 运行时导出
+bench/tmp/
+*.log
+.env.local
+
+# 操作系统
+Thumbs.db
+.DS_Store

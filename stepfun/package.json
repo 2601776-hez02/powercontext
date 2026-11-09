@@ -1,0 +1,25 @@
+{
+  "name": "stepfun-edgekb",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "端侧 AI 推理性能优化与 seekdb 混合检索：浏览器本地量化 embedding + seekdb 向量/全文混合检索的迷你知识库",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "setup": "node scripts/fetch-vendor.mjs && node scripts/fetch-models.mjs",
+    "fetch-vendor": "node scripts/fetch-vendor.mjs",
+    "fetch-models": "node scripts/fetch-models.mjs",
+    "start": "node server/index.mjs",
+    "verify": "node scripts/verify.mjs",
+    "bench": "node scripts/bench.mjs",
+    "report": "node scripts/report.mjs"
+  },
+  "dependencies": {
+    "seekdb": "1.4.0"
+  },
+  "devDependencies": {
+    "playwright-core": "1.65.0"
+  }
+}

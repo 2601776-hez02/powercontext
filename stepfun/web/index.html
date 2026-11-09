@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EdgeKB · 端侧推理 + seekdb 混合检索</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%232b6cff'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='white' font-family='system-ui'%3EEK%3C/text%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <span class="logo">EdgeKB</span>
+        <span class="tagline">浏览器本地向量化 · seekdb 混合检索</span>
+      </div>
+      <div class="status-strip">
+        <span class="pill" id="pill-backend" title="当前推理后端">后端：未加载</span>
+        <span class="pill" id="pill-model" title="模型与精度">模型：—</span>
+        <span class="pill" id="pill-db" title="seekdb 连接状态">seekdb：连接中…</span>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="column">
+        <div class="card" id="card-model">
+          <div class="card-head">
+            <h2>1 · 端侧模型</h2>
+            <span class="hint">Transformers.js · ONNX Runtime Web</span>
+          </div>
+          <div class="controls">
+            <label>
+              推理后端
+              <select id="select-device">
+                <option value="auto">自动（WebGPU 优先，自动降级 WASM）</option>
+                <option value="webgpu">强制 WebGPU</option>
+                <option value="wasm">强制 WASM</option>
+              </select>
+            </label>
+            <label>
+              精度 / 量化
+              <select id="select-dtype">
+                <option value="q8">INT8（model_quantized.onnx）</option>
+                <option value="fp16">FP16（model_fp16.onnx）</option>
+                <option value="fp32">FP32（model.onnx，基线）</option>
+              </select>
+            </label>
+            <label>
+              推理批大小
+              <select id="select-batch">
+                <option value="1">1</option>
+                <option value="4">4</option>
+                <option value="8" selected>8</option>
+                <option value="16">16</option>
+                <option value="32">32</option>
+              </select>
+            </label>
+            <button class="primary" id="btn-load">加载模型</button>
+          </div>
+          <div class="meter" id="model-meter" hidden>
+            <div class="meter-bar"><span id="model-meter-fill"></span></div>
+            <span class="meter-text" id="model-meter-text"></span>
+          </div>
+          <dl class="kv" id="model-info">
+            <div><dt>模型</dt><dd id="kv-model">—</dd></div>
+            <div><dt>实际后端</dt><dd id="kv-device">—</dd></div>
+            <div><dt>模型体积</dt><dd id="kv-size">—</dd></div>
+            <div><dt>加载耗时</dt><dd id="kv-load">—</dd></div>
+          </dl>
+          <p class="note" id="device-note"></p>
+        </div>
+
+        <div class="card" id="card-corpus">
+          <div class="card-head">
+            <h2>2 · 导入语料</h2>
+            <span class="hint">本地切块 → 本地向量化 → 写入 seekdb</span>
+          </div>
+          <div class="controls">
+            <button id="btn-sample">导入内置语料</button>
+            <label class="file-button">
+              选择 Markdown/TXT 文件
+              <input type="file" id="file-input" multiple accept=".md,.markdown,.txt" hidden />
+            </label>
+            <label class="inline">
+              <input type="checkbox" id="check-refresh" checked />
+              导入后立即刷新向量索引
+            </label>
+          </div>
+          <textarea id="paste-area" rows="3" placeholder="也可以直接粘贴文本，每行一段；第一行可写成 `# 标题`"></textarea>
+          <div class="controls">
+            <button id="btn-paste">导入粘贴内容</button>
+            <button class="ghost" id="btn-reset">清空知识库</button>
+          </div>
+          <div class="meter" id="import-meter" hidden>
+            <div class="meter-bar"><span id="import-meter-fill"></span></div>
+            <span class="meter-text" id="import-meter-text"></span>
+          </div>
+          <div class="corpus-summary" id="corpus-summary">知识库为空</div>
+        </div>
+
+        <div class="card" id="card-search">
+          <div class="card-head">
+            <h2>3 · 混合检索</h2>
+            <span class="hint">由 seekdb 单条 SQL 完成</span>
+          </div>
+          <div class="controls">
+            <input type="search" id="query-input" placeholder="输入问题，例如：seekdb 的向量索引用什么算法？" />
+            <button class="primary" id="btn-search">检索</button>
+          </div>
+          <div class="controls">
+            <label>
+              检索模式
+              <select id="select-mode">
+                <option value="hybrid">混合（全文 + 向量 + RRF）</option>
+                <option value="vector">仅向量</option>
+                <option value="fulltext">仅全文</option>
+              </select>
+            </label>
+            <label>
+              Top-K
+              <select id="select-topk">
+                <option>5</option>
+                <option selected>10</option>
+                <option>20</option>
+              </select>
+            </label>
+            <label>
+              RRF 窗口
+              <input type="number" id="input-window" value="40" min="1" max="500" />
+            </label>
+            <label>
+              RRF 常数
+              <input type="number" id="input-constant" value="60" min="0" max="200" />
+            </label>
+          </div>
+          <div class="results" id="results"></div>
+        </div>
+      </section>
+
+      <section class="column side">
+        <div class="card" id="card-metrics">
+          <div class="card-head">
+            <h2>运行指标</h2>
+            <span class="hint">最近一次操作</span>
+          </div>
+          <table class="metrics" id="metrics-table">
+            <tbody>
+              <tr><th>模型加载</th><td id="m-load">—</td></tr>
+              <tr><th>文档向量化</th><td id="m-embed">—</td></tr>
+              <tr><th>写入 seekdb</th><td id="m-write">—</td></tr>
+              <tr><th>索引刷新</th><td id="m-refresh">—</td></tr>
+              <tr><th>查询向量化</th><td id="m-qembed">—</td></tr>
+              <tr><th>seekdb 检索</th><td id="m-search">—</td></tr>
+              <tr><th>端到端</th><td id="m-e2e">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card" id="card-sql">
+          <div class="card-head">
+            <h2>seekdb 实际执行的 SQL</h2>
+            <span class="hint">混合检索 = 一条查询语句</span>
+          </div>
+          <pre class="sql" id="sql-view">（检索后显示）</pre>
+          <ul class="stmt-list" id="stmt-list"></ul>
+        </div>
+
+        <div class="card" id="card-bench">
+          <div class="card-head">
+            <h2>基准测试</h2>
+            <span class="hint">固定查询集 × 多轮，取中位数/P95</span>
+          </div>
+          <div class="controls">
+            <label>
+              轮数
+              <input type="number" id="input-rounds" value="5" min="1" max="20" />
+            </label>
+            <button id="btn-bench">运行基准</button>
+            <button class="ghost" id="btn-export">导出 JSON</button>
+          </div>
+          <div class="bench-output" id="bench-output"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <span>端侧 AI 推理性能优化与 seekdb 混合检索 · 2026 OceanBase 数据库大赛</span>
+      <span>文档与查询向量全部在浏览器内计算，服务端只写库与检索</span>
+    </footer>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "note": "固定评测集。easy=关键词基本重合；hard=改写成口语/近义表达，几乎不依赖字面匹配，用来暴露量化与模型差异。gold 为 docId 列表，打分口径是文档级 Recall@5 / MRR。",
+  "queries": [
+    { "q": "seekdb 支持哪些类型的检索索引", "gold": ["seekdb-overview"], "kind": "easy" },
+    { "q": "HNSW 的 ef_construction 参数是干什么的", "gold": ["vector-index-hnsw"], "kind": "easy" },
+    { "q": "中文没有空格怎么分词做全文检索", "gold": ["fulltext-ngram"], "kind": "easy" },
+    { "q": "RRF 公式里的平滑常数 k 一般取多少", "gold": ["hybrid-rrf"], "kind": "easy" },
+    { "q": "混合检索的候选窗口 rank_window_size 怎么选", "gold": ["hybrid-rrf"], "kind": "easy" },
+    { "q": "浏览器的 embedding 推理由哪个运行时执行", "gold": ["browser-inference"], "kind": "easy" },
+    { "q": "WebGPU 拿不到适配器时怎么降级", "gold": ["webgpu-vs-wasm"], "kind": "easy" },
+    { "q": "INT8 量化后模型体积压缩到多少", "gold": ["model-quantization"], "kind": "easy" },
+    { "q": "切块时块与块之间保留多少字符的重叠", "gold": ["rag-pipeline"], "kind": "easy" },
+    { "q": "seekdb-js 怎么让新写入的数据立刻能检索到", "gold": ["seekdb-js-api"], "kind": "easy" },
+    { "q": "用户文档会不会被上传到服务器", "gold": ["privacy-offline"], "kind": "easy" },
+    { "q": "批大小从 1 提到 8 对吞吐有什么影响", "gold": ["perf-batching"], "kind": "easy" },
+    { "q": "Recall@5 这个指标是怎么定义的", "gold": ["eval-recall"], "kind": "easy" },
+    { "q": "为什么不把向量放在 IndexedDB 里自己算相似度", "gold": ["why-db-retrieval"], "kind": "easy" },
+    { "q": "SharedArrayBuffer 需要哪些响应头才能启用", "gold": ["wasm-threads"], "kind": "easy" },
+    { "q": "余弦距离检索的 SQL 怎么写", "gold": ["seekdb-overview", "vector-index-hnsw"], "kind": "easy" },
+    { "q": "ngram_token_size 设为 2 会怎么切中文", "gold": ["fulltext-ngram"], "kind": "easy" },
+    { "q": "索引刷新一次大概要多久", "gold": ["perf-batching", "vector-index-hnsw"], "kind": "easy" },
+    { "q": "端侧推理的隐私优势是什么", "gold": ["privacy-offline"], "kind": "easy" },
+    { "q": "量化前后的检索质量怎么对比", "gold": ["model-quantization", "eval-recall"], "kind": "easy" },
+
+    { "q": "我的笔记不想离开自己的电脑，能离线做语义搜索吗", "gold": ["privacy-offline"], "kind": "hard" },
+    { "q": "手机或笔记本上没有独立显卡时还能跑得动吗", "gold": ["webgpu-vs-wasm"], "kind": "hard" },
+    { "q": "一段话太长塞进模型里效果不好，应该怎么拆", "gold": ["rag-pipeline"], "kind": "hard" },
+    { "q": "为什么我刚加进去的文件搜不到", "gold": ["seekdb-js-api", "vector-index-hnsw"], "kind": "hard" },
+    { "q": "两种不同的搜索结果该怎么合并成一个排序", "gold": ["hybrid-rrf"], "kind": "hard" },
+    { "q": "模型文件太大加载太慢有什么办法", "gold": ["model-quantization", "perf-batching"], "kind": "hard" },
+    { "q": "在浏览器里做矩阵乘法的底层是什么", "gold": ["browser-inference", "webgpu-vs-wasm"], "kind": "hard" },
+    { "q": "怎么证明检索是数据库做的而不是前端拼出来的", "gold": ["why-db-retrieval", "hybrid-rrf"], "kind": "hard" },
+    { "q": "测量延迟的时候为什么不能只报平均值", "gold": ["eval-recall"], "kind": "hard" },
+    { "q": "向量数量变多以后暴力遍历会有什么问题", "gold": ["why-db-retrieval", "vector-index-hnsw"], "kind": "hard" },
+    { "q": "同样的语料在不同机器上测出来的数字能直接比吗", "gold": ["eval-recall"], "kind": "hard" },
+    { "q": "网页里的脚本怎么读到模型权重文件", "gold": ["browser-inference"], "kind": "hard" }
+  ]
+}

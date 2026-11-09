@@ -1,0 +1,18 @@
+{
+  "docs": [
+    { "docId": "seekdb-overview", "title": "seekdb 是什么", "file": "seekdb-overview.md" },
+    { "docId": "vector-index-hnsw", "title": "HNSW 向量索引与参数选择", "file": "vector-index-hnsw.md" },
+    { "docId": "fulltext-ngram", "title": "中文全文检索与 ngram 分词", "file": "fulltext-ngram.md" },
+    { "docId": "hybrid-rrf", "title": "混合检索与 RRF 融合", "file": "hybrid-rrf.md" },
+    { "docId": "browser-inference", "title": "浏览器里跑 embedding：Transformers.js 与 ONNX Runtime Web", "file": "browser-inference.md" },
+    { "docId": "webgpu-vs-wasm", "title": "WebGPU 与 WASM 两种推理后端", "file": "webgpu-vs-wasm.md" },
+    { "docId": "model-quantization", "title": "模型量化：INT8 与 FP16 的体积与质量", "file": "model-quantization.md" },
+    { "docId": "rag-pipeline", "title": "切块与召回：把文档变成可检索的片段", "file": "rag-pipeline.md" },
+    { "docId": "seekdb-js-api", "title": "用 seekdb-js 读写知识库", "file": "seekdb-js-api.md" },
+    { "docId": "privacy-offline", "title": "隐私与离线：为什么要把推理放在端侧", "file": "privacy-offline.md" },
+    { "docId": "perf-batching", "title": "性能优化：批处理、预热与索引刷新策略", "file": "perf-batching.md" },
+    { "docId": "eval-recall", "title": "评测方法：Recall@K、nDCG 与计时口径", "file": "eval-recall.md" },
+    { "docId": "why-db-retrieval", "title": "为什么检索必须留给数据库", "file": "why-db-retrieval.md" },
+    { "docId": "wasm-threads", "title": "WASM 多线程与跨源隔离", "file": "wasm-threads.md" }
+  ]
+}
