@@ -959,7 +959,6 @@ def _render(entries: Sequence[_PreparedContextEntry]) -> str:
     return "\n\n".join((TRUST_POLICY, f"{_BEGIN_MARKER}\n{encoded}\n{_END_MARKER}"))
 
 
-_SENTENCE_PATTERN = re.compile(r"[^.!?\n]+[.!?\n]*")
 _TOKEN_PATTERN = re.compile(r"[a-z]+|\d+")
 # Share the budget with a second abstract when both best sentences match the same query terms.
 _EVIDENCE_SHARED_TERMS = 1.0
