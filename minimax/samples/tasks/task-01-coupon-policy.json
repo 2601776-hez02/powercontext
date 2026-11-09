@@ -1,0 +1,47 @@
+{
+  "task_id": "coupon-policy",
+  "title": "Apply coupon codes case-insensitively and reject expired codes",
+  "description": "The reservation flow rejects coupon codes that customers type in lowercase, and it still accepts the retired SPRING10 campaign code because the validity date is never checked. Make coupon matching follow PRC-3 (case-insensitive, surrounding whitespace stripped, unknown codes unchanged) and make expired coupons fail with ExpiredCouponError per PRC-4, without consuming capacity (RSV-3). Pricing, capacity and quantity behavior must not change.",
+  "keywords": [
+    "coupon",
+    "discount",
+    "expired",
+    "case-insensitive",
+    "whitespace",
+    "reservation",
+    "capacity",
+    "apply_coupon",
+    "find_coupon",
+    "PRC-3",
+    "PRC-4",
+    "RSV-3"
+  ],
+  "acceptance_tests": [
+    "tests/test_coupon_policy.py"
+  ],
+  "regression_tests": [
+    "tests/test_pricing.py",
+    "tests/test_reservation.py"
+  ],
+  "must_include": {
+    "specs": [
+      "docs/specs/pricing.md#PRC-3",
+      "docs/specs/pricing.md#PRC-4",
+      "docs/specs/reservation.md#RSV-3"
+    ],
+    "code": [
+      "src/evently/pricing.py#find_coupon",
+      "src/evently/pricing.py#apply_coupon",
+      "src/evently/reservation.py#ReservationService.reserve"
+    ],
+    "tests": [
+      "tests/test_coupon_policy.py"
+    ]
+  },
+  "keep_behavior": [
+    "subtotal = quantity * 12500 cents (PRC-1)",
+    "VIP20 keeps taking 20% off (PRC-2)",
+    "unknown codes raise UnknownCouponError (PRC-3)",
+    "quantity and capacity errors keep their exception types (RSV-1, RSV-2)"
+  ]
+}
