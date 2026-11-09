@@ -1,0 +1,147 @@
+{
+  "task": "coupon-policy",
+  "pack": "artifacts/context-pack-v1.json",
+  "markdown": "artifacts/context-pack-v1.md",
+  "selected": {
+    "specs": [
+      {
+        "ref": "docs/specs/reservation.md#RSV-3",
+        "score": 0.563,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      },
+      {
+        "ref": "docs/specs/pricing.md#PRC-3",
+        "score": 0.496,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      },
+      {
+        "ref": "docs/specs/pricing.md#PRC-4",
+        "score": 0.478,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      },
+      {
+        "ref": "docs/specs/reservation.md#RSV-2",
+        "score": 0.463,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      }
+    ],
+    "code": [
+      {
+        "ref": "src/evently/pricing.py#apply_coupon",
+        "score": 0.447,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      },
+      {
+        "ref": "src/evently/reservation.py#ReservationService",
+        "score": 0.439,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      },
+      {
+        "ref": "src/evently/reservation.py#ReservationService.reserve",
+        "score": 0.433,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      },
+      {
+        "ref": "src/evently/pricing.py#find_coupon",
+        "score": 0.417,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      },
+      {
+        "ref": "src/evently/errors.py#ExpiredCouponError",
+        "score": 0.414,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      }
+    ],
+    "tests": [
+      {
+        "ref": "tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively",
+        "score": 0.857,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      },
+      {
+        "ref": "tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation",
+        "score": 0.857,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      },
+      {
+        "ref": "tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total",
+        "score": 0.824,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      },
+      {
+        "ref": "tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored",
+        "score": 0.824,
+        "why": "fulltext match for: coupon discount expired case insensitive whitespace; exact symbol/path match"
+      }
+    ]
+  },
+  "checks": {
+    "ok": true,
+    "missing": {},
+    "required": {
+      "specs": [
+        "docs/specs/pricing.md#PRC-3",
+        "docs/specs/pricing.md#PRC-4",
+        "docs/specs/reservation.md#RSV-3"
+      ],
+      "code": [
+        "src/evently/pricing.py#find_coupon",
+        "src/evently/pricing.py#apply_coupon",
+        "src/evently/reservation.py#ReservationService.reserve"
+      ],
+      "tests": [
+        "tests/test_coupon_policy.py"
+      ]
+    },
+    "source_status": {
+      "ok": 13
+    },
+    "stale_sources": []
+  },
+  "state": null,
+  "state_error": "",
+  "capture": {
+    "source_id": "sdd-context-coupon-policy-20261109T133214296735",
+    "status": "accepted",
+    "source": {
+      "name": "content",
+      "source_id": "sdd-context-coupon-policy-20261109T133214296735"
+    },
+    "position": 1
+  },
+  "db": {
+    "target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
+    "server_version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+    "database": "test",
+    "documents": 10,
+    "items": 50,
+    "items_by_kind": {
+      "code": 20,
+      "spec": 10,
+      "test": 20
+    },
+    "imports": 1,
+    "history_rows": 10,
+    "indexes": [
+      "ix_sdd_item_doc",
+      "ix_sdd_item_kind",
+      "ix_sdd_item_path",
+      "ix_sdd_item_symbol",
+      "ix_sdd_item_search",
+      "PRIMARY"
+    ],
+    "data_path": "/root/minimax/.runtime/seekdb"
+  },
+  "index": {
+    "import_id": "20261109T133214296735",
+    "started_at": "2026-11-09T13:32:14Z",
+    "finished_at": "2026-11-09T13:32:14Z",
+    "repo_path": "/root/minimax/.runtime/repo",
+    "seekdb_target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
+    "spec_revision": "1e10174f8aaa5bc1cb55072400e5da69",
+    "code_revision": "0655c6f8159031dc8ef7337201bade87",
+    "test_revision": "93ca07ea448bc0bba47fbbc8855d5b23",
+    "document_count": 10,
+    "item_count": 50
+  }
+}

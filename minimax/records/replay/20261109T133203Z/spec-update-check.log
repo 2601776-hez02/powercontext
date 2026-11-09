@@ -1,0 +1,4 @@
+spec revision : 1e10174f8aaa5bc1 -> 18471ec477520271
+changed items : docs/specs/pricing.md#PRC-3, docs/specs/pricing.md#PRC-4
+PRC-3 excerpt : together with the matched code and the UTC order date.
+context follows the re-imported specification: OK

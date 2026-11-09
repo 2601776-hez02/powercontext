@@ -1,0 +1,5 @@
+home            /root/minimax/.runtime
+seekdb          embedded-seekdb:/root/minimax/.runtime/seekdb
+server version  5.7.25-OceanBase seekdb-v1.4.0.0
+tables          sdd_documents, sdd_items, sdd_imports, sdd_document_history
+fulltext index  ix_sdd_item_search (created)

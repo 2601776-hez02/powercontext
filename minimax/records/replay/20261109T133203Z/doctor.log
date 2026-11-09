@@ -1,0 +1,6 @@
+sdd context     0.1.0
+home            /root/minimax/.runtime
+seekdb          embedded-seekdb:/root/minimax/.runtime/seekdb · server 5.7.25-OceanBase seekdb-v1.4.0.0 · ready
+powercontext    http://127.0.0.1:8138 · ready
+minimax         NO API KEY · MiniMax-M2 @ https://api.minimaxi.com/v1
+sample          /root/minimax/sample-project (ok)

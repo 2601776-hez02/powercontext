@@ -1,0 +1,24 @@
+task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
+repository      /root/minimax/.runtime/repo
+index           20261109T133225022549 · spec 18471ec47752
+specs           4
+   0.56  docs/specs/reservation.md#RSV-3
+   0.50  docs/specs/pricing.md#PRC-3
+   0.48  docs/specs/pricing.md#PRC-4
+   0.46  docs/specs/reservation.md#RSV-2
+code            5
+   0.45  src/evently/pricing.py#apply_coupon
+   0.44  src/evently/reservation.py#ReservationService
+   0.43  src/evently/reservation.py#ReservationService.reserve
+   0.42  src/evently/pricing.py#find_coupon
+   0.41  src/evently/errors.py#ExpiredCouponError
+tests           4
+   0.86  tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively
+   0.86  tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation
+   0.82  tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total
+   0.82  tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored
+task state      revision 3 · verified · done 2 · todo 2 · verifications 2
+next step       Send the context pack to MiniMax and review the patch
+source checks   {'ok': 13}
+pack            artifacts/context-pack-v2.json
+markdown        artifacts/context-pack-v2.md

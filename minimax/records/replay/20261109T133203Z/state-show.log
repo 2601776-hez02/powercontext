@@ -1,0 +1,13 @@
+task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
+status          in_progress
+revision        1
+updated         2026-11-09T13:32:16Z
+scope           scp_25dxjx8wdp1j6h2a7983v7x7y9
+done            2
+  - Read PRC-3, PRC-4 and RSV-3
+  - Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted
+todo            2
+  - Normalize coupon codes before the catalog lookup
+  - Reject expired coupons with ExpiredCouponError before capacity is consumed
+verifications   0
+next step       Send the context pack to MiniMax and review the patch

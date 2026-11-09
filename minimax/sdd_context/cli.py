@@ -337,6 +337,18 @@ def cmd_verify(args: argparse.Namespace, settings: Settings) -> int:
         status="verified" if run.exit_code == 0 else "in_progress",
         verification={**run.as_dict(), "targets": list(targets), "log": str(log_path)},
     )
+    record = {
+        "state": {key: value for key, value in state.items() if not key.startswith("_")},
+        "memory": result.memory_reference,
+        "entry_version": result.entry_version,
+        "scope_id": result.scope_id,
+        "tests": run.as_dict(),
+        "log": str(log_path),
+    }
+    write_json(
+        settings.records_dir / "powercontext" / f"verification-{task.task_id}-r{state['revision']}.json",
+        record,
+    )
     append_event(settings.records_dir, "verify",
                  {"task": task.task_id, "exit_code": run.exit_code, "summary": run.summary,
                   "log": str(log_path), "state_revision": state["revision"]})

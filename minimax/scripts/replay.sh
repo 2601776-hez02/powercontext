@@ -35,8 +35,9 @@ step "1. start from an empty state"
 rm -rf "$SDD_HOME/seekdb" "$SDD_HOME/workdir" "$SDD_HOME/repo" "$POWERCONTEXT_HOME"
 sdd init | tee "$LOG_DIR/init.log"
 
-step "2. start PowerContext (SQLite backed, default port $SDD_POWERCONTEXT_PORT)"
+step "2. start PowerContext (SQLite backed, port from .runtime/powercontext.env)"
 ./scripts/start-powercontext.sh
+source scripts/env.sh   # pick up the port the Server actually bound
 sdd doctor | tee "$LOG_DIR/doctor.log"
 
 step "3. import the sample repository into seekdb"
@@ -72,6 +73,7 @@ echo "state reuse after module restart: OK"
 step "7. restart PowerContext itself and read the state again"
 ./scripts/stop-powercontext.sh
 ./scripts/start-powercontext.sh
+source scripts/env.sh
 sdd state show --task "$TASK_FILE" | tee "$LOG_DIR/state-show-after-restart.log"
 grep -q "Reproduced: lowercase code" "$LOG_DIR/state-show-after-restart.log"
 echo "state survives a PowerContext restart: OK"

@@ -1,0 +1,17 @@
+repository      /root/minimax/.runtime/repo
+seekdb          embedded-seekdb:/root/minimax/.runtime/seekdb (server 5.7.25-OceanBase seekdb-v1.4.0.0)
+documents       10 · items 50 {'spec': 10, 'code': 20, 'test': 20}
+spec revision   1e10174f8aaa5bc1
+code revision   0655c6f8159031dc
+test revision   93ca07ea448bc0bb
+change journal  {'added': 10, 'changed': 0, 'removed': 0, 'unchanged': 0}
+  added    docs/specs/pricing.md  - -> a5c3344e1b75
+  added    docs/specs/reservation.md  - -> 845db18e9ab5
+  added    src/evently/__init__.py  - -> f5096f71ebc8
+  added    src/evently/catalog.py  - -> 52896c2982a8
+  added    src/evently/errors.py  - -> faa9b5e69a6f
+  added    src/evently/pricing.py  - -> 42054ffe235d
+  added    src/evently/reservation.py  - -> 03b71ba982dd
+  added    tests/test_coupon_policy.py  - -> 65220d8d8b33
+  added    tests/test_pricing.py  - -> 67516e8dd7b5
+  added    tests/test_reservation.py  - -> 54c42e24bb28

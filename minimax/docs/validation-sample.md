@@ -10,7 +10,7 @@
 | 字段 | 内容 |
 | --- | --- |
 | task_id | `coupon-policy` |
-| 目标测试 | `tests/test_coupon_policy.py`（7 个用例，交付快照上全部失败） |
+| 目标测试 | `tests/test_coupon_policy.py`（7 个用例，交付快照上 6 个失败、1 个通过） |
 | 回归测试 | `tests/test_pricing.py`、`tests/test_reservation.py`（10 个用例，改前改后都必须通过） |
 | 保持行为 | 单价/小计、VIP20 20%、未知码报错、数量与容量错误类型 |
 
@@ -65,7 +65,7 @@ export MINIMAX_API_KEY=... && ./scripts/live-run.sh
 | --- | --- |
 | `sdd import --repo .runtime/repo` | 10 个文档 / 50 个条目：spec 10、code 20、test 20；spec revision 稳定 |
 | `sdd context --check` | 退出码 0；`materials.specs` 含 PRC-3、PRC-4、RSV-3；`checks.ok = true` |
-| `sdd verify --targets tests/test_coupon_policy.py`（改前） | **退出码 1**，7 个用例失败（`DID NOT RAISE` / `UnknownCouponError`） |
+| `sdd verify --targets tests/test_coupon_policy.py`（改前） | **退出码 1**，6 个用例失败、1 个通过（未知码在旧代码上也会被拒，属于已成立的行为） |
 | 应用补丁后跑三个测试文件 | **退出码 0**，17 passed |
 | `sdd state show` | 状态 `verified`，`verifications` 里能看到改前(exit 1)与改后(exit 0)两条 |
 | 重启 PowerContext 后 `sdd state show` | 内容不变（状态来自 PowerContext 持久化，不在内存） |

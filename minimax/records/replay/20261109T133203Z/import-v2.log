@@ -1,0 +1,8 @@
+repository      /root/minimax/.runtime/repo
+seekdb          embedded-seekdb:/root/minimax/.runtime/seekdb (server 5.7.25-OceanBase seekdb-v1.4.0.0)
+documents       10 · items 50 {'spec': 10, 'code': 20, 'test': 20}
+spec revision   18471ec477520271
+code revision   0655c6f8159031dc
+test revision   93ca07ea448bc0bb
+change journal  {'added': 0, 'changed': 1, 'removed': 0, 'unchanged': 9}
+  changed  docs/specs/pricing.md  a5c3344e1b75 -> 1fc2126f0081

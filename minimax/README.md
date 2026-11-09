@@ -119,6 +119,17 @@ CLI（`python -m sdd_context`）：
 `sdd context --check` 会对比 `samples/tasks/*.json` 里 `must_include` 声明的必要来源，
 缺任何一条就返回退出码 2；`retrieval.queries` 保留了本次实际执行的 SQL。
 
+## 4.1 交付材料索引
+
+| 题面要求的材料 | 本仓库中的位置 |
+| --- | --- |
+| 完整源码 | `sdd_context/`（上下文模块）、`scripts/`（启动与复现） |
+| 运行说明 | 本文件（第 1–5 节） |
+| 验证样例 | `samples/tasks/task-01-coupon-policy.json`、`docs/validation-sample.md`、`samples/specs-v2/` |
+| 代码与测试 | `sample-project/`、`patches/`、`artifacts/code.diff`、`records/runs/*/tests.log` |
+| 技术使用记录 | `docs/records.md` + `records/`（seekdb 查询、PowerContext 写入/复用、测试日志） |
+| 一页技术说明 | `docs/technical-note.md` |
+
 ## 5. 数据初始化与重置
 
 ```bash

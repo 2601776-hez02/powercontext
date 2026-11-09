@@ -1,0 +1,49 @@
+{
+  "settings": {
+    "home": "/root/minimax/.runtime",
+    "records": "/root/minimax/records",
+    "artifacts": "/root/minimax/artifacts",
+    "sample_repo": "/root/minimax/sample-project",
+    "workdir": "/root/minimax/.runtime/workdir",
+    "seekdb": {
+      "kind": "embedded",
+      "path": "/root/minimax/.runtime/seekdb",
+      "host": "",
+      "port": 2881,
+      "database": "test"
+    },
+    "powercontext_url": "http://127.0.0.1:8137",
+    "minimax_model": "MiniMax-M2",
+    "minimax_base_url": "https://api.minimaxi.com/v1"
+  },
+  "seekdb": {
+    "tables": [
+      "sdd_documents",
+      "sdd_items",
+      "sdd_imports",
+      "sdd_document_history"
+    ],
+    "fulltext_index": "ix_sdd_item_search",
+    "fulltext_created": true,
+    "server_version": "5.7.25-OceanBase seekdb-v1.4.0.0"
+  },
+  "stats": {
+    "target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
+    "server_version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+    "database": "test",
+    "documents": 0,
+    "items": 0,
+    "items_by_kind": {},
+    "imports": 0,
+    "history_rows": 0,
+    "indexes": [
+      "ix_sdd_item_doc",
+      "ix_sdd_item_kind",
+      "ix_sdd_item_path",
+      "ix_sdd_item_symbol",
+      "ix_sdd_item_search",
+      "PRIMARY"
+    ],
+    "data_path": "/root/minimax/.runtime/seekdb"
+  }
+}

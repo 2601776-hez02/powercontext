@@ -1,0 +1,59 @@
+{
+  "state": {
+    "created_at": "2026-11-09T13:32:16Z",
+    "done": [
+      "Read PRC-3, PRC-4 and RSV-3",
+      "Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted"
+    ],
+    "next_step": "Send the context pack to MiniMax and review the patch",
+    "revision": 2,
+    "schema": "sdd-task-state/v1",
+    "status": "in_progress",
+    "task_id": "coupon-policy",
+    "title": "Apply coupon codes case-insensitively and reject expired codes",
+    "todo": [
+      "Normalize coupon codes before the catalog lookup",
+      "Reject expired coupons with ExpiredCouponError before capacity is consumed"
+    ],
+    "updated_at": "2026-11-09T13:32:23Z",
+    "verifications": [
+      {
+        "command": "/root/minimax/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py",
+        "targets": [
+          "tests/test_coupon_policy.py"
+        ],
+        "workdir": "/root/minimax/.runtime/workdir",
+        "exit_code": 1,
+        "passed": 1,
+        "failed": 6,
+        "errors": 0,
+        "duration_s": 0.196,
+        "started_at": "2026-11-09T13:32:22Z",
+        "summary": "1 passed, 6 failed",
+        "log": "/root/minimax/records/runs/coupon-policy-20261109T133223Z/tests.log"
+      }
+    ]
+  },
+  "memory": {
+    "family": "memory",
+    "artifact_id": "memory",
+    "revision": 2
+  },
+  "entry_version": 1,
+  "scope_id": "scp_25dxjx8wdp1j6h2a7983v7x7y9",
+  "tests": {
+    "command": "/root/minimax/.venv/bin/python -m pytest -q -p no:cacheprovider tests/test_coupon_policy.py",
+    "targets": [
+      "tests/test_coupon_policy.py"
+    ],
+    "workdir": "/root/minimax/.runtime/workdir",
+    "exit_code": 1,
+    "passed": 1,
+    "failed": 6,
+    "errors": 0,
+    "duration_s": 0.196,
+    "started_at": "2026-11-09T13:32:22Z",
+    "summary": "1 passed, 6 failed"
+  },
+  "log": "/root/minimax/records/runs/coupon-policy-20261109T133223Z/tests.log"
+}

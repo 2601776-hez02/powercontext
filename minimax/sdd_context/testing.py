@@ -153,19 +153,32 @@ def run_pytest(
 
 
 def _parse_counts(output: str) -> tuple[int, int, int]:
+    """Parse pytest's terminal summary, tolerating ``-q``/``-qq`` output."""
     passed = failed = errors = 0
     for line in reversed(output.splitlines()):
-        if " passed" in line or " failed" in line or " error" in line:
-            for match in re.finditer(r"(\d+) (passed|failed|error|errors)", line):
-                count, kind = int(match.group(1)), match.group(2)
-                if kind == "passed":
-                    passed = count
-                elif kind == "failed":
-                    failed = count
-                else:
-                    errors = count
-            if passed or failed or errors:
-                break
+        if not re.search(r"\b\d+ (passed|failed|error|errors|skipped|deselected)\b", line):
+            continue
+        for match in re.finditer(r"(\d+) (passed|failed|error|errors)", line):
+            count, kind = int(match.group(1)), match.group(2)
+            if kind == "passed":
+                passed = count
+            elif kind == "failed":
+                failed = count
+            else:
+                errors = count
+        if passed or failed or errors:
+            break
+    if not (passed or failed or errors):
+        # ``pytest -qq`` prints only the progress line: count its characters.
+        for line in reversed(output.splitlines()):
+            stripped = line.strip()
+            if stripped.endswith("[100%]"):
+                dots = stripped.split("[")[0]
+                if dots and set(dots) <= {".", "s", "x", "F", "E"}:
+                    passed = dots.count(".")
+                    failed = dots.count("F")
+                    errors = dots.count("E")
+                    break
     return passed, failed, errors
 
 

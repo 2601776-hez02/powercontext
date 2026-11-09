@@ -1,0 +1,655 @@
+{
+  "schema": "sdd-context-pack/v1",
+  "generated_at": "2026-11-09T13:32:17Z",
+  "repo": "/root/minimax/.runtime/repo",
+  "task": {
+    "task_id": "coupon-policy",
+    "title": "Apply coupon codes case-insensitively and reject expired codes",
+    "description": "The reservation flow rejects coupon codes that customers type in lowercase, and it still accepts the retired SPRING10 campaign code because the validity date is never checked. Make coupon matching follow PRC-3 (case-insensitive, surrounding whitespace stripped, unknown codes unchanged) and make expired coupons fail with ExpiredCouponError per PRC-4, without consuming capacity (RSV-3). Pricing, capacity and quantity behavior must not change.",
+    "keywords": [
+      "coupon",
+      "discount",
+      "expired",
+      "case-insensitive",
+      "whitespace",
+      "reservation",
+      "capacity",
+      "apply_coupon",
+      "find_coupon",
+      "PRC-3",
+      "PRC-4",
+      "RSV-3"
+    ],
+    "acceptance_tests": [
+      "tests/test_coupon_policy.py"
+    ],
+    "regression_tests": [
+      "tests/test_pricing.py",
+      "tests/test_reservation.py"
+    ],
+    "must_include": {
+      "specs": [
+        "docs/specs/pricing.md#PRC-3",
+        "docs/specs/pricing.md#PRC-4",
+        "docs/specs/reservation.md#RSV-3"
+      ],
+      "code": [
+        "src/evently/pricing.py#find_coupon",
+        "src/evently/pricing.py#apply_coupon",
+        "src/evently/reservation.py#ReservationService.reserve"
+      ],
+      "tests": [
+        "tests/test_coupon_policy.py"
+      ]
+    },
+    "keep_behavior": [
+      "subtotal = quantity * 12500 cents (PRC-1)",
+      "VIP20 keeps taking 20% off (PRC-2)",
+      "unknown codes raise UnknownCouponError (PRC-3)",
+      "quantity and capacity errors keep their exception types (RSV-1, RSV-2)"
+    ],
+    "source": "/root/minimax/samples/tasks/task-01-coupon-policy.json"
+  },
+  "database": {
+    "target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
+    "server_version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+    "database": "test",
+    "documents": 10,
+    "items": 50,
+    "items_by_kind": {
+      "code": 20,
+      "spec": 10,
+      "test": 20
+    },
+    "imports": 1,
+    "history_rows": 10,
+    "indexes": [
+      "ix_sdd_item_doc",
+      "ix_sdd_item_kind",
+      "ix_sdd_item_path",
+      "ix_sdd_item_symbol",
+      "ix_sdd_item_search",
+      "PRIMARY"
+    ],
+    "data_path": "/root/minimax/.runtime/seekdb"
+  },
+  "index": {
+    "import_id": "20261109T133214296735",
+    "started_at": "2026-11-09T13:32:14Z",
+    "finished_at": "2026-11-09T13:32:14Z",
+    "repo_path": "/root/minimax/.runtime/repo",
+    "seekdb_target": "embedded-seekdb:/root/minimax/.runtime/seekdb",
+    "spec_revision": "1e10174f8aaa5bc1cb55072400e5da69",
+    "code_revision": "0655c6f8159031dc8ef7337201bade87",
+    "test_revision": "93ca07ea448bc0bba47fbbc8855d5b23",
+    "document_count": 10,
+    "item_count": 50
+  },
+  "materials": {
+    "specs": [
+      {
+        "item_id": "120d02693d6f075c64db4c03",
+        "kind": "spec",
+        "path": "docs/specs/reservation.md",
+        "item_ref": "docs/specs/reservation.md#RSV-3",
+        "symbol": "RSV-3",
+        "title": "Coupon application and capacity safety",
+        "start_line": 23,
+        "end_line": 33,
+        "revision": "845db18e9ab58f20b9635ff87126decc48287fe25eea9c68323c237028bc3305",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "exact symbol/path match",
+          "identifier coverage 0.33",
+          "keyword coverage 0.58",
+          "text coverage 0.30"
+        ],
+        "exact": true,
+        "linked": null,
+        "score": 0.5631,
+        "text": "## RSV-3 Coupon application and capacity safety\n\nCoupons are applied after the subtotal is computed, following the pricing\nspecification (PRC-2 through PRC-5). The reservation total MUST equal the\ndiscounted amount.\n\nA reservation that fails because the coupon is unknown, malformed or expired\nMUST NOT consume capacity: the seats remain available for a later successful\nreservation. In other words, coupon validation happens before the seat counter\nis updated."
+      },
+      {
+        "item_id": "c5bf84d1444d20521ac4519e",
+        "kind": "spec",
+        "path": "docs/specs/pricing.md",
+        "item_ref": "docs/specs/pricing.md#PRC-3",
+        "symbol": "PRC-3",
+        "title": "Coupon matching",
+        "start_line": 28,
+        "end_line": 37,
+        "revision": "a5c3344e1b759e840e6f3958590ab49d9dbfe318899b552363fbee4bcb6091c6",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "exact symbol/path match",
+          "identifier coverage 0.17",
+          "keyword coverage 0.42",
+          "text coverage 0.30"
+        ],
+        "exact": true,
+        "linked": null,
+        "score": 0.4965,
+        "text": "## PRC-3 Coupon matching\n\nCoupon codes are matched **case-insensitively**. Surrounding whitespace\n(spaces, tabs, newlines) MUST be stripped before matching. Internal whitespace\nis significant and no other normalization is allowed.\n\nA code that does not resolve to a catalog entry MUST raise `UnknownCouponError`\nand MUST NOT change the order total. Matching MUST NOT modify the catalog or\ncreate new entries."
+      },
+      {
+        "item_id": "75470e530fbed3476dc58939",
+        "kind": "spec",
+        "path": "docs/specs/pricing.md",
+        "item_ref": "docs/specs/pricing.md#PRC-4",
+        "symbol": "PRC-4",
+        "title": "Coupon validity",
+        "start_line": 38,
+        "end_line": 46,
+        "revision": "a5c3344e1b759e840e6f3958590ab49d9dbfe318899b552363fbee4bcb6091c6",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "exact symbol/path match",
+          "identifier coverage 0.17",
+          "keyword coverage 0.33",
+          "text coverage 0.28"
+        ],
+        "exact": true,
+        "linked": null,
+        "score": 0.4777,
+        "text": "## PRC-4 Coupon validity\n\nA coupon is usable only while its `valid until` date is today or later. The\ndate is inclusive and evaluated against the UTC calendar date of the order.\n\nAttempting to use an expired coupon MUST raise `ExpiredCouponError`. The order\ntotal MUST remain unchanged and the failure MUST NOT be reported as an unknown\ncode, because support tooling treats the two cases differently."
+      },
+      {
+        "item_id": "885d306c7a5e5c5787e56690",
+        "kind": "spec",
+        "path": "docs/specs/reservation.md",
+        "item_ref": "docs/specs/reservation.md#RSV-2",
+        "symbol": "RSV-2",
+        "title": "Capacity",
+        "start_line": 15,
+        "end_line": 22,
+        "revision": "845db18e9ab58f20b9635ff87126decc48287fe25eea9c68323c237028bc3305",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "exact symbol/path match",
+          "identifier coverage 0.25",
+          "keyword coverage 0.25",
+          "text coverage 0.13"
+        ],
+        "exact": true,
+        "linked": null,
+        "score": 0.4628,
+        "text": "## RSV-2 Capacity\n\nEach event has a fixed capacity. Reserving more seats than remain MUST raise\n`SoldOutError`. Unknown event ids MUST raise `UnknownEventError`; they are not\nsilently treated as sold out.\n\nA successful reservation consumes exactly the reserved quantity."
+      }
+    ],
+    "code": [
+      {
+        "item_id": "5ccfffc8081a5e3c28a013c7",
+        "kind": "code",
+        "path": "src/evently/pricing.py",
+        "item_ref": "src/evently/pricing.py#apply_coupon",
+        "symbol": "apply_coupon",
+        "title": "def apply_coupon(code, amount_cents)",
+        "start_line": 24,
+        "end_line": 28,
+        "revision": "42054ffe235df4bb70258de77394a6a2635f44f87147cca7670549de5986b740",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "exact symbol/path match",
+          "identifier coverage 0.17",
+          "keyword coverage 0.33",
+          "text coverage 0.11"
+        ],
+        "exact": true,
+        "linked": null,
+        "score": 0.4468,
+        "text": "def apply_coupon(code: str, amount_cents: int) -> int:\n    \"\"\"Return ``amount_cents`` after applying the coupon for ``code``.\"\"\"\n    coupon = find_coupon(code)\n    discount = amount_cents * coupon.percent_off // 100\n    return amount_cents - discount"
+      },
+      {
+        "item_id": "0572f73178891414a05b6216",
+        "kind": "code",
+        "path": "src/evently/reservation.py",
+        "item_ref": "src/evently/reservation.py#ReservationService",
+        "symbol": "ReservationService",
+        "title": "class ReservationService",
+        "start_line": 21,
+        "end_line": 50,
+        "revision": "03b71ba982dd4c2d7c19cf344bc887d9b3407f7893a5cb23d7cd5bb2fd788535",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "exact symbol/path match",
+          "identifier coverage 0.08",
+          "keyword coverage 0.33",
+          "text coverage 0.19"
+        ],
+        "exact": true,
+        "linked": null,
+        "score": 0.4389,
+        "text": "class ReservationService:\n    \"\"\"In-memory reservation service with a per-event capacity.\"\"\"\n\n    def __init__(self, capacity: dict[str, int]) -> None:\n        self._capacity = dict(capacity)\n        self._sold = {event_id: 0 for event_id in self._capacity}\n\n    def remaining(self, event_id: str) -> int:\n        \"\"\"Return the number of seats that can still be reserved.\"\"\"\n        if event_id not in self._capacity:\n            raise UnknownEventError(f\"unknown event: {event_id!r}\")\n        return self._capacity[event_id] - self._sold[event_id]\n\n    def reserve(self, event_id: str, quantity: int, coupon_code: str | None = None) -> Reservation:\n        \"\"\"Reserve ``quantity`` seats, optionally applying ``coupon_code``.\"\"\"\n        if quantity <= 0:\n            raise InvalidQuantityError(f\"quantity must be positive, got {quantity}\")\n        remaining = self.remaining(event_id)\n        if quantity > remaining:\n            raise SoldOutError(f\"{event_id} only has {remaining} seats left\")\n\n        total = subtotal_cents(quantity)\n        if coupon_code is None:\n            reservation = Reservation(event_id, quantity, total, None)\n        else:\n            total = apply_coupon(coupon_code, total)\n            reservation = Reservation(event_id, quantity, total, coupon_code)\n\n        self._sold[event_id] += quantity\n        return reservation"
+      },
+      {
+        "item_id": "9fa09e161cf2689ee4b2a56f",
+        "kind": "code",
+        "path": "src/evently/reservation.py",
+        "item_ref": "src/evently/reservation.py#ReservationService.reserve",
+        "symbol": "ReservationService.reserve",
+        "title": "def reserve(self, event_id, quantity, coupon_code)",
+        "start_line": 34,
+        "end_line": 50,
+        "revision": "03b71ba982dd4c2d7c19cf344bc887d9b3407f7893a5cb23d7cd5bb2fd788535",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "exact symbol/path match",
+          "identifier coverage 0.17",
+          "keyword coverage 0.25",
+          "text coverage 0.13"
+        ],
+        "exact": true,
+        "linked": null,
+        "score": 0.4327,
+        "text": "    def reserve(self, event_id: str, quantity: int, coupon_code: str | None = None) -> Reservation:\n        \"\"\"Reserve ``quantity`` seats, optionally applying ``coupon_code``.\"\"\"\n        if quantity <= 0:\n            raise InvalidQuantityError(f\"quantity must be positive, got {quantity}\")\n        remaining = self.remaining(event_id)\n        if quantity > remaining:\n            raise SoldOutError(f\"{event_id} only has {remaining} seats left\")\n\n        total = subtotal_cents(quantity)\n        if coupon_code is None:\n            reservation = Reservation(event_id, quantity, total, None)\n        else:\n            total = apply_coupon(coupon_code, total)\n            reservation = Reservation(event_id, quantity, total, coupon_code)\n\n        self._sold[event_id] += quantity\n        return reservation"
+      },
+      {
+        "item_id": "be4f45d9558898b30f965a42",
+        "kind": "code",
+        "path": "src/evently/pricing.py",
+        "item_ref": "src/evently/pricing.py#find_coupon",
+        "symbol": "find_coupon",
+        "title": "def find_coupon(code)",
+        "start_line": 16,
+        "end_line": 21,
+        "revision": "42054ffe235df4bb70258de77394a6a2635f44f87147cca7670549de5986b740",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "exact symbol/path match",
+          "identifier coverage 0.17",
+          "keyword coverage 0.17",
+          "text coverage 0.13"
+        ],
+        "exact": true,
+        "linked": null,
+        "score": 0.4165,
+        "text": "def find_coupon(code: str) -> Coupon:\n    \"\"\"Return the catalog entry the customer typed in.\"\"\"\n    try:\n        return CATALOG[code]\n    except KeyError:\n        raise UnknownCouponError(f\"unknown coupon code: {code!r}\") from None"
+      },
+      {
+        "item_id": "c53f874d4ff73d85efe5c19a",
+        "kind": "code",
+        "path": "src/evently/errors.py",
+        "item_ref": "src/evently/errors.py#ExpiredCouponError",
+        "symbol": "ExpiredCouponError",
+        "title": "class ExpiredCouponError",
+        "start_line": 38,
+        "end_line": 41,
+        "revision": "faa9b5e69a6f76495897e3909a80d1b9a45eb3446b7bba47a1ed5fe12ebfbb41",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "exact symbol/path match",
+          "identifier coverage 0.17",
+          "keyword coverage 0.17",
+          "text coverage 0.11"
+        ],
+        "exact": true,
+        "linked": null,
+        "score": 0.4145,
+        "text": "class ExpiredCouponError(DomainError):\n    \"\"\"The coupon existed but is no longer valid for the order date.\"\"\"\n\n    code = \"coupon_expired\""
+      }
+    ],
+    "tests": [
+      {
+        "item_id": "292a405af4347755896b19aa",
+        "kind": "test",
+        "path": "tests/test_coupon_policy.py",
+        "item_ref": "tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively",
+        "symbol": "test_codes_are_matched_case_insensitively",
+        "title": "def test_codes_are_matched_case_insensitively()",
+        "start_line": 22,
+        "end_line": 25,
+        "revision": "65220d8d8b333d091eb513b50f5278a02ba9bb135aafa8bf3ceecf0d98e6c612",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "imports evently.errors, evently.pricing",
+          "exact symbol/path match",
+          "test imports a selected symbol",
+          "identifier coverage 0.25",
+          "keyword coverage 0.50",
+          "text coverage 0.21",
+          "declared acceptance test for this task"
+        ],
+        "exact": true,
+        "linked": true,
+        "score": 0.8568,
+        "text": "def test_codes_are_matched_case_insensitively() -> None:\n    \"\"\"PRC-3: matching is case-insensitive.\"\"\"\n    assert find_coupon(\"vip20\").code == \"VIP20\"\n    assert apply_coupon(\"vip20\", 25_000) == 20_000"
+      },
+      {
+        "item_id": "ed1cde092c0dca1d4eeeb9a2",
+        "kind": "test",
+        "path": "tests/test_coupon_policy.py",
+        "item_ref": "tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation",
+        "symbol": "test_lowercase_coupon_applies_to_reservation",
+        "title": "def test_lowercase_coupon_applies_to_reservation()",
+        "start_line": 46,
+        "end_line": 49,
+        "revision": "65220d8d8b333d091eb513b50f5278a02ba9bb135aafa8bf3ceecf0d98e6c612",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "imports evently.errors, evently.pricing",
+          "exact symbol/path match",
+          "test imports a selected symbol",
+          "identifier coverage 0.25",
+          "keyword coverage 0.50",
+          "text coverage 0.21",
+          "declared acceptance test for this task"
+        ],
+        "exact": true,
+        "linked": true,
+        "score": 0.8568,
+        "text": "def test_lowercase_coupon_applies_to_reservation() -> None:\n    \"\"\"PRC-3 + RSV-3: normalized codes apply inside the reservation flow.\"\"\"\n    reservation = service().reserve(\"gig-1\", 2, \"vip20\")\n    assert reservation.total_cents == 20_000"
+      },
+      {
+        "item_id": "be17551a8b2b4180b4c456a0",
+        "kind": "test",
+        "path": "tests/test_coupon_policy.py",
+        "item_ref": "tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total",
+        "symbol": "test_expired_coupon_does_not_change_the_total",
+        "title": "def test_expired_coupon_does_not_change_the_total()",
+        "start_line": 40,
+        "end_line": 43,
+        "revision": "65220d8d8b333d091eb513b50f5278a02ba9bb135aafa8bf3ceecf0d98e6c612",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "imports evently.errors, evently.pricing",
+          "exact symbol/path match",
+          "test imports a selected symbol",
+          "identifier coverage 0.17",
+          "keyword coverage 0.42",
+          "text coverage 0.19",
+          "declared acceptance test for this task"
+        ],
+        "exact": true,
+        "linked": true,
+        "score": 0.8238,
+        "text": "def test_expired_coupon_does_not_change_the_total() -> None:\n    \"\"\"PRC-4: the failure must not be reported as a discounted total.\"\"\"\n    with pytest.raises(ExpiredCouponError):\n        apply_coupon(\"spring10\", 25_000)"
+      },
+      {
+        "item_id": "2a14376356af2c52f5b20947",
+        "kind": "test",
+        "path": "tests/test_coupon_policy.py",
+        "item_ref": "tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored",
+        "symbol": "test_surrounding_whitespace_is_ignored",
+        "title": "def test_surrounding_whitespace_is_ignored()",
+        "start_line": 28,
+        "end_line": 31,
+        "revision": "65220d8d8b333d091eb513b50f5278a02ba9bb135aafa8bf3ceecf0d98e6c612",
+        "reasons": [
+          "fulltext match for: coupon discount expired case insensitive whitespace",
+          "exact symbol/path match",
+          "imports evently.errors, evently.pricing",
+          "exact symbol/path match",
+          "test imports a selected symbol",
+          "identifier coverage 0.17",
+          "keyword coverage 0.42",
+          "text coverage 0.19"
+        ],
+        "exact": true,
+        "linked": true,
+        "score": 0.8238,
+        "text": "def test_surrounding_whitespace_is_ignored() -> None:\n    \"\"\"PRC-3: surrounding whitespace is stripped before matching.\"\"\"\n    assert find_coupon(\"  vip20\\n\").code == \"VIP20\"\n    assert apply_coupon(\" VIP20\\t\", 10_000) == 8_000"
+      }
+    ]
+  },
+  "task_state": {
+    "created_at": "2026-11-09T13:32:16Z",
+    "done": [
+      "Read PRC-3, PRC-4 and RSV-3",
+      "Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted"
+    ],
+    "next_step": "Send the context pack to MiniMax and review the patch",
+    "revision": 1,
+    "schema": "sdd-task-state/v1",
+    "status": "in_progress",
+    "task_id": "coupon-policy",
+    "title": "Apply coupon codes case-insensitively and reject expired codes",
+    "todo": [
+      "Normalize coupon codes before the catalog lookup",
+      "Reject expired coupons with ExpiredCouponError before capacity is consumed"
+    ],
+    "updated_at": "2026-11-09T13:32:16Z",
+    "verifications": [],
+    "_citation": {
+      "memory_ref": {
+        "family": "memory",
+        "artifact_id": "memory",
+        "revision": 1
+      },
+      "entry_id": "mem_ent_55ddcb1db75447a78f486f096611fab9",
+      "entry_version_id": "mem_ver_26693b14fa0046aaa93da47f0bed2ce8"
+    },
+    "_score": 0.01639344262295082
+  },
+  "checks": {
+    "ok": true,
+    "missing": {},
+    "required": {
+      "specs": [
+        "docs/specs/pricing.md#PRC-3",
+        "docs/specs/pricing.md#PRC-4",
+        "docs/specs/reservation.md#RSV-3"
+      ],
+      "code": [
+        "src/evently/pricing.py#find_coupon",
+        "src/evently/pricing.py#apply_coupon",
+        "src/evently/reservation.py#ReservationService.reserve"
+      ],
+      "tests": [
+        "tests/test_coupon_policy.py"
+      ]
+    },
+    "source_status": {
+      "ok": 13
+    },
+    "stale_sources": []
+  },
+  "source_checks": [
+    {
+      "item_ref": "docs/specs/reservation.md#RSV-3",
+      "status": "ok",
+      "detail": "lines 23-33"
+    },
+    {
+      "item_ref": "docs/specs/pricing.md#PRC-3",
+      "status": "ok",
+      "detail": "lines 28-37"
+    },
+    {
+      "item_ref": "docs/specs/pricing.md#PRC-4",
+      "status": "ok",
+      "detail": "lines 38-46"
+    },
+    {
+      "item_ref": "docs/specs/reservation.md#RSV-2",
+      "status": "ok",
+      "detail": "lines 15-22"
+    },
+    {
+      "item_ref": "src/evently/pricing.py#apply_coupon",
+      "status": "ok",
+      "detail": "lines 24-28"
+    },
+    {
+      "item_ref": "src/evently/reservation.py#ReservationService",
+      "status": "ok",
+      "detail": "lines 21-50"
+    },
+    {
+      "item_ref": "src/evently/reservation.py#ReservationService.reserve",
+      "status": "ok",
+      "detail": "lines 34-50"
+    },
+    {
+      "item_ref": "src/evently/pricing.py#find_coupon",
+      "status": "ok",
+      "detail": "lines 16-21"
+    },
+    {
+      "item_ref": "src/evently/errors.py#ExpiredCouponError",
+      "status": "ok",
+      "detail": "lines 38-41"
+    },
+    {
+      "item_ref": "tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively",
+      "status": "ok",
+      "detail": "lines 22-25"
+    },
+    {
+      "item_ref": "tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation",
+      "status": "ok",
+      "detail": "lines 46-49"
+    },
+    {
+      "item_ref": "tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total",
+      "status": "ok",
+      "detail": "lines 40-43"
+    },
+    {
+      "item_ref": "tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored",
+      "status": "ok",
+      "detail": "lines 28-31"
+    }
+  ],
+  "retrieval": {
+    "terms": [
+      "coupon",
+      "discount",
+      "expired",
+      "case",
+      "insensitive",
+      "whitespace",
+      "reservation",
+      "capacity",
+      "apply",
+      "find",
+      "prc",
+      "rsv",
+      "codes",
+      "insensitively",
+      "reject",
+      "flow",
+      "rejects",
+      "customers",
+      "type",
+      "lowercase",
+      "still",
+      "accepts",
+      "retired",
+      "spring10",
+      "campaign",
+      "code",
+      "because",
+      "validity",
+      "date",
+      "never",
+      "checked",
+      "make",
+      "matching",
+      "follow",
+      "surrounding",
+      "stripped",
+      "unknown",
+      "unchanged",
+      "coupons",
+      "fail",
+      "error",
+      "without",
+      "consuming",
+      "pricing",
+      "quantity",
+      "behavior",
+      "change"
+    ],
+    "candidate_count": 46,
+    "queries": [
+      {
+        "purpose": "latest-import",
+        "sql": "SELECT import_id, started_at, finished_at, repo_path, seekdb_target, spec_revision, code_revision, test_revision, document_count, item_count FROM sdd_imports ORDER BY started_at DESC LIMIT 1",
+        "params": [],
+        "rows": 1
+      },
+      {
+        "purpose": "fulltext:coupon discount expired case insensitive whitespace reservation capacity apply find prc rsv codes insensitively reject flow rejects customers type lowercase still accepts retired spring10",
+        "sql": "SELECT item_id, kind, path, item_ref, symbol, title, start_line, end_line, revision, text, MATCH(searchable) AGAINST (%s IN NATURAL LANGUAGE MODE) AS score FROM sdd_items WHERE MATCH(searchable) AGAINST (%s IN NATURAL LANGUAGE MODE) ORDER BY score DESC, item_ref LIMIT %s",
+        "params": [
+          "coupon discount expired case insensitive whitespace reservation capacity apply find prc rsv codes insensitively reject flow rejects customers type lowercase still accepts retired spring10",
+          "coupon discount expired case insensitive whitespace reservation capacity apply find prc rsv codes insensitively reject flow rejects customers type lowercase still accepts retired spring10",
+          120
+        ],
+        "rows": 46
+      },
+      {
+        "purpose": "exact-symbol:coupon,discount,expired,case",
+        "sql": "SELECT item_id, kind, path, item_ref, symbol, title, start_line, end_line, revision, text FROM sdd_items WHERE (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) OR (LOWER(symbol) LIKE %s OR LOWER(path) LIKE %s OR LOWER(title) LIKE %s) ORDER BY kind, item_ref LIMIT %s",
+        "params": [
+          "%coupon%",
+          "%coupon%",
+          "%coupon%",
+          "%discount%",
+          "%discount%",
+          "%discount%",
+          "%expired%",
+          "%expired%",
+          "%expired%",
+          "%case%",
+          "%case%",
+          "%case%",
+          "%insensitive%",
+          "%insensitive%",
+          "%insensitive%",
+          "%whitespace%",
+          "%whitespace%",
+          "%whitespace%",
+          "%reservation%",
+          "%reservation%",
+          "%reservation%",
+          "%capacity%",
+          "%capacity%",
+          "%capacity%",
+          "%apply%",
+          "%apply%",
+          "%apply%",
+          "%find%",
+          "%find%",
+          "%find%",
+          "%prc%",
+          "%prc%",
+          "%prc%",
+          "%rsv%",
+          "%rsv%",
+          "%rsv%",
+          40
+        ],
+        "rows": 36
+      },
+      {
+        "purpose": "tests-importing:evently.errors,evently.pricing,evently.reservation",
+        "sql": "SELECT item_id, kind, path, item_ref, symbol, title, start_line, end_line, revision, text FROM sdd_items WHERE kind = 'test' AND (LOWER(text) LIKE %s OR LOWER(text) LIKE %s OR LOWER(text) LIKE %s OR LOWER(text) LIKE %s OR LOWER(text) LIKE %s OR LOWER(text) LIKE %s OR LOWER(text) LIKE %s OR LOWER(text) LIKE %s) ORDER BY item_ref LIMIT %s",
+        "params": [
+          "%evently.errors%",
+          "%evently.pricing%",
+          "%evently.reservation%",
+          "%expiredcouponerror%",
+          "%reservationservice%",
+          "%apply_coupon%",
+          "%find_coupon%",
+          "%reserve%",
+          30
+        ],
+        "rows": 18
+      }
+    ]
+  }
+}

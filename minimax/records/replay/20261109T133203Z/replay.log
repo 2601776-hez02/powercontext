@@ -1,0 +1,201 @@
+SDD context module — replay of the recorded MiniMax change
+==========================================================
+Everything below runs locally: embedded seekdb for the material index,
+PowerContext for task state, and the recorded patch instead of a live model call.
+
+== 0. dependencies
+dependencies ok
+
+== 1. start from an empty state
+home            /root/minimax/.runtime
+seekdb          embedded-seekdb:/root/minimax/.runtime/seekdb
+server version  5.7.25-OceanBase seekdb-v1.4.0.0
+tables          sdd_documents, sdd_items, sdd_imports, sdd_document_history
+fulltext index  ix_sdd_item_search (created)
+
+== 2. start PowerContext (SQLite backed, port from .runtime/powercontext.env)
+starting PowerContext on http://127.0.0.1:8138
+  POWERCONTEXT_HOME=/root/minimax/.runtime/powercontext
+  database kind=sqlite
+ready (pid 1342508)
+sdd context     0.1.0
+home            /root/minimax/.runtime
+seekdb          embedded-seekdb:/root/minimax/.runtime/seekdb · server 5.7.25-OceanBase seekdb-v1.4.0.0 · ready
+powercontext    http://127.0.0.1:8138 · ready
+minimax         NO API KEY · MiniMax-M2 @ https://api.minimaxi.com/v1
+sample          /root/minimax/sample-project (ok)
+
+== 3. import the sample repository into seekdb
+repository      /root/minimax/.runtime/repo
+seekdb          embedded-seekdb:/root/minimax/.runtime/seekdb (server 5.7.25-OceanBase seekdb-v1.4.0.0)
+documents       10 · items 50 {'spec': 10, 'code': 20, 'test': 20}
+spec revision   1e10174f8aaa5bc1
+code revision   0655c6f8159031dc
+test revision   93ca07ea448bc0bb
+change journal  {'added': 10, 'changed': 0, 'removed': 0, 'unchanged': 0}
+  added    docs/specs/pricing.md  - -> a5c3344e1b75
+  added    docs/specs/reservation.md  - -> 845db18e9ab5
+  added    src/evently/__init__.py  - -> f5096f71ebc8
+  added    src/evently/catalog.py  - -> 52896c2982a8
+  added    src/evently/errors.py  - -> faa9b5e69a6f
+  added    src/evently/pricing.py  - -> 42054ffe235d
+  added    src/evently/reservation.py  - -> 03b71ba982dd
+  added    tests/test_coupon_policy.py  - -> 65220d8d8b33
+  added    tests/test_pricing.py  - -> 67516e8dd7b5
+  added    tests/test_reservation.py  - -> 54c42e24bb28
+
+== 4. build the context pack for the task (specification v1)
+task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
+repository      /root/minimax/.runtime/repo
+index           20261109T133214296735 · spec 1e10174f8aaa
+specs           4
+   0.56  docs/specs/reservation.md#RSV-3
+   0.50  docs/specs/pricing.md#PRC-3
+   0.48  docs/specs/pricing.md#PRC-4
+   0.46  docs/specs/reservation.md#RSV-2
+code            5
+   0.45  src/evently/pricing.py#apply_coupon
+   0.44  src/evently/reservation.py#ReservationService
+   0.43  src/evently/reservation.py#ReservationService.reserve
+   0.42  src/evently/pricing.py#find_coupon
+   0.41  src/evently/errors.py#ExpiredCouponError
+tests           4
+   0.86  tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively
+   0.86  tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation
+   0.82  tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total
+   0.82  tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored
+task state      skipped (--no-state)
+source checks   {'ok': 13}
+pack            artifacts/context-pack-v1.json
+markdown        artifacts/context-pack-v1.md
+pc source       sdd-context-coupon-policy-20261109T133214296735 (accepted)
+
+== 5. save the task state into PowerContext (first write, from empty state)
+saved           coupon-policy revision 1 (587 bytes, entry version 1)
+memory          memory @1
+scope           scp_25dxjx8wdp1j6h2a7983v7x7y9
+
+== 6. restart the module as a new process and read the state back
+task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
+status          in_progress
+revision        1
+updated         2026-11-09T13:32:16Z
+scope           scp_25dxjx8wdp1j6h2a7983v7x7y9
+done            2
+  - Read PRC-3, PRC-4 and RSV-3
+  - Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted
+todo            2
+  - Normalize coupon codes before the catalog lookup
+  - Reject expired coupons with ExpiredCouponError before capacity is consumed
+verifications   0
+next step       Send the context pack to MiniMax and review the patch
+task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
+repository      /root/minimax/.runtime/repo
+index           20261109T133214296735 · spec 1e10174f8aaa
+specs           4
+   0.56  docs/specs/reservation.md#RSV-3
+   0.50  docs/specs/pricing.md#PRC-3
+   0.48  docs/specs/pricing.md#PRC-4
+   0.46  docs/specs/reservation.md#RSV-2
+code            5
+   0.45  src/evently/pricing.py#apply_coupon
+   0.44  src/evently/reservation.py#ReservationService
+   0.43  src/evently/reservation.py#ReservationService.reserve
+   0.42  src/evently/pricing.py#find_coupon
+   0.41  src/evently/errors.py#ExpiredCouponError
+tests           4
+   0.86  tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively
+   0.86  tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation
+   0.82  tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total
+   0.82  tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored
+task state      revision 1 · in_progress · done 2 · todo 2 · verifications 0
+next step       Send the context pack to MiniMax and review the patch
+source checks   {'ok': 13}
+pack            /root/minimax/records/replay/20261109T133203Z/context-with-state.json
+markdown        /root/minimax/records/replay/20261109T133203Z/context-with-state.md
+state reuse after module restart: OK
+
+== 7. restart PowerContext itself and read the state again
+stopped PowerContext (pid 1342508)
+starting PowerContext on http://127.0.0.1:8138
+  POWERCONTEXT_HOME=/root/minimax/.runtime/powercontext
+  database kind=sqlite
+ready (pid 1342900)
+task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
+status          in_progress
+revision        1
+updated         2026-11-09T13:32:16Z
+scope           scp_25dxjx8wdp1j6h2a7983v7x7y9
+done            2
+  - Read PRC-3, PRC-4 and RSV-3
+  - Reproduced: lowercase code raises UnknownCouponError, expired code is still accepted
+todo            2
+  - Normalize coupon codes before the catalog lookup
+  - Reject expired coupons with ExpiredCouponError before capacity is consumed
+verifications   0
+next step       Send the context pack to MiniMax and review the patch
+state survives a PowerContext restart: OK
+
+== 8. baseline: the acceptance tests fail on the untouched snapshot
+tests           1 passed, 6 failed (exit 1)
+log             /root/minimax/records/runs/coupon-policy-20261109T133223Z/tests.log
+state           revision 2 · status in_progress
+baseline exit code 1 (expected: the acceptance tests fail because the behavior is missing)
+
+== 9. apply the recorded MiniMax patch and re-run acceptance + regression tests
+note: patches/recorded-coupon-policy.patch is missing, replaying /root/minimax/patches/reference-coupon-policy.patch instead
+ src/evently/pricing.py | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+tests           17 passed (exit 0)
+log             /root/minimax/records/runs/coupon-policy-20261109T133223Z/tests.log
+state           revision 3 · status verified
+
+== 10. specification update: replace pricing.md with v2 and re-import
+repository      /root/minimax/.runtime/repo
+seekdb          embedded-seekdb:/root/minimax/.runtime/seekdb (server 5.7.25-OceanBase seekdb-v1.4.0.0)
+documents       10 · items 50 {'spec': 10, 'code': 20, 'test': 20}
+spec revision   18471ec477520271
+code revision   0655c6f8159031dc
+test revision   93ca07ea448bc0bb
+change journal  {'added': 0, 'changed': 1, 'removed': 0, 'unchanged': 9}
+  changed  docs/specs/pricing.md  a5c3344e1b75 -> 1fc2126f0081
+task            coupon-policy  Apply coupon codes case-insensitively and reject expired codes
+repository      /root/minimax/.runtime/repo
+index           20261109T133225022549 · spec 18471ec47752
+specs           4
+   0.56  docs/specs/reservation.md#RSV-3
+   0.50  docs/specs/pricing.md#PRC-3
+   0.48  docs/specs/pricing.md#PRC-4
+   0.46  docs/specs/reservation.md#RSV-2
+code            5
+   0.45  src/evently/pricing.py#apply_coupon
+   0.44  src/evently/reservation.py#ReservationService
+   0.43  src/evently/reservation.py#ReservationService.reserve
+   0.42  src/evently/pricing.py#find_coupon
+   0.41  src/evently/errors.py#ExpiredCouponError
+tests           4
+   0.86  tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively
+   0.86  tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation
+   0.82  tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total
+   0.82  tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored
+task state      revision 3 · verified · done 2 · todo 2 · verifications 2
+next step       Send the context pack to MiniMax and review the patch
+source checks   {'ok': 13}
+pack            artifacts/context-pack-v2.json
+markdown        artifacts/context-pack-v2.md
+
+== 11. prove the context followed the specification update
+spec revision : 1e10174f8aaa5bc1 -> 18471ec477520271
+changed items : docs/specs/pricing.md#PRC-3, docs/specs/pricing.md#PRC-4
+PRC-3 excerpt : together with the matched code and the UTC order date.
+context follows the re-imported specification: OK
+
+== 12. summary
+task        : Apply coupon codes case-insensitively and reject expired codes
+database    : embedded-seekdb:/root/minimax/.runtime/seekdb | items 50
+specs       : docs/specs/reservation.md#RSV-3, docs/specs/pricing.md#PRC-3, docs/specs/pricing.md#PRC-4, docs/specs/reservation.md#RSV-2
+code        : src/evently/pricing.py#apply_coupon, src/evently/reservation.py#ReservationService, src/evently/reservation.py#ReservationService.reserve, src/evently/pricing.py#find_coupon, src/evently/errors.py#ExpiredCouponError
+tests       : tests/test_coupon_policy.py#test_codes_are_matched_case_insensitively, tests/test_coupon_policy.py#test_lowercase_coupon_applies_to_reservation, tests/test_coupon_policy.py#test_expired_coupon_does_not_change_the_total, tests/test_coupon_policy.py#test_surrounding_whitespace_is_ignored
+
+replay finished. Logs: /root/minimax/records/replay/20261109T133203Z
+artifacts: artifacts/context-pack-v1.json, artifacts/context-pack-v2.json, artifacts/code.diff

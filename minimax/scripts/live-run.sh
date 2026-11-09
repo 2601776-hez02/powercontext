@@ -23,6 +23,7 @@ step "0. dependencies and services"
 if [ ! -x .venv/bin/python ]; then ./scripts/bootstrap.sh; fi
 python -c "import pylibseekdb, powercontext, pymysql, requests; print('dependencies ok')"
 ./scripts/start-powercontext.sh
+source scripts/env.sh
 sdd doctor | tee "$LOG_DIR/doctor.log"
 
 step "1. import the sample repository and build the context pack"

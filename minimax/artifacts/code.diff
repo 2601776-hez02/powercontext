@@ -1,0 +1,43 @@
+diff --git a/src/evently/pricing.py b/src/evently/pricing.py
+index 0e39296..02597d5 100644
+--- a/src/evently/pricing.py
++++ b/src/evently/pricing.py
+@@ -2,8 +2,10 @@
+ 
+ from __future__ import annotations
+ 
++from datetime import datetime, timezone
++
+ from .catalog import CATALOG, Coupon
+-from .errors import UnknownCouponError
++from .errors import ExpiredCouponError, UnknownCouponError
+ 
+ TICKET_PRICE_CENTS = 12_500
+ 
+@@ -14,9 +16,13 @@ def subtotal_cents(quantity: int) -> int:
+ 
+ 
+ def find_coupon(code: str) -> Coupon:
+-    """Return the catalog entry the customer typed in."""
++    """Return the catalog entry the customer typed in.
++
++    PRC-3: matching is case-insensitive and surrounding whitespace is stripped
++    before the lookup; the catalog itself is never modified.
++    """
+     try:
+-        return CATALOG[code]
++        return CATALOG[code.strip().upper()]
+     except KeyError:
+         raise UnknownCouponError(f"unknown coupon code: {code!r}") from None
+ 
+@@ -24,5 +30,10 @@ def find_coupon(code: str) -> Coupon:
+ def apply_coupon(code: str, amount_cents: int) -> int:
+     """Return ``amount_cents`` after applying the coupon for ``code``."""
+     coupon = find_coupon(code)
++    today = datetime.now(timezone.utc).date()
++    if coupon.valid_until < today:
++        raise ExpiredCouponError(
++            f"coupon {coupon.code} expired on {coupon.valid_until.isoformat()}"
++        )
+     discount = amount_cents * coupon.percent_off // 100
+     return amount_cents - discount
