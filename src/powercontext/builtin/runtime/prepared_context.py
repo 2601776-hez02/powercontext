@@ -965,9 +965,9 @@ _TOKEN_PATTERN = re.compile(r"[a-z]+|\d+")
 _EVIDENCE_SHARED_TERMS = 1.0
 # Window selection: "centered", "bestsum", or "hybrid" (bestsum only for split evidence).
 _EVIDENCE_WINDOW_MODE = "hybrid"
-# Cover a multi-part question split across abstracts when the halves fill most of the query.
+# Cover a multi-part question when its two halves together account for the whole query.
 _EVIDENCE_MULTIPART_SPLIT = True
-_EVIDENCE_MULTIPART_COVERAGE = 0.8
+_EVIDENCE_MULTIPART_COVERAGE = 1.0
 # A claim is about its content words; grammar words match every abstract equally well.
 _EVIDENCE_COMMON_WORD_FACTOR = 0.2
 _EVIDENCE_COMMON_WORDS = frozenset(
