@@ -504,8 +504,7 @@ class PreparedContextBuilder:
                 document_frequency[token] += 1
         total_documents = len(tokenized)
         weights = {
-            token: math.log(1.0 + (total_documents - count + 0.5) / (count + 0.5))
-            for token, count in document_frequency.items()
+            token: _term_weight(token, total_documents, count) for token, count in document_frequency.items()
         }
 
         prepared: list[tuple[float, int, int, MemoryEntryAddress, str, list[tuple[int, int]]]] = []
@@ -910,6 +909,23 @@ _TOKEN_PATTERN = re.compile(r"[a-z]+|\d+")
 _EVIDENCE_SHARED_TERMS = 0.5
 # ... or when its answer is nearly as strong, covering multi-part queries with disjoint terms.
 _EVIDENCE_SHARED_PEAK = 0.9
+# A claim is about its content words; grammar words match every abstract equally well.
+_EVIDENCE_COMMON_WORD_FACTOR = 0.2
+_EVIDENCE_COMMON_WORDS = frozenset(
+    """a an the and or but if then than that this these those of in on at to for from by with without into
+    over under between among during after before above below up down out off again further once here there
+    when where why how all any both each few more most other some such no nor not only own same so too very
+    can will just should now is are was were be been being have has had having do does did doing it its
+    they them their we us our you your he she him her his who whom which what whose whether while because as
+    also may might must shall could would""".split()
+)
+
+
+def _term_weight(token: str, total_documents: int, document_frequency: int) -> float:
+    weight = math.log(1.0 + (total_documents - document_frequency + 0.5) / (document_frequency + 0.5))
+    if token in _EVIDENCE_COMMON_WORDS:
+        return weight * _EVIDENCE_COMMON_WORD_FACTOR
+    return weight
 
 
 def _tokenize(text: str) -> set[str]:
