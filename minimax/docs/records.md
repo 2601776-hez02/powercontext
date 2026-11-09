@@ -95,6 +95,12 @@ OpenAI 兼容端点 `{base}/chat/completions` 作为回退），温度 0.2，`ma
 > 现场运行方式见 README 第 3 节（`export MINIMAX_API_KEY=... && ./scripts/live-run.sh`）。
 > `scripts/replay.sh` 不需要 Key，用记录下来的补丁完成同样的改前/改后验证。
 >
+> **备用接入（账户无 API 余额、只有网页版额度时）**：`sdd prompt --task ... --out FILE`
+> 会把 API 版本**完全相同**的 system+user 消息导出成文本
+> （`records/minimax/coupon-policy/prompt-web.md`，13.8 KB ≈ 3.4k tokens）。
+> 把它粘贴到 MiniMax 网页版/App，再把模型回答原样贴回，即可用同一份上下文完成修改；
+> 开发记录会注明「网页版」、使用时间与模型版本，后续 apply / 测试 / 记录流程不变。
+>
 > 2026-11-09T14:15Z 用参赛账号的 Key 实测：鉴权通过（`GET /v1/models` 正常返回），
 > 但 `POST /v1/text/chatcompletion_v2` 返回 `base_resp.status_code=1008 insufficient balance`
 > —— 该账号/M Plan 权益尚未到账，因此这一次调用没有产出补丁。Key 无效或模型名过期时

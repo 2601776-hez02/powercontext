@@ -364,6 +364,39 @@ def cmd_verify(args: argparse.Namespace, settings: Settings) -> int:
     return run.exit_code
 
 
+def cmd_prompt(args: argparse.Namespace, settings: Settings) -> int:
+    """Render the exact prompt the agent step would send (for manual runs)."""
+    from .agent import build_messages  # noqa: PLC0415 - avoids a cycle at import time
+
+    task = load_task(Path(args.task))
+    repo = Path(args.repo).expanduser().resolve() if args.repo else settings.sample_repo
+    with SeekDBStore(settings.seekdb) as store:
+        stats = store.stats()
+        index = store.latest_import()
+        selection = select_materials(store, task)
+    state = None
+    if not args.no_state:
+        try:
+            state = TaskStateStore(settings.powercontext_url, settings.powercontext_token).load(task.task_id)
+        except PowerContextError:
+            state = None
+    pack = build_pack(selection, repo_root=repo, state=state, index=index, db=stats)
+    messages = build_messages(pack)
+    text = (
+        "### SYSTEM\n" + messages[0]["content"].strip()
+        + "\n\n### USER\n" + messages[1]["content"].strip() + "\n"
+    )
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(text, encoding="utf-8")
+    append_event(settings.records_dir, "prompt", {"task": task.task_id, "out": str(out), "bytes": len(text)})
+    print(f"prompt          {out} ({len(text)} bytes, ~{len(text)//4} tokens)")
+    print(f"specs           {', '.join(item.hit['item_ref'] for item in selection.specs)}")
+    print(f"code            {', '.join(item.hit['item_ref'] for item in selection.code)}")
+    print(f"tests           {', '.join(item.hit['item_ref'] for item in selection.tests)}")
+    return 0
+
+
 def cmd_db(args: argparse.Namespace, settings: Settings) -> int:
     with SeekDBStore(settings.seekdb) as store:
         if args.action == "stats":
@@ -504,6 +537,12 @@ def build_parser() -> argparse.ArgumentParser:
     verify.add_argument("--reset", action="store_true")
     verify.add_argument("--json", action="store_true")
 
+    prompt = sub.add_parser("prompt", help="render the MiniMax prompt (for a manual Web/App run)")
+    prompt.add_argument("--task", required=True)
+    prompt.add_argument("--repo", default=None)
+    prompt.add_argument("--out", required=True)
+    prompt.add_argument("--no-state", action="store_true")
+
     db = sub.add_parser("db", help="inspect the seekdb index")
     db.add_argument("action", choices=["stats", "query"])
     db.add_argument("--sql", default="")
@@ -522,6 +561,7 @@ COMMANDS = {
     "state": cmd_state,
     "agent": cmd_agent,
     "verify": cmd_verify,
+    "prompt": cmd_prompt,
     "db": cmd_db,
     "doctor": cmd_doctor,
 }
