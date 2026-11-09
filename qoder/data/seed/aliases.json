@@ -1,0 +1,14 @@
+[
+  { "term": "召回率", "aliases": ["recall", "召回"] },
+  { "term": "延迟", "aliases": ["latency", "耗时", "响应时间"] },
+  { "term": "向量索引", "aliases": ["HNSW", "近似最近邻", "ANN"] },
+  { "term": "全文索引", "aliases": ["FTS", "倒排索引", "ngram"] },
+  { "term": "分块", "aliases": ["chunk", "切块", "切片"] },
+  { "term": "字节预算", "aliases": ["budget", "输出预算", "上下文预算"] },
+  { "term": "周报", "aliases": ["weekly", "汇报", "总结"] },
+  { "term": "出处", "aliases": ["引用", "citation", "来源"] },
+  { "term": "任务进度", "aliases": ["进度", "里程碑", "排期"] },
+  { "term": "评测", "aliases": ["evaluation", "benchmark", "指标"] },
+  { "term": "证据", "aliases": ["evidence", "原文片段", "引文"] },
+  { "term": "嵌入", "aliases": ["embedding", "向量化", "编码"] }
+]

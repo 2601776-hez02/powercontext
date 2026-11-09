@@ -1,0 +1,812 @@
+{
+  "schema": "zhixu.site.v1",
+  "generated_at": "2026-11-09 21:47:52",
+  "version": "0.1.0",
+  "repo": {
+    "branch": "2026-competition-ecosystem",
+    "remote": "https://github.com/2601776-hez02/powercontext"
+  },
+  "stats": {
+    "documents": 16,
+    "chunks": 77,
+    "tasks": 12,
+    "events": 12,
+    "searches": 19
+  },
+  "store": {
+    "engine": "5.7.25-OceanBase seekdb-v1.4.0.0",
+    "path": ".\\.zhixu\\seekdb",
+    "schema_version": "1"
+  },
+  "documents": [
+    {
+      "id": 1,
+      "path": "01-项目背景-资料散落在各处.md",
+      "title": "项目背景：资料散落在聊天记录、PDF 和笔记里",
+      "kind": "note",
+      "tags": "背景,痛点,资料管理",
+      "char_count": 686,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 3
+    },
+    {
+      "id": 2,
+      "path": "02-需求-结论要有出处.md",
+      "title": "需求：一屏内回答「这条结论出自哪里」",
+      "kind": "spec",
+      "tags": "需求,出处,引用",
+      "char_count": 820,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 4
+    },
+    {
+      "id": 3,
+      "path": "03-设计-双索引与混合检索.md",
+      "title": "设计：ngram 全文 + HNSW 向量双索引",
+      "kind": "design",
+      "tags": "架构,全文索引,向量索引,混合检索",
+      "char_count": 1695,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 6
+    },
+    {
+      "id": 4,
+      "path": "04-笔记-HNSW参数与召回.md",
+      "title": "阅读笔记：HNSW 的 efSearch、efConstruction 与 M",
+      "kind": "reading",
+      "tags": "HNSW,召回率,延迟,参数",
+      "char_count": 933,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 5
+    },
+    {
+      "id": 5,
+      "path": "05-笔记-中文ngram分词.md",
+      "title": "阅读笔记：中文检索为什么用 ngram 而不是空格分词",
+      "kind": "reading",
+      "tags": "ngram,全文索引,中文分词,检索",
+      "char_count": 938,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 5
+    },
+    {
+      "id": 6,
+      "path": "06-实验-efSearch扫描.md",
+      "title": "实验记录：efSearch 扫描（召回率与延迟）",
+      "kind": "experiment",
+      "tags": "实验,efSearch,召回率,延迟,HNSW",
+      "char_count": 883,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 6
+    },
+    {
+      "id": 7,
+      "path": "07-实验-分块大小对比.md",
+      "title": "实验记录：分块大小对检索效果的影响",
+      "kind": "experiment",
+      "tags": "分块,chunk,检索,实验",
+      "char_count": 798,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 5
+    },
+    {
+      "id": 8,
+      "path": "08-评测规范-证据召回率与预算.md",
+      "title": "评测规范：证据召回率、字节预算与引用核对",
+      "kind": "spec",
+      "tags": "评测,召回率,字节预算,引用",
+      "char_count": 973,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 6
+    },
+    {
+      "id": 9,
+      "path": "09-周会纪要-1105.md",
+      "title": "周会纪要 11-05：先打通出处，再谈智能",
+      "kind": "meeting",
+      "tags": "会议,纪要,里程碑,风险",
+      "char_count": 740,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 4
+    },
+    {
+      "id": 10,
+      "path": "10-工作流-周报模板与自动汇总.md",
+      "title": "工作流：周报模板与自动汇总",
+      "kind": "workflow",
+      "tags": "周报,模板,自动化,汇报",
+      "char_count": 982,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 5
+    },
+    {
+      "id": 11,
+      "path": "11-里程碑与风险.md",
+      "title": "里程碑与风险清单",
+      "kind": "plan",
+      "tags": "里程碑,风险,排期",
+      "char_count": 704,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 3
+    },
+    {
+      "id": 12,
+      "path": "12-笔记-距离度量与归一化.md",
+      "title": "阅读笔记：余弦距离、L2 距离与向量归一化",
+      "kind": "reading",
+      "tags": "向量,余弦距离,归一化,距离度量",
+      "char_count": 942,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 4
+    },
+    {
+      "id": 13,
+      "path": "13-笔记-查询计划与索引.md",
+      "title": "数据库笔记：查询计划与向量索引的选择",
+      "kind": "reading",
+      "tags": "SQL,查询计划,索引,seekdb",
+      "char_count": 1081,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 5
+    },
+    {
+      "id": 14,
+      "path": "14-论文摘要-RAG与引用溯源.md",
+      "title": "论文摘要笔记：RAG 与引用溯源",
+      "kind": "reading",
+      "tags": "RAG,引用,证据,检索增强",
+      "char_count": 828,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 6
+    },
+    {
+      "id": 15,
+      "path": "15-运维-数据目录与重启恢复.md",
+      "title": "运维笔记：数据目录、重启恢复与幂等初始化",
+      "kind": "ops",
+      "tags": "运维,重启,幂等,seekdb",
+      "char_count": 932,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 6
+    },
+    {
+      "id": 16,
+      "path": "16-选型-嵌入式seekdb.md",
+      "title": "选型：为什么用嵌入式 seekdb 而不是再起一个服务",
+      "kind": "design",
+      "tags": "选型,seekdb,嵌入式,架构",
+      "char_count": 996,
+      "updated_at": "2026-11-09 21:40:52",
+      "chunk_count": 4
+    }
+  ],
+  "tasks": [
+    {
+      "id": 6,
+      "title": "双人交叉标注 12 条查询",
+      "status": "blocked",
+      "status_label": "阻塞",
+      "priority": "P0",
+      "owner": "评测同学",
+      "due_date": "2026-11-10",
+      "detail": "卡在标注口径没有对齐：证据区间是否允许跨小节。",
+      "evidence_document_id": 8,
+      "updated_at": "2026-10-31 10:55:00"
+    },
+    {
+      "id": 4,
+      "title": "补齐 512 字节预算的边界测试",
+      "status": "doing",
+      "status_label": "进行中",
+      "priority": "P0",
+      "owner": "我",
+      "due_date": "2026-11-11",
+      "detail": "目标：预算极小时至少保留一条最短证据，且绝不超预算。",
+      "evidence_document_id": 8,
+      "updated_at": "2026-10-31 10:09:00"
+    },
+    {
+      "id": 5,
+      "title": "术语表补到 20 条以上",
+      "status": "doing",
+      "status_label": "进行中",
+      "priority": "P1",
+      "owner": "师兄",
+      "due_date": "2026-11-12",
+      "detail": "重点覆盖中英混写：recall/召回、latency/延迟、ANN/近似最近邻。",
+      "evidence_document_id": 5,
+      "updated_at": "2026-10-31 10:32:00"
+    },
+    {
+      "id": 7,
+      "title": "任务板状态流转与事件日志上线",
+      "status": "doing",
+      "status_label": "进行中",
+      "priority": "P1",
+      "owner": "我",
+      "due_date": "2026-11-13",
+      "detail": "每次状态变更写一条事件，周报从事件流折叠。",
+      "evidence_document_id": 10,
+      "updated_at": "2026-10-31 11:18:00"
+    },
+    {
+      "id": 8,
+      "title": "周报自动生成并归档到 reports/",
+      "status": "todo",
+      "status_label": "待开始",
+      "priority": "P1",
+      "owner": "我",
+      "due_date": "2026-11-14",
+      "detail": "包含概览、本周完成、进行中、风险、下周计划五段。",
+      "evidence_document_id": 10,
+      "updated_at": "2026-10-31 11:41:00"
+    },
+    {
+      "id": 9,
+      "title": "项目网站与演示数据导出",
+      "status": "todo",
+      "status_label": "待开始",
+      "priority": "P2",
+      "owner": "我",
+      "due_date": "2026-11-16",
+      "detail": "站点数据必须来自真实查询，不允许手写假数据。",
+      "evidence_document_id": 11,
+      "updated_at": "2026-10-31 12:04:00"
+    },
+    {
+      "id": 10,
+      "title": "万级片段压测，复核 M 与 efSearch",
+      "status": "todo",
+      "status_label": "待开始",
+      "priority": "P2",
+      "owner": "我",
+      "due_date": "2026-11-20",
+      "detail": "百级结论不外推到万级，需要重跑延迟与召回。",
+      "evidence_document_id": 6,
+      "updated_at": "2026-10-31 12:27:00"
+    },
+    {
+      "id": 1,
+      "title": "整理资料库并导入第一批 Markdown",
+      "status": "done",
+      "status_label": "已完成",
+      "priority": "P0",
+      "owner": "我",
+      "due_date": "2026-11-03",
+      "detail": "16 篇资料，92 个片段，重复导入不再产生重复行。",
+      "evidence_document_id": 1,
+      "updated_at": "2026-11-03 17:30:00"
+    },
+    {
+      "id": 2,
+      "title": "打通全文 + 向量的混合检索",
+      "status": "done",
+      "status_label": "已完成",
+      "priority": "P0",
+      "owner": "我",
+      "due_date": "2026-11-05",
+      "detail": "RRF 融合，输出命中通道，Top3 能命中相关小节。",
+      "evidence_document_id": 3,
+      "updated_at": "2026-11-05 17:30:00"
+    },
+    {
+      "id": 3,
+      "title": "抽查 10 条结果的出处是否可回查",
+      "status": "done",
+      "status_label": "已完成",
+      "priority": "P1",
+      "owner": "师兄",
+      "due_date": "2026-11-06",
+      "detail": "行号与字符区间全部对得上。",
+      "evidence_document_id": 2,
+      "updated_at": "2026-11-06 17:30:00"
+    },
+    {
+      "id": 12,
+      "title": "把「引用可回查」写进验收清单",
+      "status": "done",
+      "status_label": "已完成",
+      "priority": "P1",
+      "owner": "我",
+      "due_date": "2026-11-08",
+      "detail": "路径、字符区间、行号、正文四者一致才算通过。",
+      "evidence_document_id": 14,
+      "updated_at": "2026-11-08 17:30:00"
+    },
+    {
+      "id": 11,
+      "title": "确认单进程窗口的文档说明",
+      "status": "done",
+      "status_label": "已完成",
+      "priority": "P2",
+      "owner": "我",
+      "due_date": "2026-11-07",
+      "detail": "写清楚 serve 与命令行不能同时写库。",
+      "evidence_document_id": 15,
+      "updated_at": "2026-11-07 17:30:00"
+    }
+  ],
+  "task_summary": {
+    "total": 12,
+    "counts": {
+      "todo": 3,
+      "doing": 3,
+      "blocked": 1,
+      "done": 5
+    },
+    "counts_label": {
+      "待开始": 3,
+      "进行中": 3,
+      "阻塞": 1,
+      "已完成": 5
+    },
+    "overdue": [],
+    "due_soon": [
+      "双人交叉标注 12 条查询",
+      "补齐 512 字节预算的边界测试",
+      "术语表补到 20 条以上",
+      "任务板状态流转与事件日志上线",
+      "周报自动生成并归档到 reports/",
+      "项目网站与演示数据导出"
+    ],
+    "completion_rate": 0.4167
+  },
+  "digest": {
+    "period_start": "2026-11-03",
+    "period_end": "2026-11-09",
+    "markdown": "# 学研周报 · 2026-11-03 ~ 2026-11-09\n\n> 由知序自动汇总；数据源为本地 seekdb 库（zx_documents / zx_chunks / zx_tasks / zx_task_events / zx_searches）。\n\n## 一、概览\n\n- 资料：本周期新增 **16** 篇，累计 16 篇 / 77 个片段。\n- 任务：完成 **5** 个，进行中 3 个，阻塞 1 个，累计 12 个（完成率 41.7%）。\n- 检索：本周期 **19** 次，平均每次都会带回原文出处。\n\n## 二、本周完成\n\n- [x] 整理资料库并导入第一批 Markdown（P0，完成于 11-03 17:30） — 证据：《项目背景：资料散落在聊天记录、PDF 和笔记里》第 9-13 行\n- [x] 打通全文 + 向量的混合检索（P0，完成于 11-05 17:30） — 证据：《设计：ngram 全文 + HNSW 向量双索引》第 9-13 行\n- [x] 抽查 10 条结果的出处是否可回查（P1，完成于 11-06 17:30） — 证据：《需求：一屏内回答「这条结论出自哪里」》第 9-11 行\n- [x] 确认单进程窗口的文档说明（P2，完成于 11-07 17:30） — 证据：《运维笔记：数据目录、重启恢复与幂等初始化》第 9-13 行\n- [x] 把「引用可回查」写进验收清单（P1，完成于 11-08 17:30） — 证据：《论文摘要笔记：RAG 与引用溯源》第 9-15 行\n\n## 三、进行中\n\n- [ ] 补齐 512 字节预算的边界测试（P0，截止 2026-11-11）：目标：预算极小时至少保留一条最短证据，且绝不超预算。\n- [ ] 术语表补到 20 条以上（P1，截止 2026-11-12）：重点覆盖中英混写：recall/召回、latency/延迟、ANN/近似最近邻。\n- [ ] 任务板状态流转与事件日志上线（P1，截止 2026-11-13）：每次状态变更写一条事件，周报从事件流折叠。\n\n## 四、风险与阻塞\n\n- ⚠ 双人交叉标注 12 条查询（P0）：卡在标注口径没有对齐：证据区间是否允许跨小节。\n\n## 五、资料沉淀\n\n- 项目背景：资料散落在聊天记录、PDF 和笔记里（note，01-项目背景-资料散落在各处.md）\n- 需求：一屏内回答「这条结论出自哪里」（spec，02-需求-结论要有出处.md）\n- 设计：ngram 全文 + HNSW 向量双索引（design，03-设计-双索引与混合检索.md）\n- 阅读笔记：HNSW 的 efSearch、efConstruction 与 M（reading，04-笔记-HNSW参数与召回.md）\n- 阅读笔记：中文检索为什么用 ngram 而不是空格分词（reading，05-笔记-中文ngram分词.md）\n- 实验记录：efSearch 扫描（召回率与延迟）（experiment，06-实验-efSearch扫描.md）\n- 实验记录：分块大小对检索效果的影响（experiment，07-实验-分块大小对比.md）\n- 评测规范：证据召回率、字节预算与引用核对（spec，08-评测规范-证据召回率与预算.md）\n- 周会纪要 11-05：先打通出处，再谈智能（meeting，09-周会纪要-1105.md）\n- 工作流：周报模板与自动汇总（workflow，10-工作流-周报模板与自动汇总.md）\n- 里程碑与风险清单（plan，11-里程碑与风险.md）\n- 阅读笔记：余弦距离、L2 距离与向量归一化（reading，12-笔记-距离度量与归一化.md）\n- 数据库笔记：查询计划与向量索引的选择（reading，13-笔记-查询计划与索引.md）\n- 论文摘要笔记：RAG 与引用溯源（reading，14-论文摘要-RAG与引用溯源.md）\n- 运维笔记：数据目录、重启恢复与幂等初始化（ops，15-运维-数据目录与重启恢复.md）\n- 选型：为什么用嵌入式 seekdb 而不是再起一个服务（design，16-选型-嵌入式seekdb.md）\n\n## 六、下周建议\n\n- 双人交叉标注 12 条查询（截止 2026-11-10）\n- 补齐 512 字节预算的边界测试（截止 2026-11-11）\n- 术语表补到 20 条以上（截止 2026-11-12）\n- 任务板状态流转与事件日志上线（截止 2026-11-13）\n- 周报自动生成并归档到 reports/（截止 2026-11-14）\n\n## 附：热门检索\n\n- HNSW 的 efSearch 怎么影响召回率和延迟（3 次）\n- 中文资料检索为什么要用 ngram 分词（3 次）\n- 分块大小对检索效果的影响（3 次）\n- 周报里应该写哪些内容（3 次）\n- 证据召回率怎么评测，字节预算怎么算（3 次）\n\n_生成时间：2026-11-09 21:47；本周期新增任务 0 个。_",
+    "stats": {
+      "completed": 5,
+      "doing": 3,
+      "blocked": 1,
+      "new_documents": 16,
+      "searches": 19,
+      "documents_total": 16,
+      "chunks_total": 77,
+      "tasks_total": 12
+    }
+  },
+  "demos": [
+    {
+      "query": "HNSW 的 efSearch 怎么影响召回率和延迟",
+      "intent": "调参时快速定位实验记录",
+      "content": "BEGIN_ZHIXU_CONTEXT_V1 trust=\"untrusted_local_corpus\"\n{\"schema\":\"zhixu.context.v1\",\"query\":\"HNSW 的 efSearch 怎么影响召回率和延迟\",\"items\":[{\"citation\":{\"document_id\":3,\"path\":\"03-设计-双索引与混合检索.md\",\"title\":\"设计：ngram 全文 + HNSW 向量双索引\",\"heading\":\"检索流程\",\"chunk_id\":11,\"char_start\":981,\"char_end\":1344,\"lines\":[40,46]},\"content\":\"## 检索流程\\n\\n1. 术语扩展：查 `zx_aliases`，把「召回率」扩成「召回率 recall」，把「HNSW」扩成「HNSW 向量索引 近似最近邻」。\\n2. 全文检索：`MATCH(body) AGAINST(? IN NATURAL LANGUAGE MODE)`，取前 40 条。\\n3. 向量检索：`ORDER BY cosine_distance(embedding, ?) APPROXIMATE LIMIT 40`，走 HNSW 索引；相似度低于阈值或明显低于…\",\"score\":0.032266,\"channels\":[\"fts\",\"vector\"]},{\"citation\":{\"document_id\":6,\"path\":\"06-实验-efSearch扫描.md\",\"title\":\"实验记录：efSearch 扫描（召回率与延迟）\",\"heading\":\"目的\",\"chunk_id\":24,\"char_start\":120,\"char_end\":174,\"lines\":[9,11]},\"content\":\"## 目的\\n\\n验证 HNSW 的 `efSearch` 对召回率和查询延迟的影响，给出资料库规模下的推荐值。\",\"score\":0.031754,\"channels\":[\"fts\",\"vector\"]}]}\nEND_ZHIXU_CONTEXT_V1",
+      "content_bytes": 1236,
+      "budget_bytes": 1800,
+      "items": [
+        {
+          "citation": {
+            "document_id": 3,
+            "path": "03-设计-双索引与混合检索.md",
+            "title": "设计：ngram 全文 + HNSW 向量双索引",
+            "heading": "检索流程",
+            "chunk_id": 11,
+            "char_start": 981,
+            "char_end": 1344,
+            "lines": [
+              40,
+              46
+            ]
+          },
+          "content": "## 检索流程\n\n1. 术语扩展：查 `zx_aliases`，把「召回率」扩成「召回率 recall」，把「HNSW」扩成「HNSW 向量索引 近似最近邻」。\n2. 全文检索：`MATCH(body) AGAINST(? IN NATURAL LANGUAGE MODE)`，取前 40 条。\n3. 向量检索：`ORDER BY cosine_distance(embedding, ?) APPROXIMATE LIMIT 40`，走 HNSW 索引；相似度低于阈值或明显低于…",
+          "score": 0.032266,
+          "channels": [
+            "fts",
+            "vector"
+          ]
+        },
+        {
+          "citation": {
+            "document_id": 6,
+            "path": "06-实验-efSearch扫描.md",
+            "title": "实验记录：efSearch 扫描（召回率与延迟）",
+            "heading": "目的",
+            "chunk_id": 24,
+            "char_start": 120,
+            "char_end": 174,
+            "lines": [
+              9,
+              11
+            ]
+          },
+          "content": "## 目的\n\n验证 HNSW 的 `efSearch` 对召回率和查询延迟的影响，给出资料库规模下的推荐值。",
+          "score": 0.031754,
+          "channels": [
+            "fts",
+            "vector"
+          ]
+        }
+      ],
+      "latency_ms": 36.66,
+      "fts_hits": 40,
+      "vector_hits": 5,
+      "aliases": [
+        "召回率",
+        "延迟",
+        "向量索引"
+      ]
+    },
+    {
+      "query": "中文资料检索为什么要用 ngram 分词",
+      "intent": "写方案时找出处",
+      "content": "BEGIN_ZHIXU_CONTEXT_V1 trust=\"untrusted_local_corpus\"\n{\"schema\":\"zhixu.context.v1\",\"query\":\"中文资料检索为什么要用 ngram 分词\",\"items\":[{\"citation\":{\"document_id\":5,\"path\":\"05-笔记-中文ngram分词.md\",\"title\":\"阅读笔记：中文检索为什么用 ngram 而不是空格分词\",\"heading\":\"为什么选 ngram\",\"chunk_id\":21,\"char_start\":446,\"char_end\":595,\"lines\":[19,21]},\"content\":\"## 为什么选 ngram\\n\\n我们的资料以中文为主、夹杂英文术语，且希望**开箱即用、不额外维护词典**。ngram 二元组对「向量检索」「召回率」这类术语的召回很稳定，配合 `MATCH ... AGAINST` 的相关度排序已经够用。代价是索引膨胀——百级片段完全感觉不到，十万级时要重新评估。\",\"score\":0.032018,\"channels\":[\"fts\",\"vector\"]},{\"citation\":{\"document_id\":13,\"path\":\"13-笔记-查询计划与索引.md\",\"title\":\"数据库笔记：查询计划与向量索引的选择\",\"heading\":\"全文索引这边\",\"chunk_id\":60,\"char_start\":788,\"char_end\":917,\"lines\":[35,37]},\"content\":\"## 全文索引这边\\n\\n`MATCH(body) AGAINST(? IN NATURAL LANGUAGE MODE)` 走全文索引；如果查询串全是停用词或被分词器丢掉，会返回空集，此时需要兜底成 `LIKE` 子串匹配——这属于产品行为，不属于数据库问题。\",\"score\":0.031754,\"channels\":[\"fts\",\"vector\"]}]}\nEND_ZHIXU_CONTEXT_V1",
+      "content_bytes": 1391,
+      "budget_bytes": 1800,
+      "items": [
+        {
+          "citation": {
+            "document_id": 5,
+            "path": "05-笔记-中文ngram分词.md",
+            "title": "阅读笔记：中文检索为什么用 ngram 而不是空格分词",
+            "heading": "为什么选 ngram",
+            "chunk_id": 21,
+            "char_start": 446,
+            "char_end": 595,
+            "lines": [
+              19,
+              21
+            ]
+          },
+          "content": "## 为什么选 ngram\n\n我们的资料以中文为主、夹杂英文术语，且希望**开箱即用、不额外维护词典**。ngram 二元组对「向量检索」「召回率」这类术语的召回很稳定，配合 `MATCH ... AGAINST` 的相关度排序已经够用。代价是索引膨胀——百级片段完全感觉不到，十万级时要重新评估。",
+          "score": 0.032018,
+          "channels": [
+            "fts",
+            "vector"
+          ]
+        },
+        {
+          "citation": {
+            "document_id": 13,
+            "path": "13-笔记-查询计划与索引.md",
+            "title": "数据库笔记：查询计划与向量索引的选择",
+            "heading": "全文索引这边",
+            "chunk_id": 60,
+            "char_start": 788,
+            "char_end": 917,
+            "lines": [
+              35,
+              37
+            ]
+          },
+          "content": "## 全文索引这边\n\n`MATCH(body) AGAINST(? IN NATURAL LANGUAGE MODE)` 走全文索引；如果查询串全是停用词或被分词器丢掉，会返回空集，此时需要兜底成 `LIKE` 子串匹配——这属于产品行为，不属于数据库问题。",
+          "score": 0.031754,
+          "channels": [
+            "fts",
+            "vector"
+          ]
+        }
+      ],
+      "latency_ms": 9.6,
+      "fts_hits": 40,
+      "vector_hits": 6,
+      "aliases": [
+        "全文索引"
+      ]
+    },
+    {
+      "query": "证据召回率怎么评测，字节预算怎么算",
+      "intent": "准备评测口径",
+      "content": "BEGIN_ZHIXU_CONTEXT_V1 trust=\"untrusted_local_corpus\"\n{\"schema\":\"zhixu.context.v1\",\"query\":\"证据召回率怎么评测，字节预算怎么算\",\"items\":[{\"citation\":{\"document_id\":8,\"path\":\"08-评测规范-证据召回率与预算.md\",\"title\":\"评测规范：证据召回率、字节预算与引用核对\",\"heading\":\"指标三：字节预算\",\"chunk_id\":38,\"char_start\":460,\"char_end\":740,\"lines\":[27,35]},\"content\":\"## 指标三：字节预算\\n\\n`content_bytes` 必须等于完整输出的 UTF-8 字节数，并且小于等于 `max_bytes`。预算包含：信封标记（`BEGIN_...` / `END_...`）、JSON 结构、引用字段、正文。**不能只算正文长度**——中文一个字 3 字节，JSON 的 key 和引号同样占预算，忽略它们就会超限。\\n\\n边界情况：\\n\\n- 预算很小（比如 512 字节）时，允许返回更少的证据，但不允许超预算；\\n- 没有可用证据时返回空 Context…\",\"score\":0.031778,\"channels\":[\"fts\",\"vector\"]},{\"citation\":{\"document_id\":14,\"path\":\"14-论文摘要-RAG与引用溯源.md\",\"title\":\"论文摘要笔记：RAG 与引用溯源\",\"heading\":\"评测方式\",\"chunk_id\":65,\"char_start\":461,\"char_end\":613,\"lines\":[25,31]},\"content\":\"## 评测方式\\n\\n- 证据召回（evidence recall）：选中的原文覆盖了多少 gold 证据词项；\\n- 完整覆盖（complete evidence）：合并后的区间是否覆盖全部 gold 区间；\\n- 引用一致性：每条引用的区间能否回查通过。\\n\\n这和我们的评测规范一致：离线、可复现、不调用模型。\",\"score\":0.016393,\"channels\":[\"fts\"]}]}\nEND_ZHIXU_CONTEXT_V1",
+      "content_bytes": 1614,
+      "budget_bytes": 1800,
+      "items": [
+        {
+          "citation": {
+            "document_id": 8,
+            "path": "08-评测规范-证据召回率与预算.md",
+            "title": "评测规范：证据召回率、字节预算与引用核对",
+            "heading": "指标三：字节预算",
+            "chunk_id": 38,
+            "char_start": 460,
+            "char_end": 740,
+            "lines": [
+              27,
+              35
+            ]
+          },
+          "content": "## 指标三：字节预算\n\n`content_bytes` 必须等于完整输出的 UTF-8 字节数，并且小于等于 `max_bytes`。预算包含：信封标记（`BEGIN_...` / `END_...`）、JSON 结构、引用字段、正文。**不能只算正文长度**——中文一个字 3 字节，JSON 的 key 和引号同样占预算，忽略它们就会超限。\n\n边界情况：\n\n- 预算很小（比如 512 字节）时，允许返回更少的证据，但不允许超预算；\n- 没有可用证据时返回空 Context…",
+          "score": 0.031778,
+          "channels": [
+            "fts",
+            "vector"
+          ]
+        },
+        {
+          "citation": {
+            "document_id": 14,
+            "path": "14-论文摘要-RAG与引用溯源.md",
+            "title": "论文摘要笔记：RAG 与引用溯源",
+            "heading": "评测方式",
+            "chunk_id": 65,
+            "char_start": 461,
+            "char_end": 613,
+            "lines": [
+              25,
+              31
+            ]
+          },
+          "content": "## 评测方式\n\n- 证据召回（evidence recall）：选中的原文覆盖了多少 gold 证据词项；\n- 完整覆盖（complete evidence）：合并后的区间是否覆盖全部 gold 区间；\n- 引用一致性：每条引用的区间能否回查通过。\n\n这和我们的评测规范一致：离线、可复现、不调用模型。",
+          "score": 0.016393,
+          "channels": [
+            "fts"
+          ]
+        }
+      ],
+      "latency_ms": 16.5,
+      "fts_hits": 40,
+      "vector_hits": 1,
+      "aliases": [
+        "召回率",
+        "字节预算",
+        "评测",
+        "证据"
+      ]
+    },
+    {
+      "query": "周报里应该写哪些内容",
+      "intent": "把重复整理报表变成一条命令",
+      "content": "BEGIN_ZHIXU_CONTEXT_V1 trust=\"untrusted_local_corpus\"\n{\"schema\":\"zhixu.context.v1\",\"query\":\"周报里应该写哪些内容\",\"items\":[{\"citation\":{\"document_id\":10,\"path\":\"10-工作流-周报模板与自动汇总.md\",\"title\":\"工作流：周报模板与自动汇总\",\"heading\":\"周报里应该写哪些内容\",\"chunk_id\":46,\"char_start\":239,\"char_end\":447,\"lines\":[15,24]},\"content\":\"## 周报里应该写哪些内容\\n\\n一份能直接发到群里的周报，四段就够：\\n\\n1. **概览**：本周新增资料几篇、完成任务几个、进行中几个、阻塞几个、检索几次。\\n2. **本周完成**：每条完成项带完成时间和证据链接（哪篇资料、第几行）。\\n3. **进行中 / 风险**：阻塞项要写清楚卡在哪，谁能解。\\n4. **下周计划**：按截止日期和优先级排序，最多 5 条。\\n\\n可选附录：热门检索关键词，用来看团队这周在关心什么。\",\"score\":0.032787,\"channels\":[\"fts\",\"vector\"]},{\"citation\":{\"document_id\":9,\"path\":\"09-周会纪要-1105.md\",\"title\":\"周会纪要 11-05：先打通出处，再谈智能\",\"heading\":\"里程碑风险\",\"chunk_id\":44,\"char_start\":554,\"char_end\":739,\"lines\":[31,35]},\"content\":\"## 里程碑风险\\n\\n- **数据量风险**：现在只有百级片段，万级之后 ngram 索引体积和 HNSW 参数都要重测，预留一周。\\n- **范围风险**：想做的功能很多（任务看板、周报、问答），先砍到「检索 + 出处 + 周报」三件事，其余排到 v2。\\n- **依赖风险**：seekdb 嵌入式引擎的窗口是单进程，Web 服务和命令行不能同时写库，需要在文档里写清楚。\",\"score\":0.016129,\"channels\":[\"fts\"]}]}\nEND_ZHIXU_CONTEXT_V1",
+      "content_bytes": 1702,
+      "budget_bytes": 1800,
+      "items": [
+        {
+          "citation": {
+            "document_id": 10,
+            "path": "10-工作流-周报模板与自动汇总.md",
+            "title": "工作流：周报模板与自动汇总",
+            "heading": "周报里应该写哪些内容",
+            "chunk_id": 46,
+            "char_start": 239,
+            "char_end": 447,
+            "lines": [
+              15,
+              24
+            ]
+          },
+          "content": "## 周报里应该写哪些内容\n\n一份能直接发到群里的周报，四段就够：\n\n1. **概览**：本周新增资料几篇、完成任务几个、进行中几个、阻塞几个、检索几次。\n2. **本周完成**：每条完成项带完成时间和证据链接（哪篇资料、第几行）。\n3. **进行中 / 风险**：阻塞项要写清楚卡在哪，谁能解。\n4. **下周计划**：按截止日期和优先级排序，最多 5 条。\n\n可选附录：热门检索关键词，用来看团队这周在关心什么。",
+          "score": 0.032787,
+          "channels": [
+            "fts",
+            "vector"
+          ]
+        },
+        {
+          "citation": {
+            "document_id": 9,
+            "path": "09-周会纪要-1105.md",
+            "title": "周会纪要 11-05：先打通出处，再谈智能",
+            "heading": "里程碑风险",
+            "chunk_id": 44,
+            "char_start": 554,
+            "char_end": 739,
+            "lines": [
+              31,
+              35
+            ]
+          },
+          "content": "## 里程碑风险\n\n- **数据量风险**：现在只有百级片段，万级之后 ngram 索引体积和 HNSW 参数都要重测，预留一周。\n- **范围风险**：想做的功能很多（任务看板、周报、问答），先砍到「检索 + 出处 + 周报」三件事，其余排到 v2。\n- **依赖风险**：seekdb 嵌入式引擎的窗口是单进程，Web 服务和命令行不能同时写库，需要在文档里写清楚。",
+          "score": 0.016129,
+          "channels": [
+            "fts"
+          ]
+        }
+      ],
+      "latency_ms": 7.32,
+      "fts_hits": 24,
+      "vector_hits": 1,
+      "aliases": [
+        "周报"
+      ]
+    },
+    {
+      "query": "项目里程碑有哪些风险",
+      "intent": "例会前确认进度",
+      "content": "BEGIN_ZHIXU_CONTEXT_V1 trust=\"untrusted_local_corpus\"\n{\"schema\":\"zhixu.context.v1\",\"query\":\"项目里程碑有哪些风险\",\"items\":[{\"citation\":{\"document_id\":11,\"path\":\"11-里程碑与风险.md\",\"title\":\"里程碑与风险清单\",\"heading\":\"里程碑\",\"chunk_id\":50,\"char_start\":66,\"char_end\":270,\"lines\":[9,18]},\"content\":\"## 里程碑\\n\\n| 阶段 | 目标 | 状态 |\\n| --- | --- | --- |\\n| M1 | 资料导入 + 出处回查 | 已完成 |\\n| M2 | 双索引混合检索 + 术语扩展 | 已完成 |\\n| M3 | 证据包字节预算 | 进行中 |\\n| M4 | 任务板 + 周报自动生成 | 进行中 |\\n| M5 | 项目网站与演示数据 | 待开始 |\\n| M6 | 万级数据压测与参数复核 | 待开始 |\",\"score\":0.032522,\"channels\":[\"fts\",\"vector\"]},{\"citation\":{\"document_id\":9,\"path\":\"09-周会纪要-1105.md\",\"title\":\"周会纪要 11-05：先打通出处，再谈智能\",\"heading\":\"里程碑风险\",\"chunk_id\":44,\"char_start\":554,\"char_end\":739,\"lines\":[31,35]},\"content\":\"## 里程碑风险\\n\\n- **数据量风险**：现在只有百级片段，万级之后 ngram 索引体积和 HNSW 参数都要重测，预留一周。\\n- **范围风险**：想做的功能很多（任务看板、周报、问答），先砍到「检索 + 出处 + 周报」三件事，其余排到 v2。\\n- **依赖风险**：seekdb 嵌入式引擎的窗口是单进程，Web 服务和命令行不能同时写库，需要在文档里写清楚。\",\"score\":0.032522,\"channels\":[\"fts\",\"vector\"]}]}\nEND_ZHIXU_CONTEXT_V1",
+      "content_bytes": 1490,
+      "budget_bytes": 1800,
+      "items": [
+        {
+          "citation": {
+            "document_id": 11,
+            "path": "11-里程碑与风险.md",
+            "title": "里程碑与风险清单",
+            "heading": "里程碑",
+            "chunk_id": 50,
+            "char_start": 66,
+            "char_end": 270,
+            "lines": [
+              9,
+              18
+            ]
+          },
+          "content": "## 里程碑\n\n| 阶段 | 目标 | 状态 |\n| --- | --- | --- |\n| M1 | 资料导入 + 出处回查 | 已完成 |\n| M2 | 双索引混合检索 + 术语扩展 | 已完成 |\n| M3 | 证据包字节预算 | 进行中 |\n| M4 | 任务板 + 周报自动生成 | 进行中 |\n| M5 | 项目网站与演示数据 | 待开始 |\n| M6 | 万级数据压测与参数复核 | 待开始 |",
+          "score": 0.032522,
+          "channels": [
+            "fts",
+            "vector"
+          ]
+        },
+        {
+          "citation": {
+            "document_id": 9,
+            "path": "09-周会纪要-1105.md",
+            "title": "周会纪要 11-05：先打通出处，再谈智能",
+            "heading": "里程碑风险",
+            "chunk_id": 44,
+            "char_start": 554,
+            "char_end": 739,
+            "lines": [
+              31,
+              35
+            ]
+          },
+          "content": "## 里程碑风险\n\n- **数据量风险**：现在只有百级片段，万级之后 ngram 索引体积和 HNSW 参数都要重测，预留一周。\n- **范围风险**：想做的功能很多（任务看板、周报、问答），先砍到「检索 + 出处 + 周报」三件事，其余排到 v2。\n- **依赖风险**：seekdb 嵌入式引擎的窗口是单进程，Web 服务和命令行不能同时写库，需要在文档里写清楚。",
+          "score": 0.032522,
+          "channels": [
+            "fts",
+            "vector"
+          ]
+        }
+      ],
+      "latency_ms": 6.77,
+      "fts_hits": 18,
+      "vector_hits": 2,
+      "aliases": [
+        "任务进度"
+      ]
+    },
+    {
+      "query": "分块大小对检索效果的影响",
+      "intent": "复盘实验结论",
+      "content": "BEGIN_ZHIXU_CONTEXT_V1 trust=\"untrusted_local_corpus\"\n{\"schema\":\"zhixu.context.v1\",\"query\":\"分块大小对检索效果的影响\",\"items\":[{\"citation\":{\"document_id\":14,\"path\":\"14-论文摘要-RAG与引用溯源.md\",\"title\":\"论文摘要笔记：RAG 与引用溯源\",\"heading\":\"待读\",\"chunk_id\":67,\"char_start\":737,\"char_end\":827,\"lines\":[39,42]},\"content\":\"## 待读\\n\\n- Self-RAG：让模型自己判断要不要检索。\\n- 长上下文 vs 检索增强的边界：上下文窗口变大之后，检索还有没有必要。初步判断：**有**，因为成本和可追溯性。\",\"score\":0.028021,\"channels\":[\"fts\",\"vector\"]},{\"citation\":{\"document_id\":6,\"path\":\"06-实验-efSearch扫描.md\",\"title\":\"实验记录：efSearch 扫描（召回率与延迟）\",\"heading\":\"后续动作\",\"chunk_id\":28,\"char_start\":673,\"char_end\":801,\"lines\":[35,39]},\"content\":\"## 后续动作\\n\\n1. 先做分块大小实验（见「分块大小对比」），确认 500 字是否合适。\\n2. 给高频术语补别名（recall / 召回、latency / 延迟、ANN / 近似最近邻）。\\n3. 数据量过万后重跑本实验，观察 `M=16` 是否仍够用。\",\"score\":0.016393,\"channels\":[\"fts\"]},{\"citation\":{\"document_id\":6,\"path\":\"06-实验-efSearch扫描.md\",\"title\":\"实验记录：efSearch 扫描（召回率与延迟）\",\"heading\":\"目的\",\"chunk_id\":24,\"char_start\":120,\"char_end\":174,\"lines\":[9,11]},\"content\":\"## 目的\\n\\n验证 HNSW 的 `efSearch` 对召回率和查询延迟的影响，给出资料库规模下的推荐值。\",\"score\":0.016129,\"channels\":[\"fts\"]}]}\nEND_ZHIXU_CONTEXT_V1",
+      "content_bytes": 1580,
+      "budget_bytes": 1800,
+      "items": [
+        {
+          "citation": {
+            "document_id": 14,
+            "path": "14-论文摘要-RAG与引用溯源.md",
+            "title": "论文摘要笔记：RAG 与引用溯源",
+            "heading": "待读",
+            "chunk_id": 67,
+            "char_start": 737,
+            "char_end": 827,
+            "lines": [
+              39,
+              42
+            ]
+          },
+          "content": "## 待读\n\n- Self-RAG：让模型自己判断要不要检索。\n- 长上下文 vs 检索增强的边界：上下文窗口变大之后，检索还有没有必要。初步判断：**有**，因为成本和可追溯性。",
+          "score": 0.028021,
+          "channels": [
+            "fts",
+            "vector"
+          ]
+        },
+        {
+          "citation": {
+            "document_id": 6,
+            "path": "06-实验-efSearch扫描.md",
+            "title": "实验记录：efSearch 扫描（召回率与延迟）",
+            "heading": "后续动作",
+            "chunk_id": 28,
+            "char_start": 673,
+            "char_end": 801,
+            "lines": [
+              35,
+              39
+            ]
+          },
+          "content": "## 后续动作\n\n1. 先做分块大小实验（见「分块大小对比」），确认 500 字是否合适。\n2. 给高频术语补别名（recall / 召回、latency / 延迟、ANN / 近似最近邻）。\n3. 数据量过万后重跑本实验，观察 `M=16` 是否仍够用。",
+          "score": 0.016393,
+          "channels": [
+            "fts"
+          ]
+        },
+        {
+          "citation": {
+            "document_id": 6,
+            "path": "06-实验-efSearch扫描.md",
+            "title": "实验记录：efSearch 扫描（召回率与延迟）",
+            "heading": "目的",
+            "chunk_id": 24,
+            "char_start": 120,
+            "char_end": 174,
+            "lines": [
+              9,
+              11
+            ]
+          },
+          "content": "## 目的\n\n验证 HNSW 的 `efSearch` 对召回率和查询延迟的影响，给出资料库规模下的推荐值。",
+          "score": 0.016129,
+          "channels": [
+            "fts"
+          ]
+        }
+      ],
+      "latency_ms": 7.96,
+      "fts_hits": 40,
+      "vector_hits": 1,
+      "aliases": [
+        "分块"
+      ]
+    }
+  ],
+  "evidence": {
+    "engine": "seekdb",
+    "engine_version": "5.7.25-OceanBase seekdb-v1.4.0.0",
+    "schema_version": "1",
+    "indexes": [
+      {
+        "index": "PRIMARY",
+        "kind": "主键",
+        "engine": "btree",
+        "columns": [
+          "id"
+        ],
+        "detail": "id"
+      },
+      {
+        "index": "ix_doc_seq",
+        "kind": "文档+序号",
+        "engine": "btree",
+        "columns": [
+          "document_id",
+          "seq"
+        ],
+        "detail": "document_id, seq"
+      },
+      {
+        "index": "ft_body",
+        "kind": "全文索引（ngram 解析器）",
+        "engine": "fulltext",
+        "columns": [
+          "__word_segment_27_1794231652404523",
+          "__doc_id_1794231652404372"
+        ],
+        "detail": "body · ngram 解析器"
+      },
+      {
+        "index": "vk_embedding",
+        "kind": "向量索引（HNSW / COSINE）",
+        "engine": "vector",
+        "columns": [
+          "__vid_1794231652406574",
+          "__type_25_1794231652406807"
+        ],
+        "detail": "embedding · 384 维 · COSINE"
+      }
+    ],
+    "explain": [
+      "============================================================",
+      "|ID|OPERATOR         |NAME           |EST.ROWS|EST.TIME(us)|",
+      "------------------------------------------------------------",
+      "|0 |VECTOR INDEX SCAN|c(vk_embedding)|77      |194         |",
+      "============================================================"
+    ],
+    "benchmark": {
+      "rounds": 5,
+      "queries": 6,
+      "samples": 30,
+      "median_ms": 8.63,
+      "p95_ms": 17.09,
+      "max_ms": 17.2
+    },
+    "ingest": {
+      "scanned": 16,
+      "added": 0,
+      "updated": 0,
+      "skipped": 16,
+      "chunks": 0,
+      "documents": []
+    },
+    "checks": {
+      "fts_index": true,
+      "vector_index": true,
+      "documents": true,
+      "chunks": true,
+      "tasks": true
+    }
+  },
+  "first_document": "01-项目背景-资料散落在各处.md"
+}

@@ -1,0 +1,7 @@
+# 知序 ZhiXu 运行依赖（Python 3.11+）
+# seekdb 嵌入式引擎：PyPI 上提供 Linux / macOS / Windows 预编译轮子
+pylibseekdb==1.4.0.post2
+PyMySQL>=1.1.1,<2
+
+# 开发与自测
+pytest>=8.0,<9

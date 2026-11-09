@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>知序 ZhiXu · 学研工作台 —— 资料有出处，进度有痕迹，周报自动汇总</title>
+<meta name="description" content="知序 ZhiXu 是一个基于嵌入式 seekdb 的本地学研工作台：ngram 全文 + HNSW 向量混合检索，结果可回查行号与字符区间；任务事件流自动生成周报。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f766e'/%3E%3Cpath d='M18 22h28M18 32h20M18 42h24' stroke='%23f0fdfa' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="#top" aria-label="知序 ZhiXu 首页">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" width="26" height="26"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9 11h14M9 16h10M9 21h12" stroke="#f0fdfa" stroke-width="2.6" stroke-linecap="round"/></svg>
+    </span>
+    <span class="brand-text">知序<em>ZhiXu</em></span>
+  </a>
+  <nav class="site-nav" aria-label="主导航">
+    <a href="#problems">解决的问题</a>
+    <a href="#demo">在线演示</a>
+    <a href="#architecture">技术架构</a>
+    <a href="#evidence">验证证据</a>
+    <a href="#start">本地运行</a>
+  </nav>
+  <a class="ghost-btn small" id="repo-link" href="https://github.com/2601776-hez02/powercontext" target="_blank" rel="noopener">GitHub 仓库</a>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="hero-copy">
+    <p class="eyebrow"><span class="dot"></span>Qoder × seekdb · 学习 / 科研 / 工作提效</p>
+    <h1>资料找得到出处，<br>任务追得上进度，<br><span class="grad">周报自己长出来。</span></h1>
+    <p class="lede">
+      知序把散落在 Markdown 里的文献笔记、实验记录、会议纪要收进一个<strong>本地嵌入式 seekdb</strong>。
+      一句话检索，每条结果都带文件名、小节、行号与字符区间，能直接回查原文；
+      任务每改一次状态就留一条事件，周报从事件流里自动折叠出来。
+    </p>
+    <div class="cta-row">
+      <a class="primary-btn" href="#demo">试试真实检索</a>
+      <a class="ghost-btn" href="#start">三分钟本地跑起来</a>
+    </div>
+    <p class="meta-line">数据不出本机 · 零外部服务 · <span id="version-line">zhixu 0.1.0</span></p>
+  </div>
+
+  <div class="hero-panel">
+    <div class="terminal" aria-label="命令行示例">
+      <div class="terminal-bar"><i></i><i></i><i></i><em>zhixu ask</em></div>
+      <pre id="hero-terminal">$ python -m zhixu ask "证据召回率怎么评测"
+
+BEGIN_ZHIXU_CONTEXT_V1 trust="untrusted_local_corpus"
+{"schema":"zhixu.context.v1","query":"证据召回率怎么评测…",
+ "items":[{"citation":{"path":"08-评测规范-证据召回率与预算.md",
+   "heading":"指标三：字节预算","lines":[27,35],
+   "char_start":460,"char_end":740}, …}]}
+END_ZHIXU_CONTEXT_V1
+
+  2 条证据 · 1624 / 1800 字节 · 18.4 ms</pre>
+    </div>
+    <div class="kpi-row" id="kpi-row">
+      <div class="kpi"><b>—</b><span>篇资料</span></div>
+      <div class="kpi"><b>—</b><span>个片段</span></div>
+      <div class="kpi"><b>—</b><span>个任务</span></div>
+      <div class="kpi"><b>—</b><span>中位检索</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="problems">
+  <div class="section-head">
+    <p class="eyebrow">真实痛点</p>
+    <h2>不是没有资料，是资料「在，但找不回来」</h2>
+    <p class="section-desc">下面三件事每天都在发生，知序分别用三种机制回应，而不是再加一个聊天框。</p>
+  </div>
+  <div class="card-grid three">
+    <article class="card">
+      <div class="card-icon">01</div>
+      <h3>查资料靠记忆</h3>
+      <p class="muted">只记得大概意思，记不住文件名；中文译名和英文缩写混着写，搜「召回」搜不到「recall」。</p>
+      <p class="answer"><strong>→ 双通道混合检索</strong>：ngram 全文索引保证词对得上，HNSW 向量索引负责「换个说法也能靠近」，术语表补同义词，RRF 融合两路排序。</p>
+    </article>
+    <article class="card">
+      <div class="card-icon">02</div>
+      <h3>结论没有出处</h3>
+      <p class="muted">写文档时引用一句「efSearch 影响召回」，却指不回第几段第几行，评审一问就卡住。</p>
+      <p class="answer"><strong>→ 字符级引用</strong>：入库时算好路径、小节、行号、字符区间；检索结果与证据包都带 citation，<code>原文[start:end]</code> 可逐条校验。</p>
+    </article>
+    <article class="card">
+      <div class="card-icon">03</div>
+      <h3>周报重复整理</h3>
+      <p class="muted">每周五翻聊天记录、对进度、找实验结果，重新组织一遍，还经常漏掉上周的风险。</p>
+      <p class="answer"><strong>→ 事件流折叠</strong>：任务状态变更写事件，资料入库带时间戳，检索留日志；周报用 SQL 按周期聚合，一条命令生成并归档。</p>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="demo">
+  <div class="section-head">
+    <p class="eyebrow">在线演示 · 真实数据</p>
+    <h2>下面的内容，全部来自本地 seekdb 的实际查询</h2>
+    <p class="section-desc">
+      站点数据由 <code>python -m zhixu export-site</code> 导出，没有手写样例。
+      生成时间 <span id="generated-at" class="chip">—</span>，数据版本 <span id="demo-version" class="chip">—</span>。
+    </p>
+  </div>
+
+  <div class="demo-shell">
+    <div class="tabs" role="tablist" aria-label="演示模块">
+      <button class="tab active" role="tab" aria-selected="true" data-tab="search">证据检索</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="tasks">任务板</button>
+      <button class="tab" role="tab" aria-selected="false" data-tab="digest">周报</button>
+    </div>
+
+    <div class="tab-panel active" id="panel-search" role="tabpanel">
+      <form class="live-search" id="live-form" autocomplete="off">
+        <input id="live-input" type="text" placeholder="输入自己的问题，例如：分块大小怎么选（本地 serve 时可用实时检索）" aria-label="实时检索输入框">
+        <button class="primary-btn small" type="submit">检索</button>
+        <span class="live-hint" id="live-hint">静态演示</span>
+      </form>
+      <div class="query-chips" id="query-chips"></div>
+      <div class="search-layout">
+        <div class="results" id="search-results"></div>
+        <aside class="evidence-pack">
+          <div class="pack-head">
+            <h3>证据包 · UTF-8 预算</h3>
+            <span class="pack-meter" id="pack-meter">—</span>
+          </div>
+          <pre class="pack-body" id="pack-body"></pre>
+          <div class="pack-foot">
+            <span id="pack-latency">—</span>
+            <span id="pack-channels">—</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-tasks" role="tabpanel">
+      <div class="board" id="task-board"></div>
+      <p class="board-note" id="board-note"></p>
+    </div>
+
+    <div class="tab-panel" id="panel-digest" role="tabpanel">
+      <article class="digest-paper" id="digest-paper"></article>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="architecture">
+  <div class="section-head">
+    <p class="eyebrow">技术架构</p>
+    <h2>一张片段表，两个索引，三次查询</h2>
+    <p class="section-desc">核心存储只有一个嵌入式 seekdb 实例：全文检索、向量检索、事务、任务事件都在同一个库里完成。</p>
+  </div>
+
+  <div class="flow">
+    <div class="flow-node"><span>01</span><b>Markdown 语料</b><small>文献笔记 / 实验记录 / 会议纪要</small></div>
+    <div class="flow-arrow" aria-hidden="true">→</div>
+    <div class="flow-node"><span>02</span><b>分块 + 坐标</b><small>按小节切 500 字，记录字符区间与行号</small></div>
+    <div class="flow-arrow" aria-hidden="true">→</div>
+    <div class="flow-node accent"><span>03</span><b>seekdb 片段表</b><small>ngram 全文索引 + HNSW 向量索引</small></div>
+    <div class="flow-arrow" aria-hidden="true">→</div>
+    <div class="flow-node"><span>04</span><b>RRF 融合</b><small>全文 + 向量双路排序合并</small></div>
+    <div class="flow-arrow" aria-hidden="true">→</div>
+    <div class="flow-node"><span>05</span><b>证据包</b><small>按 UTF-8 字节预算装入，带 citation</small></div>
+  </div>
+
+  <div class="split">
+    <div class="panel">
+      <h3>表结构（schema v<span id="schema-version">1</span>）</h3>
+      <table class="data-table">
+        <thead><tr><th>表</th><th>作用</th><th>关键索引</th></tr></thead>
+        <tbody>
+          <tr><td><code>zx_documents</code></td><td>资料元数据、内容哈希</td><td>uk_path</td></tr>
+          <tr><td><code>zx_chunks</code></td><td>片段正文、出处坐标、向量</td><td><b>ft_body</b>（ngram）、<b>vk_embedding</b>（HNSW）</td></tr>
+          <tr><td><code>zx_tasks</code></td><td>任务、状态、优先级、截止日</td><td>ix_status_due</td></tr>
+          <tr><td><code>zx_task_events</code></td><td>状态流转事件（周报数据源）</td><td>ix_task_event</td></tr>
+          <tr><td><code>zx_aliases</code></td><td>术语 / 同义词表</td><td>uk_term</td></tr>
+          <tr><td><code>zx_searches</code></td><td>检索日志</td><td>ix_search_time</td></tr>
+          <tr><td><code>zx_digests</code></td><td>周报存档</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>片段表 DDL（片段内建双索引）</h3>
+      <pre class="code"><span class="c">CREATE TABLE</span> zx_chunks (
+  id BIGINT <span class="k">NOT NULL AUTO_INCREMENT</span>,
+  document_id BIGINT <span class="k">NOT NULL</span>,
+  heading VARCHAR(255) <span class="k">NOT NULL</span>,
+  body TEXT <span class="k">NOT NULL</span>,
+  char_start INT <span class="k">NOT NULL</span>, char_end INT <span class="k">NOT NULL</span>,
+  start_line INT <span class="k">NOT NULL</span>, end_line INT <span class="k">NOT NULL</span>,
+  embedding <span class="t">VECTOR(384)</span> <span class="k">NOT NULL</span>,
+  <span class="c">FULLTEXT KEY</span> ft_body (body) <span class="k">WITH PARSER</span> ngram,
+  <span class="c">VECTOR KEY</span> vk_embedding (embedding)
+    <span class="k">WITH</span> (DISTANCE=COSINE, TYPE=HNSW),
+  <span class="c">PRIMARY KEY</span> (id)
+) <span class="k">DEFAULT CHARSET</span> = utf8mb4;</pre>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="evidence">
+  <div class="section-head">
+    <p class="eyebrow">验证证据</p>
+    <h2>不是「能跑」，是「跑过、量过、能复现」</h2>
+    <p class="section-desc">下列数字来自本机真实运行：索引清单、查询计划、基准测试与自检结果。</p>
+  </div>
+
+  <div class="card-grid four">
+    <article class="stat-card"><b id="ev-docs">—</b><span>篇资料入库</span></article>
+    <article class="stat-card"><b id="ev-chunks">—</b><span>个片段</span></article>
+    <article class="stat-card"><b id="ev-median">—</b><span>检索中位耗时</span></article>
+    <article class="stat-card"><b id="ev-p95">—</b><span>P95 耗时</span></article>
+  </div>
+
+  <div class="split">
+    <div class="panel">
+      <h3>索引清单（<code>information_schema</code> 实查）</h3>
+      <ul class="index-list" id="index-list"></ul>
+      <h3 class="mt">查询计划（真实 EXPLAIN）</h3>
+      <pre class="code plan" id="explain-plan"></pre>
+      <p class="muted small">带 <code>APPROXIMATE</code> 的向量排序会走 <b>VECTOR INDEX SCAN</b>；若去掉关键字，计划退化为全表扫描 + TOP-N 排序。</p>
+    </div>
+    <div class="panel">
+      <h3>自检与验证</h3>
+      <ul class="check-list" id="check-list"></ul>
+      <h3 class="mt">基准方式</h3>
+      <p class="muted small" id="bench-note">—</p>
+      <h3 class="mt">可复现命令</h3>
+      <pre class="code">python -m pytest -q                 <span class="cm"># 24 项测试</span>
+python -m zhixu doctor              <span class="cm"># 索引 / 计划 / 自检</span>
+python -m zhixu export-site         <span class="cm"># 重生成本站数据</span></pre>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="start">
+  <div class="section-head">
+    <p class="eyebrow">本地运行</p>
+    <h2>三条命令，从零到可检索</h2>
+    <p class="section-desc">需要 Python 3.11+；seekdb 以轮子形式随依赖安装，不需要 Docker 或独立数据库服务。</p>
+  </div>
+  <div class="start-grid">
+    <div class="panel">
+      <div class="cmd"><span>1</span><div><b>安装依赖</b><pre class="code">pip install -r requirements.txt</pre></div></div>
+      <div class="cmd"><span>2</span><div><b>初始化并入库</b><pre class="code">python -m zhixu init</pre></div></div>
+      <div class="cmd"><span>3</span><div><b>检索 / 证据包</b><pre class="code">python -m zhixu ask "HNSW 的 efSearch 怎么影响召回率"</pre></div></div>
+      <div class="cmd"><span>4</span><div><b>本地工作台（可选）</b><pre class="code">python -m zhixu serve   # http://127.0.0.1:8765</pre></div></div>
+    </div>
+    <div class="panel notes">
+      <h3>运行说明</h3>
+      <ul>
+        <li><b>数据目录</b>：默认 <code>.zhixu/</code>，可用 <code>ZHIXU_DATA_DIR</code> 指到大容量磁盘。</li>
+        <li><b>单进程窗口</b>：嵌入式 seekdb 独占数据目录，<code>serve</code> 与写命令不要同时跑。</li>
+        <li><b>幂等</b>：建表用 <code>IF NOT EXISTS</code>，入库按内容哈希；重复执行不会重复写入。</li>
+        <li><b>离线</b>：向量化是本地字符 n-gram 哈希，不调用任何模型或外部 API。</li>
+        <li><b>可信边界</b>：同义改写靠术语表兜底，真正的语义泛化需要换外部 embedding，文档里不夸大。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="qoder">
+  <div class="section-head">
+    <p class="eyebrow">开发与发布</p>
+    <h2>用 Qoder 开发，用 Qoder Sites 发布</h2>
+  </div>
+  <div class="split">
+    <div class="panel">
+      <h3>Qoder 工作流</h3>
+      <ol class="steps">
+        <li><b>需求与拆解</b>：在 Qoder 会话里描述痛点与验收口径，生成任务清单与目录骨架。</li>
+        <li><b>实现与自测</b>：Qoder CLI 负责写代码、跑 <code>pytest</code>、修失败用例；仓库内的 <code>AGENTS.md</code> 与 <code>.qoder/rules/</code> 固定项目约定。</li>
+        <li><b>站点发布</b>：<code>qoder sites prepare_site</code> 打包 <code>site/</code>，<code>publish_site</code> 发布为公开站点，再由 <code>update_access_policy</code> 设为 public。</li>
+      </ol>
+      <p class="muted small">站点上的统计、检索结果、任务板与周报均由 <code>export-site</code> 从真实数据库导出，和提交的代码一一对应。</p>
+    </div>
+    <div class="panel">
+      <h3>提交信息</h3>
+      <dl class="kv">
+        <dt>仓库</dt><dd><a id="repo-info" href="https://github.com/2601776-hez02/powercontext" target="_blank" rel="noopener">github.com/2601776-hez02/powercontext</a></dd>
+        <dt>分支</dt><dd><code id="branch-info">—</code></dd>
+        <dt>版本</dt><dd id="version-info">—</dd>
+        <dt>核心组件</dt><dd>嵌入式 seekdb 1.4.0（<code>pylibseekdb</code>）· ngram 全文 · HNSW 向量</dd>
+        <dt>代码位置</dt><dd><code>qoder/</code>（<code>src/zhixu</code>、<code>data/</code>、<code>site/</code>、<code>tests/</code>）</dd>
+        <dt>许可</dt><dd>Apache-2.0</dd>
+      </dl>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="brand small"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" width="20" height="20"><rect width="32" height="32" rx="9" fill="currentColor"/><path d="M9 11h14M9 16h10M9 21h12" stroke="#f0fdfa" stroke-width="2.6" stroke-linecap="round"/></svg></span><span class="brand-text">知序<em>ZhiXu</em></span></div>
+    <p class="muted small">本地优先的学研工作台 · 嵌入式 seekdb · 由 Qoder 开发并通过 Qoder Sites 发布</p>
+    <p class="muted small">数据生成于 <span id="footer-generated">—</span> · <a href="https://github.com/2601776-hez02/powercontext" target="_blank" rel="noopener">源码仓库</a></p>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>

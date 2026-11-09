@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[project]
+name = "zhixu"
+version = "0.1.0"
+description = "知序 ZhiXu —— 基于嵌入式 seekdb 的学研工作台：资料可查出处、任务可追进度、周报自动生成"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+dependencies = [
+    "pylibseekdb==1.4.0.post2",
+    "PyMySQL>=1.1.1,<2",
+]
+
+[project.scripts]
+zhixu = "zhixu.cli:main"
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0,<9"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/zhixu"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

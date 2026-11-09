@@ -1,0 +1,110 @@
+[
+  {
+    "title": "整理资料库并导入第一批 Markdown",
+    "status": "done",
+    "priority": "P0",
+    "owner": "我",
+    "due": "2026-11-03",
+    "detail": "16 篇资料，92 个片段，重复导入不再产生重复行。",
+    "evidence_path": "01-项目背景-资料散落在各处.md"
+  },
+  {
+    "title": "打通全文 + 向量的混合检索",
+    "status": "done",
+    "priority": "P0",
+    "owner": "我",
+    "due": "2026-11-05",
+    "detail": "RRF 融合，输出命中通道，Top3 能命中相关小节。",
+    "evidence_path": "03-设计-双索引与混合检索.md"
+  },
+  {
+    "title": "抽查 10 条结果的出处是否可回查",
+    "status": "done",
+    "priority": "P1",
+    "owner": "师兄",
+    "due": "2026-11-06",
+    "detail": "行号与字符区间全部对得上。",
+    "evidence_path": "02-需求-结论要有出处.md"
+  },
+  {
+    "title": "补齐 512 字节预算的边界测试",
+    "status": "doing",
+    "priority": "P0",
+    "owner": "我",
+    "due": "2026-11-11",
+    "detail": "目标：预算极小时至少保留一条最短证据，且绝不超预算。",
+    "evidence_path": "08-评测规范-证据召回率与预算.md"
+  },
+  {
+    "title": "术语表补到 20 条以上",
+    "status": "doing",
+    "priority": "P1",
+    "owner": "师兄",
+    "due": "2026-11-12",
+    "detail": "重点覆盖中英混写：recall/召回、latency/延迟、ANN/近似最近邻。",
+    "evidence_path": "05-笔记-中文ngram分词.md"
+  },
+  {
+    "title": "双人交叉标注 12 条查询",
+    "status": "blocked",
+    "priority": "P0",
+    "owner": "评测同学",
+    "due": "2026-11-10",
+    "detail": "卡在标注口径没有对齐：证据区间是否允许跨小节。",
+    "evidence_path": "08-评测规范-证据召回率与预算.md"
+  },
+  {
+    "title": "任务板状态流转与事件日志上线",
+    "status": "doing",
+    "priority": "P1",
+    "owner": "我",
+    "due": "2026-11-13",
+    "detail": "每次状态变更写一条事件，周报从事件流折叠。",
+    "evidence_path": "10-工作流-周报模板与自动汇总.md"
+  },
+  {
+    "title": "周报自动生成并归档到 reports/",
+    "status": "todo",
+    "priority": "P1",
+    "owner": "我",
+    "due": "2026-11-14",
+    "detail": "包含概览、本周完成、进行中、风险、下周计划五段。",
+    "evidence_path": "10-工作流-周报模板与自动汇总.md"
+  },
+  {
+    "title": "项目网站与演示数据导出",
+    "status": "todo",
+    "priority": "P2",
+    "owner": "我",
+    "due": "2026-11-16",
+    "detail": "站点数据必须来自真实查询，不允许手写假数据。",
+    "evidence_path": "11-里程碑与风险.md"
+  },
+  {
+    "title": "万级片段压测，复核 M 与 efSearch",
+    "status": "todo",
+    "priority": "P2",
+    "owner": "我",
+    "due": "2026-11-20",
+    "detail": "百级结论不外推到万级，需要重跑延迟与召回。",
+    "evidence_path": "06-实验-efSearch扫描.md"
+  },
+  {
+    "title": "确认单进程窗口的文档说明",
+    "status": "done",
+    "priority": "P2",
+    "owner": "我",
+    "due": "2026-11-07",
+    "detail": "写清楚 serve 与命令行不能同时写库。",
+    "evidence_path": "15-运维-数据目录与重启恢复.md"
+  },
+  {
+    "title": "把「引用可回查」写进验收清单",
+    "status": "done",
+    "priority": "P1",
+    "owner": "我",
+    "due": "2026-11-08",
+    "detail": "路径、字符区间、行号、正文四者一致才算通过。",
+    "evidence_path": "14-论文摘要-RAG与引用溯源.md"
+  }
+]
