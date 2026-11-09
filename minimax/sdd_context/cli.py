@@ -286,6 +286,7 @@ def cmd_agent(args: argparse.Namespace, settings: Settings) -> int:
         base_url=settings.minimax_base_url,
         model=settings.minimax_model,
         style=settings.minimax_api_style,
+        group_id=settings.minimax_group_id,
     )
     run = run_agent(
         pack=pack,
@@ -399,7 +400,8 @@ def cmd_doctor(args: argparse.Namespace, settings: Settings) -> int:
     except PowerContextError as exc:
         report["powercontext"] = {"error": str(exc)}
     report["minimax"] = {"api_key": bool(settings.minimax_api_key), "base_url": settings.minimax_base_url,
-                         "model": settings.minimax_model, "style": settings.minimax_api_style}
+                         "model": settings.minimax_model, "style": settings.minimax_api_style,
+                         "group_id": settings.minimax_group_id}
     report["sample_repo"] = {"path": str(settings.sample_repo), "exists": settings.sample_repo.is_dir()}
     if args.json:
         _print(report)
@@ -415,7 +417,8 @@ def cmd_doctor(args: argparse.Namespace, settings: Settings) -> int:
     print(f"powercontext    {settings.powercontext_url} · {pc.get('status')}"
           + ("" if pc.get("status") == "ready" else f" ({pc.get('detail')})"))
     print(f"minimax         {'key present' if settings.minimax_api_key else 'NO API KEY'} · "
-          f"{settings.minimax_model} @ {settings.minimax_base_url}")
+          f"{settings.minimax_model} @ {settings.minimax_base_url}"
+          + (f" · GroupId {settings.minimax_group_id}" if settings.minimax_group_id else ""))
     print(f"sample          {settings.sample_repo} ({'ok' if settings.sample_repo.is_dir() else 'missing'})")
     return 0
 

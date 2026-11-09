@@ -2,7 +2,8 @@
 # Run the task with a live MiniMax call, then verify and persist the result.
 #
 #   export MINIMAX_API_KEY=...            # required
-#   export MINIMAX_MODEL=MiniMax-M2       # optional
+#   export MINIMAX_MODEL=MiniMax-M3       # optional (default MiniMax-M3)
+#   export MINIMAX_GROUP_ID=...           # optional team/GroupId (needed on error 1004)
 #   ./scripts/live-run.sh
 #
 # The model receives the context pack built from seekdb and returns a unified

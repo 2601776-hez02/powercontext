@@ -61,6 +61,7 @@ class Settings:
     minimax_base_url: str
     minimax_model: str
     minimax_api_style: str
+    minimax_group_id: str | None = None
 
     @property
     def index_dir(self) -> Path:
@@ -89,6 +90,7 @@ def load_settings() -> Settings:
     home = _env_path("SDD_HOME", PACKAGE_ROOT / ".runtime")
     token = os.environ.get("SDD_POWERCONTEXT_TOKEN", "").strip() or None
     api_key = os.environ.get("MINIMAX_API_KEY", "").strip() or None
+    group_id = os.environ.get("MINIMAX_GROUP_ID", "").strip() or None
     return Settings(
         home=home,
         records_dir=_env_path("SDD_RECORDS_DIR", DEFAULT_RECORDS_DIR),
@@ -100,6 +102,7 @@ def load_settings() -> Settings:
         powercontext_token=token,
         minimax_api_key=api_key,
         minimax_base_url=os.environ.get("MINIMAX_BASE_URL", "https://api.minimaxi.com/v1").rstrip("/"),
-        minimax_model=os.environ.get("MINIMAX_MODEL", "MiniMax-M2"),
+        minimax_model=os.environ.get("MINIMAX_MODEL", "MiniMax-M3"),
         minimax_api_style=os.environ.get("MINIMAX_API_STYLE", "chatcompletion_v2").strip(),
+        minimax_group_id=group_id,
     )

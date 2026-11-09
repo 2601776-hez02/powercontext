@@ -67,7 +67,8 @@ replay finished.
 ```bash
 cd minimax
 export MINIMAX_API_KEY=...            # 必需
-export MINIMAX_MODEL=MiniMax-M2       # 可选，默认 MiniMax-M2
+export MINIMAX_MODEL=MiniMax-M3       # 可选，默认 MiniMax-M3（/v1/models 里可选别的）
+export MINIMAX_GROUP_ID=...           # 可选，团队/GroupId；报 1004 时填
 export MINIMAX_BASE_URL=https://api.minimaxi.com/v1   # 可选
 ./scripts/live-run.sh
 ```
@@ -146,7 +147,7 @@ rm -rf .runtime                         # 删除索引、工作副本、PowerCon
 | --- | --- | --- |
 | **seekdb**（嵌入式 `pylibseekdb` 1.4.0） | 存全部工程资料（`sdd_documents` / `sdd_items`）并建 FULLTEXT 索引；上下文包的每条材料都来自 `MATCH ... AGAINST` 或精确 symbol/path 查询 | `sdd db stats`、`records/replay/*/replay.log` 中的 `retrieval.queries`、`sdd db query` |
 | **PowerContext**（1.2.0，HTTP API） | 保存任务状态（done/todo/验证结果）与每次上下文包对应的 Source；重启后读回并参与上下文 | `records/powercontext/state-*.json`、`sdd state show`、PowerContext 自带 SQLite 数据目录 |
-| **MiniMax**（`MiniMax-M2`） | 根据上下文包生成 unified diff，完成业务代码修改 | `records/minimax/<task>/attempt-*-prompt.json` / `response.json` / `*.patch`、`artifacts/code.diff` |
+| **MiniMax**（`MiniMax-M3`） | 根据上下文包生成 unified diff，完成业务代码修改 | `records/minimax/<task>/attempt-*-prompt.json` / `response.json` / `*.patch`、`artifacts/code.diff` |
 
 ## 7. 目录结构
 

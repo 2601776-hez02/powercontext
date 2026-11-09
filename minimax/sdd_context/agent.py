@@ -72,29 +72,34 @@ class MiniMaxClient:
         *,
         api_key: str,
         base_url: str = "https://api.minimaxi.com/v1",
-        model: str = "MiniMax-M2",
+        model: str = "MiniMax-M3",
         style: str = "auto",
+        group_id: str | None = None,
         timeout: float = 240.0,
     ) -> None:
-        if not api_key:
+        if not api_key or not api_key.strip():
             raise MiniMaxError(
                 "MINIMAX_API_KEY is not set. Export a MiniMax API key before running the agent step; "
                 "scripts/replay.sh reproduces the recorded patch without a key."
             )
-        self.api_key = api_key
+        self.api_key = api_key.strip()
         self.base_url = base_url.rstrip("/")
         self.model = model
         self.style = style
+        self.group_id = (group_id or "").strip() or None
         self.timeout = timeout
 
     def _endpoints(self) -> list[tuple[str, str]]:
-        native = (f"{self.base_url}/text/chatcompletion_v2", "chatcompletion_v2")
-        compatible = (f"{self.base_url}/chat/completions", "openai")
+        native = ("/text/chatcompletion_v2", "chatcompletion_v2")
+        compatible = ("/chat/completions", "openai")
         if self.style == "openai":
-            return [compatible]
-        if self.style == "chatcompletion_v2":
-            return [native]
-        return [native, compatible]
+            chosen = [compatible]
+        elif self.style == "chatcompletion_v2":
+            chosen = [native]
+        else:
+            chosen = [native, compatible]
+        suffix = f"?GroupId={self.group_id}" if self.group_id else ""
+        return [(f"{self.base_url}{path}{suffix}", style) for path, style in chosen]
 
     def chat(
         self,
@@ -134,9 +139,19 @@ class MiniMaxClient:
                 raise MiniMaxError(f"{style} returned non-JSON content: {response.text[:400]}") from exc
             base_resp = body.get("base_resp") or {}
             if base_resp.get("status_code") not in (None, 0):
-                raise MiniMaxError(
-                    f"{style} error {base_resp.get('status_code')}: {base_resp.get('status_msg')}"
-                )
+                code = base_resp.get("status_code")
+                message = base_resp.get("status_msg")
+                hint = ""
+                if code == 1008:
+                    hint = (
+                        " — the account has no remaining quota; redeem the MiniMax M Plan for this "
+                        "account's team (GroupId) or top up the balance"
+                    )
+                elif code == 1004:
+                    hint = " — set MINIMAX_GROUP_ID to the team id that owns this API key"
+                elif code == 2069:
+                    hint = " — pick a model that /v1/models still lists (e.g. MiniMax-M3)"
+                raise MiniMaxError(f"{style} error {code}: {message}{hint}")
             choices = body.get("choices") or []
             if not choices:
                 raise MiniMaxError(f"{style} returned no choices: {json.dumps(body)[:400]}")

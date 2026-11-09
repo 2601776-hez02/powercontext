@@ -11,7 +11,7 @@
 | Python | 3.12.16（venv） | `records/events.jsonl` |
 | seekdb | 嵌入式 `pylibseekdb`，`5.7.25-OceanBase seekdb-v1.4.0.0` | `records/init.json` |
 | PowerContext | `powercontext[cli,server]==1.2.0`，SQLite 后端，`http://127.0.0.1:8138`（默认端口被占用时自动顺延） | `records/replay/*/doctor.log` |
-| MiniMax | `MiniMax-M2`，`https://api.minimaxi.com/v1` | `sdd_context/config.py` |
+| MiniMax | `MiniMax-M3`，`https://api.minimaxi.com/v1` | `sdd_context/config.py` |
 
 ## 1. seekdb 使用记录
 
