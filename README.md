@@ -18,7 +18,8 @@
 * **想最快跑起来**：导入 `dify/dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型（默认连作者的公网演示，不用起后端）
 * **想完全本地跑**：`cd dify && bash scripts/00_bringup.sh` → 导入 `dify/dsl/wangchuan-tavern.local.yaml` → 配模型
 * **想核对「声明 vs 实际」**：
-  * 声明逐条：`dify/docs/conformance.md`（58 条 PASS/FAIL，含实测值）
+  * 机器可读：`dify/rules.json`（六条规则，每条带 say / expect，自检按它逐条跑）
+  * 声明逐条：`dify/docs/conformance.md`（59 条 PASS/FAIL，含实测值）
   * 样例逐条：`dify/docs/evidence/walkthrough-check.md`（11 步逐条断言）
   * seekdb 在干活：`dify/docs/evidence/seekdb-explain.json`、`engine-transcript.json`、`docs/evidence/dify/` 截图
 
