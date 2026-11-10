@@ -557,6 +557,31 @@ def main(argv: list[str] | None = None) -> int:
         f"raw 样本={[raw[:12] for raw in raws][:3]}",
     )
 
+    # ---- 3ac. 两份 DSL 只差一个环境变量（防止改了一份忘同步另一份）
+    dsl_dir = pathlib.Path(__file__).resolve().parent.parent / "dsl"
+    main_yaml = dsl_dir / "wangchuan-tavern.chatflow.yaml"
+    demo_yaml = dsl_dir / "wangchuan-tavern.demo.yaml"
+    if main_yaml.exists() and demo_yaml.exists():
+        import yaml as _yaml
+
+        main_dsl = _yaml.safe_load(main_yaml.read_text(encoding="utf-8"))
+        demo_dsl = _yaml.safe_load(demo_yaml.read_text(encoding="utf-8"))
+        main_vars = {v["name"]: v["value"] for v in main_dsl["workflow"]["environment_variables"]}
+        demo_vars = {v["name"]: v["value"] for v in demo_dsl["workflow"]["environment_variables"]}
+        rest_same = (
+            main_dsl["workflow"]["graph"] == demo_dsl["workflow"]["graph"]
+            and main_dsl["workflow"]["features"] == demo_dsl["workflow"]["features"]
+        )
+        only_url = set(main_vars) == set(demo_vars) and all(
+            main_vars[key] == demo_vars[key] for key in main_vars if key != "TAVERN_ENGINE_URL"
+        )
+        report.check(
+            "dsl.two_variants_consistent",
+            "两份 DSL 的节点/开场白完全一致，只有 TAVERN_ENGINE_URL 不同",
+            rest_same and only_url and main_vars["TAVERN_ENGINE_URL"] != demo_vars["TAVERN_ENGINE_URL"],
+            f"图一致={rest_same} 变量一致={only_url}",
+        )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []
