@@ -200,10 +200,10 @@ workflow:
         title: 开始
         type: start
         variables:
-        - label: 你的名字
+        - label: 你的名字（随便起，决定你在这家店的账本）
           max_length: 48
           options: []
-          required: false
+          required: true
           type: text-input
           variable: guest
           default: 无名客
