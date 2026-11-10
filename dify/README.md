@@ -574,6 +574,8 @@ bash scripts/07_doctor.sh
 
 * **世界初始数据**：`data/seed/tavern.json`（3 个 NPC / 11 件物品 / 12 条前置记忆）；`python -m engine.cli init` 幂等写入 seekdb，重复执行不会重复插入。
 * **知识库**：本作品**不依赖** Dify 知识库——NPC 的记忆是运行时产生的，不是预置文档。若你想额外给叙事加一份「酒馆设定集」知识库，Dify 的向量会写进同一个 seekdb（`VECTOR_STORE=seekdb`），步骤见 [`docs/limitations.md`](docs/limitations.md)。
+* **空库已验证**：新建一个空数据库直接起引擎，会自动建表、灌种子、跑通一回合（含 `tw_memory.raw` 存原话）——
+  记录见 [`docs/evidence/fresh-db.md`](docs/evidence/fresh-db.md)
 * **重置**：`POST /admin/reset {"guest":"无名客"}` 或 `.venv/bin/python -m engine.cli reset --guest 无名客`，只清这个玩家，世界设定不动。
 
 ---
