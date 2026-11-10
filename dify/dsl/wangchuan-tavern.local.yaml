@@ -1,9 +1,9 @@
 app:
-  description: 零配置体验版：后端由作者托管在公网，导入后配一个对话模型即可玩。正式验收请用 wangchuan-tavern.chatflow.yaml（本地后端，完全可复现）。
+  description: 全本地版：连 http://172.17.0.1:9100（你机器上 scripts/03_engine.sh 起的酒馆引擎）。用于完全可复现的验收；只想先玩一把请用 wangchuan-tavern.chatflow.yaml。
   icon: 🏮
   icon_background: '#FFEAD5'
   mode: advanced-chat
-  name: 忘川酒馆（在线演示）
+  name: 忘川酒馆（全本地）
   use_icon_as_answer_icon: false
 dependencies: []
 kind: app
@@ -13,9 +13,9 @@ workflow:
   environment_variables:
   - id: 940a5edf-bd42-4745-9e48-cfc37a7a0492
     name: TAVERN_ENGINE_URL
-    value: https://presence-hierarchy-necessarily-females.trycloudflare.com
+    value: http://172.17.0.1:9100
     value_type: string
-    description: 作者托管的在线演示后端（公网地址，可能随时下线）。要换成自己的引擎，就改成 http://<你的地址>:9100。
+    description: 本机酒馆引擎地址（scripts/02b_seekdb.sh + scripts/03_engine.sh 之后可用）
   features:
     file_upload:
       allowed_file_extensions: []
