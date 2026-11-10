@@ -260,6 +260,13 @@ def _ask_answer(
         world = world_of(db)
         rules = "；".join(str(rule).split("：")[0] for rule in (world.get("rules") or [])[:3])
         return f"{name}：「规矩三条：{rules}。剩下的，你自己试。」"
+    # 问自己：我有多少钱 / 我名声怎么样 / 我都干过什么 / 记了几次账
+    if any(word in text for word in ("记账", "记了几次", "记过几次", "被记")):
+        wanted = int(player["wanted"])
+        if wanted <= 0:
+            return f"{name}：「账本上没你的名字。规矩记着就行。」"
+        left = max(0, 3 - wanted)
+        return f"{name}：「记了你 {wanted} 次。再记 {left} 次，这门就不给你开了。」"
     # 问自己：我有多少钱 / 我名声怎么样 / 我都干过什么
     if any(word in text for word in ("我有多", "我还有多少", "我身上", "我的钱", "我剩")):
         return f"{name}瞟了一眼你袖口：「你身上还有 {int(player['coins'])} 个铜板。」"

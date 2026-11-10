@@ -405,6 +405,18 @@ def main(argv: list[str] | None = None) -> int:
         deeds_reply[:44],
     )
 
+    # ---- 3s. 多轮数字自洽：问「记了几次账」，答案必须和账本一致
+    reset()
+    zero_reply = str((act("我被记账几次了？").get("outcome") or {}).get("detail") or "")
+    act("拍桌子吓唬阿箬。")
+    one_reply = str((act("我被记账几次了？").get("outcome") or {}).get("detail") or "")
+    report.check(
+        "ask.wanted_count",
+        "问「我被记账几次」时报出的次数与账本一致（0 次时说还没名字，1 次时说记了 1 次）",
+        ("没你的名字" in zero_reply) and ("记了你 1 次" in one_reply),
+        f"{zero_reply[:20]}｜{one_reply[:24]}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []
