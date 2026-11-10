@@ -505,6 +505,18 @@ def main(argv: list[str] | None = None) -> int:
         f"好感 {praise_aff}｜{haggle_detail[:22]}",
     )
 
+    # ---- 3z. 提到往事里的专有名词，知道的人会接话
+    reset()
+    case_7 = str((act("渡口七尸案是怎么回事？").get("outcome") or {}).get("detail") or "")
+    case_shen = act("那个沈客人是谁？")
+    shen_detail = str((case_shen.get("outcome") or {}).get("detail") or "")
+    report.check(
+        "lore.named_terms",
+        "提到「七尸案」时老陶接话；提到「沈客人」时阿箬答得出",
+        ("七尸案" in case_7) and ("老陶" in case_7) and ("沈" in shen_detail),
+        f"{case_7[:26]}｜{shen_detail[:26]}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

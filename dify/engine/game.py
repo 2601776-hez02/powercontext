@@ -228,6 +228,41 @@ def _tavern_recall(db: SeekDB, pc: PowerContext, guest: str) -> dict[str, Any]:
     return {"available": available, "mode": mode, "hits": hits, "scope_id": _pc_scope(db, pc, guest) if pc else ""}
 
 
+def _lore_hit(db: SeekDB, guest: str, text: str) -> tuple[str, str] | None:
+    """玩家提到往事里的专有名词时，找出该由谁来讲。
+
+    用一张确定性的词表（比字符串相似度可靠）：词表里命中哪个词，就由对应 NPC
+    那条含有该词的「旧事」来回答。
+    """
+
+    terms = (
+        ("七尸案", "laotao", "七尸案"),
+        ("渡口翻", "laotao", "七尸案"),
+        ("沈", "aruo", "沈"),
+        ("玉佩", "aruo", "玉佩"),
+        ("灯芯", "aruo", "灯芯"),
+        ("第三块砖", "aruo", "砖"),
+        ("砖", "aruo", "砖"),
+        ("桂花糖", "xiaoman", "桂花糖"),
+        ("三花猫", "xiaoman", "猫"),
+        ("脚步", "laotao", "脚步"),
+        ("诗", "laotao", "诗"),
+        ("倒酒", "laotao", "倒酒"),
+        ("乞丐", "xiaoman", "乞丐"),
+    )
+    for word, npc_id, needle in terms:
+        if word not in text:
+            continue
+        row = db.one(
+            "SELECT body FROM tw_memory WHERE (guest = %s OR guest = '*') AND npc = %s "
+            "AND kind IN ('旧事', '秘密') AND body LIKE %s ORDER BY id LIMIT 1",
+            (guest, npc_id, f"%{needle}%"),
+        )
+        if row:
+            return npc_id, str(row["body"])
+    return None
+
+
 def _short_deed(detail: str, limit: int = 26) -> str:
     """把一条事件描述压成账本里的一句：不切在引号中间，也不留重复标点。"""
 
@@ -373,6 +408,15 @@ def _ask_answer(
             lore = str(item.get("lore") or "").strip()
             if lure := lore:
                 return f"{name}瞟了一眼那{item['name']}：「{lure}」"
+
+    # 提到往事里的专有名词（七尸案 / 沈客人 / 三花猫…）：让知道这件事的人接话
+    lore = _lore_hit(db, str(player["guest"]), text)
+    if lore:
+        who, body = lore
+        speaker = npcs.get(who, {}).get("name", name)
+        if who == str(action.target):
+            return f"{speaker}{gesture}：「{body}」"
+        return f"「{body}」——{speaker}在边上接了这么一句。"
 
     # 天气 / 时辰 / 渡口这类闲话，也给一句
     if any(word in text for word in ("天气", "下雨", "下雪", "起风", "雾", "冷", "热")):
