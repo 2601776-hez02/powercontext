@@ -48,8 +48,11 @@ import urllib.parse  # noqa: E402  （放在 call 之后，保持上面的可读
 SESSION = "conv-a"
 
 
-def act(utterance: str, guest: str = GUEST) -> dict:
-    _, payload = call("/act/form", form={"guest": guest, "utterance": utterance, "session": SESSION})
+def act(utterance: str, guest: str = GUEST, session: str = "") -> dict:
+    _, payload = call(
+        "/act/form",
+        form={"guest": guest, "utterance": utterance, "session": session or SESSION},
+    )
     return payload
 
 
@@ -415,6 +418,20 @@ def main(argv: list[str] | None = None) -> int:
         "问「我被记账几次」时报出的次数与账本一致（0 次时说还没名字，1 次时说记了 1 次）",
         ("没你的名字" in zero_reply) and ("记了你 1 次" in one_reply),
         f"{zero_reply[:20]}｜{one_reply[:24]}",
+    )
+
+    # ---- 3t. 跨会话：第二天问「我还有多少钱」，要报出打烊时的余额
+    reset()
+    act("要一壶桂花酿。", session="conv-a")
+    before = act("打烊了，我该走了。", session="conv-a")
+    before_coins = int((before.get("player") or {}).get("coins") or 0)
+    act("我又来了。", session="conv-b")
+    after_reply = str((act("我身上还有多少钱？", session="conv-b").get("outcome") or {}).get("detail") or "")
+    report.check(
+        "cross_session.coins_persist",
+        "跨会话（第二天）问余额，报出的数字与打烊时一致",
+        f"{before_coins} 个铜板" in after_reply,
+        f"打烊时 {before_coins}｜第二天回答 {after_reply[:24]}",
     )
 
     # ---- 4. 好感过门槛说秘密
