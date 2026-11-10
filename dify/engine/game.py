@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import random
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
@@ -18,6 +19,9 @@ from .parse import Action, VERB_CN, parse
 from .powercontext import PowerContext
 
 DEFAULT_SEED = Path(__file__).resolve().parent.parent / "data" / "seed" / "tavern.json"
+
+# 需要 NPC 在场的动作：目标不在身边时，引擎替你走过去
+INTERACT_VERBS = {"buy", "gift", "steal", "tell_story", "threaten", "help", "apologize", "ask", "read_mind"}
 
 
 # --------------------------------------------------------------------- 世界
@@ -286,8 +290,17 @@ def act(
     )
     # 「去后厨，替小满把碗端出来」：先挪步，再在这个新地点里判定动作
     move_to = action.location if action.location and action.verb != "move" else ""
+    # 目标不在身边时自己走过去：酒馆就这么大，别让玩家为了「帮小满收拾」再补一句「去后厨」
+    target_location = str(npcs.get(action.target, {}).get("location") or "")
+    if (
+        not move_to
+        and target_location
+        and target_location != location
+        and action.verb in INTERACT_VERBS
+    ):
+        move_to = target_location
     located = {**player, "location": move_to} if move_to else player
-    if move_to:
+    if move_to and action.location:
         action = parse(
             utterance,
             items=items,
@@ -297,6 +310,7 @@ def act(
         )
 
     turn = int(player["turn"]) + 1
+    action = _fill_defaults(action, npcs=npcs, items=items)
     rng = rules.seeded_rng(turn, action)
     outcome = rules.resolve(
         action,
@@ -704,6 +718,31 @@ def reset(guest: str, *, db: SeekDB) -> dict[str, Any]:
 
 
 # ------------------------------------------------------------------ 辅助
+
+
+def _fill_defaults(action: Action, *, npcs: dict[str, dict], items: dict[str, dict]) -> Action:
+    """玩家只说了「偷点东西」「来壶酒」时，按场景补一个具体目标。
+
+    否则这些最自然的说法只会得到一句「没什么可顺的」——声明说「输入任何一句中文」，
+    结果却什么都不发生，等于把确定性赌在玩家的措辞上。
+    """
+
+    if action.verb == "buy" and not action.item:
+        drinks = [item for item in items.values() if item["price"] > 0 and item["kind"] == "酒"]
+        if drinks:
+            cheapest = min(drinks, key=lambda item: item["price"])
+            return replace(action, item=cheapest["item_id"])
+
+    if action.verb == "steal" and not action.item:
+        owned = [
+            item
+            for item in items.values()
+            if item["owner_npc"] == action.target and item["price"] == 0
+        ]
+        if owned:
+            return replace(action, item=owned[0]["item_id"])
+
+    return action
 
 
 def _default_target(npcs: dict[str, dict], location: str) -> str:

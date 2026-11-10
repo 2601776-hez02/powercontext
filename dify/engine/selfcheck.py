@@ -161,6 +161,24 @@ def main(argv: list[str] | None = None) -> int:
     report.check("rule4.secret", "好感过门槛 → NPC 说出守了多年的秘密",
                  "秘密" in kinds, f"kinds={kinds}")
 
+    # ---- 4b. 自由说法：没指定对象/物品时按场景补
+    reset()
+    vague = act("来壶酒。")
+    report.check(
+        "input.vague_buy",
+        "只说「来壶酒」也能真的买到（引擎按场景补最便宜的酒）",
+        vague.get("outcome", {}).get("verdict") == "success" and bool(vague.get("action", {}).get("item")),
+        f"item={vague.get('action', {}).get('item')} verdict={vague.get('outcome', {}).get('verdict')}",
+    )
+    reset()
+    walk = act("帮小满收拾。")
+    report.check(
+        "input.auto_walk",
+        "目标在别的区域时会自己走过去（「帮小满收拾」→ 后厨）",
+        walk.get("location") == "后厨" and walk.get("outcome", {}).get("verdict") == "success",
+        f"at={walk.get('location')} verdict={walk.get('outcome', {}).get('verdict')}",
+    )
+
     # ---- 5. 读心
     reset()
     act("要一壶桂花酿。")

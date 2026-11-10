@@ -34,6 +34,9 @@
 4. **检索**此刻每个 NPC 会想起什么（全文 + 向量），把「想起的旧事」交给 Dify 写进台词；
 5. 把「这一回合到底发生了什么」以**纯文本事实行**附在回答末尾——**由引擎写，模型改不了**。
 
+说得含糊也玩得下去：只写「来壶酒」会按场景补成最便宜的那壶；「偷点东西」会落到柜台上那件旧物；
+目标在别的区域（比如后厨的小满）时，引擎替你走过去再判定——不要求玩家背关键词。
+
 ### 1.2.1 酒馆开场就声明的三条规矩，逐条都能验
 
 开场白里写着「一杯酒换一个秘密；酒钱不能欠；动手的人，记账上」。这三条不是气氛话：
@@ -157,7 +160,7 @@ dify/
 ├── tests/test_logic.py           29 项单测（不需要数据库与模型）
 └── docs/
     ├── sample-walkthrough.md     验证样例：初始状态 / 输入 / 预期 / 实际
-    ├── conformance.md            声明一致性自检报告（18 条 PASS/FAIL，自动生成）
+    ├── conformance.md            声明一致性自检报告（20 条 PASS/FAIL，自动生成）
     ├── evidence/                 截图与日志（seekdb 证据、Dify 节点记录）
     └── limitations.md            已知边界
 ```
@@ -280,14 +283,14 @@ python3 deploy/dify_provision.py chat --message "要一壶桂花酿，铜板放�
 
 ```bash
 bash scripts/05_verify.sh                                  # 引擎侧：判定 / 记忆 / 检索 / 执行计划
-bash scripts/06_selfcheck.sh                               # 声明一致性自检：18 条 PASS/FAIL
+bash scripts/06_selfcheck.sh                               # 声明一致性自检：20 条 PASS/FAIL
 python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
         --engine http://127.0.0.1:9100 --guest 无名客       # Dify 侧：走完整条 Chatflow
 ```
 
 第一个脚本清洗玩家状态、跑完 10 回合剧本、把证据写进 `docs/evidence/`；
 第二个脚本把 README 与样样例里「会怎样」的每一条都跑一遍，生成
-[`docs/conformance.md`](docs/conformance.md)（**本次 18 条 18 PASS / 0 FAIL**，只依赖 seekdb + 引擎，
+[`docs/conformance.md`](docs/conformance.md)（**本次 20 条 20 PASS / 0 FAIL**，只依赖 seekdb + 引擎，
 不需要 Dify 和模型）；第三个脚本用 Dify 的应用 API 逐句发送同样的 10 句，把每轮叙事存成
 `docs/evidence/dify-walkthrough.json`。逐条对照见 [`docs/sample-walkthrough.md`](docs/sample-walkthrough.md)。
 
