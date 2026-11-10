@@ -188,7 +188,7 @@ def main(argv: list[str] | None = None) -> int:
         third = act("拍桌子吓唬阿箬。")
     report.check(
         "guide.step2",
-        "开场白第 2 件：连偷三次 → 第三次【判定：被逐出】",
+        "开场白第 3 件：连发三次「拍桌子吓唬阿箬」→ 第三次【判定：被逐出】",
         (third.get("outcome") or {}).get("verdict") == "banned",
         f"verdict={(third.get('outcome') or {}).get('verdict')} wanted={(third.get('player') or {}).get('wanted')}",
     )
@@ -199,7 +199,7 @@ def main(argv: list[str] | None = None) -> int:
     guide3 = call("/facts/form", form={"guest": GUEST}, text=True)[1]
     report.check(
         "guide.step3",
-        "开场白第 3 件：打烊后再进门 → 第二天 + 账本上还有你上一回",
+        "开场白第 2 件：打烊后再进门 → 第二天 + 账本上还有你上一回",
         str((guided.get("outcome") or {}).get("detail", "")).startswith("第二天")
         and "酒馆记得你" in guide3,
         f"detail={str((guided.get('outcome') or {}).get('detail'))[:24]} 记得你={'酒馆记得你' in guide3}",

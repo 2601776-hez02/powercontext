@@ -234,7 +234,7 @@ for i in $(seq 1 6); do curl -s -o /dev/null -X POST localhost:9100/act -H 'Cont
 curl -s -X POST localhost:9100/act -H 'Content-Type: application/json' \
   -d '{"guest":"验规客2","utterance":"再要一碗阳春面。"}' | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d["outcome"]["reason"], d["player"]["coins"])'
 
-# 规矩三：连偷三次 → 当场逐出，之后再说话只会被挡在门外
+# 规矩三：动手要记账——这一回合偷玉佩被抓，被记账 +1（记到第三次才逐出）
 curl -s -X POST localhost:9100/admin/reset -H 'Content-Type: application/json' -d '{"guest":"验规客3"}'
 for i in 1 2 3; do curl -s -X POST localhost:9100/act -H 'Content-Type: application/json' \
   -d '{"guest":"验规客3","utterance":"把柜台上的玉佩塞进袖子。"}' \
