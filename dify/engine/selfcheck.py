@@ -325,6 +325,17 @@ def main(argv: list[str] | None = None) -> int:
         f"verdict={((stolen.get('outcome') or {}).get('verdict'))} wanted={wanted}",
     )
 
+    # ---- 3m. 规矩一的全称：第二杯不再换秘密（声明写的是「每位 NPC 只换一次」）
+    reset()
+    act("要一壶桂花酿。")
+    second = act("再来一壶烧刀子。")
+    report.check(
+        "rule.confide_once_per_npc",
+        "「一杯酒换一个秘密」按声明是每位 NPC 只换一次：第二杯不再给杯边话",
+        not (second.get("outcome") or {}).get("confide"),
+        f"第二杯 confide={bool((second.get('outcome') or {}).get('confide'))}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []
