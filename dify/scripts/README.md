@@ -45,4 +45,5 @@ POWERCONTEXT_ENABLED=0 ./scripts/03_engine.sh
 引擎在 PowerContext 不可用时会自动降级：跨会话传说只写进 seekdb 的 `tw_legend` 表，
 其它玩法完全不变（`/health` 里 `powercontext.available` 会是 `false`）。
 
+| `10_stale_claims.sh` | 旧文案扫描：检查仓库里是否还残留已废弃的说法（例如已被新引导取代的旧说法） | 改过规则/引导后 |
 | `09_docs_lint.sh` | 文档自检：所有 markdown 表格列数一致 + README 相对链接都存在 | 改过 README 后 |
