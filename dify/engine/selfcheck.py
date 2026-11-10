@@ -517,6 +517,33 @@ def main(argv: list[str] | None = None) -> int:
         f"{case_7[:26]}｜{shen_detail[:26]}",
     )
 
+    # ---- 3aa. README 里那张「还能做什么」的表，逐行对一遍
+    reset()
+    replies = {}
+    replies["greeting"] = str((act("你好。").get("outcome") or {}).get("detail") or "")
+    replies["whoami"] = str((act("我是谁？").get("outcome") or {}).get("detail") or "")
+    replies["buy"] = str((act("要一壶桂花酿。").get("outcome") or {}).get("detail") or "")
+    replies["price"] = str((act("一壶桂花酿多少钱？").get("outcome") or {}).get("detail") or "")
+    replies["coins"] = str((act("我身上还有多少钱？").get("outcome") or {}).get("detail") or "")
+    replies["praise"] = str((act("阿箬你真好看。").get("outcome") or {}).get("detail") or "")
+    replies["haggle"] = str((act("太贵了，便宜点吧。").get("outcome") or {}).get("detail") or "")
+    replies["insult"] = str((act("你个笨蛋。").get("outcome") or {}).get("detail") or "")
+    table_ok = (
+        "来了" in replies["greeting"]
+        and GUEST in replies["whoami"]
+        and "3 个铜板" in replies["price"]
+        and "个铜板" in replies["coins"]
+        and "笑了一下" in replies["praise"]
+        and "一文不让" in replies["haggle"]
+        and "不兴骂人" in replies["insult"]
+    )
+    report.check(
+        "readme.interactions_table",
+        "README「还能做什么」那张表的七行，逐行与实现一致",
+        table_ok,
+        "｜".join(f"{key}={value[:10]}" for key, value in replies.items()),
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []
