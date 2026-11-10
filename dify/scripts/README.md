@@ -7,6 +7,7 @@ Compose 编排，不依赖任何云服务。
 | 脚本 | 作用 | 何时跑 |
 | --- | --- | --- |
 | `01_check.sh` | 检查 Docker/Compose 版本、端口占用、磁盘与内存 | 第一次，1 分钟 |
+| `00_bringup.sh` | 一条命令：检查 → 起 seekdb → 起引擎 → 跑验证 → 自检（评审用这个） | 第一步 |
 | `02b_seekdb.sh` | 只起 seekdb（评审已有自己的 Dify 时用），并把连接信息写进 `deploy/.env` | 第 1 步的替代 |
 | `02_dify.sh` | 下载 Dify 1.19.0 的 docker 目录，写入 `.env`/`security.env`，`compose up -d` | 第一次，10~20 分钟（拉镜像） |
 | `03_engine.sh` | 建 Python 虚拟环境、装引擎依赖、初始化 seekdb 表与世界数据、起 `:9100` 服务 | 第一次，2 分钟 |

@@ -1,6 +1,6 @@
 app:
-  description: 渡口最后一盏灯，什么都记得。三个 NPC 会记住你干过的每一件事——偷玉佩、讲故事、道歉，都写进 seekdb 里带全文与向量索引的记忆表；下一局进门，PowerContext
-    把你的「传说」念回来。
+  description: 渡口最后一盏灯，什么都记得。三个 NPC 会记住你干过的每一件事——偷玉佩、讲故事、道歉，都写进 seekdb 里带全文与向量索引的记忆表；下一局进门，账本会把你的「传说」念回来。导入后配一个对话模型即可玩（后端按
+    README 第 1~2 步起，或用 demo 版连现成的演示后端）。
   icon: 🏮
   icon_background: '#FFEAD5'
   icon_type: emoji
@@ -33,8 +33,7 @@ version: 0.7.0
 workflow:
   conversation_variables: []
   environment_variables:
-  - description: 酒馆引擎地址。引擎与 Dify 同机跑在宿主机上时用 docker0 网关（172.17.0.1）；不在同机就改成引擎的实际地址，例如
-      http://10.0.0.5:9100
+  - description: 本机酒馆引擎地址（scripts/00_bringup.sh 或 02b+03 之后可用）。已部署好的演示后端见 wangchuan-tavern.demo.yaml。
     id: 940a5edf-bd42-4745-9e48-cfc37a7a0492
     name: TAVERN_ENGINE_URL
     selector:
