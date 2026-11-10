@@ -13,6 +13,7 @@
 | **完全本地跑** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.local.yaml` → 配模型 | 一条命令起后端并自检，不依赖作者侧服务 |
 | **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md) | **57 条声明逐条 PASS/FAIL + 实测值** |
 | **核对「预期 vs 实际」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md) | **11 步样例逐条断言** |
+| **样例在在线演示上能不能复现** | [`docs/evidence/sample-on-demo.md`](docs/evidence/sample-on-demo.md)（10 回合逐项对照） | **10/10 一致** |
 | **最坏情况下还能看到什么** | [`docs/evidence/fallbacks.md`](docs/evidence/fallbacks.md)（没配模型 / 后端连不上 / 只发一句没用的话） | 判定行始终在 |
 | **看「刚打开应用」长什么样** | [`docs/evidence/dify/01-new-conversation.png`](docs/evidence/dify/01-new-conversation.png)（开场白 + 三件可做的事 + 一句「你好」的回应） | 30 秒知道怎么玩 |
 | **看「读心」长什么样** | [`docs/evidence/dify/03-read-mind.png`](docs/evidence/dify/03-read-mind.png)（读老陶的脑子：他记得你讲故事、买酒、那首诗） | 招牌玩法 |
@@ -596,6 +597,9 @@ pytest tests -q          # 32 passed
 > 复跑前必须先把玩家洗回初始状态（`05_verify.sh` / `dify_walkthrough.py` 都会自动做 `POST /admin/reset`）：
 > 回合号会继续累加，骰子随之变化，所以「不重置直接再来一遍」的判定本来就和下表不同——这是设计，不是不确定。
 
+> **在在线演示上照着做**：填一个**没用过的名字**（比如「评审-你的名字」），就会从第 1 回合开始，
+> 数字与下表一致；若用「无名客」这类被别人玩过的名字，会接着别人的回合数走，数字自然不同——这是设计。
+>
 > 这 11 条预期不是写在文档里给人看的：`data/samples/walkthrough.json` 每回合都带
 > `expect`（verdict / 铜板 / 风评 / 被记账 / 地点 / 结局 / 秘密），`scripts/05_verify.sh`
 > 会逐条断言并输出 PASS/FAIL 表——第 3 步跑完看到 10 个 PASS 就说明「结果与声明一致」。
