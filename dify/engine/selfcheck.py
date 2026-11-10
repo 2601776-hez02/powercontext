@@ -182,7 +182,7 @@ def main(argv: list[str] | None = None) -> int:
 
     reset()
     for _ in range(3):
-        third = act("把柜台上的玉佩塞进袖子。")
+        third = act("拍桌子吓唬阿箬。")
     report.check(
         "guide.step2",
         "开场白第 2 件：连偷三次 → 第三次【判定：被逐出】",
