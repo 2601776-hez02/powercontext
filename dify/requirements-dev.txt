@@ -1,0 +1,3 @@
+# 只跑单测需要的依赖（运行应用本身不需要这些）
+#   pip install -r requirements-dev.txt && pytest tests
+pytest>=8.0

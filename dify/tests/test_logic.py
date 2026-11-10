@@ -1,6 +1,6 @@
-"""玩法逻辑单测：不需要数据库，也不需要模型。
+"""玩法逻辑单测：不需要 Dify、不需要 seekdb、不需要网络。
 
-运行：``python -m pytest tests -q``（在 dify/engine 目录，或用仓库根脚本）。
+运行：pip install -r requirements-dev.txt && pytest tests
 """
 
 from __future__ import annotations

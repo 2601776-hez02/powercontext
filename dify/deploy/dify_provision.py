@@ -77,6 +77,21 @@ def _cookie_header(cookies: dict[str, str]) -> str:
     return "; ".join(f"{name}={value}" for name, value in cookies.items() if value)
 
 
+def _relogin(base: str) -> bool:
+    """令牌过期时用已知口令重新登录一次（评审隔几小时再跑 doctor 会遇到）。"""
+
+    class _Args:
+        pass
+
+    args = _Args()
+    args.base = base
+    try:
+        cmd_login(args)  # type: ignore[arg-type]
+        return True
+    except Exception:
+        return False
+
+
 def request(
     base: str,
     path: str,
@@ -113,6 +128,33 @@ def request(
             except ValueError:
                 return response.status, text, out_headers
     except urllib.error.HTTPError as exc:
+        # 401：令牌过期。自动重登一次再试，避免把「已配好」误判成「没配」
+        if exc.code == 401 and auth:
+            body_text = exc.read().decode("utf-8", "replace") if exc.fp else ""
+            if _relogin(base):
+                state = load_state()
+                cookies = state.get("cookies") or {}
+                retry_headers = {"Content-Type": "application/json", "Accept": "application/json"}
+                if headers:
+                    retry_headers.update(headers)
+                cookie = _cookie_header(cookies)
+                if cookie:
+                    retry_headers["Cookie"] = cookie
+                if cookies.get("csrf_token"):
+                    retry_headers["X-CSRF-Token"] = cookies["csrf_token"]
+                retry = urllib.request.Request(url, data=payload, method=method, headers=retry_headers)
+                try:
+                    with urllib.request.urlopen(retry, timeout=timeout) as response:
+                        text = response.read().decode("utf-8", "replace")
+                        out_headers = {k.lower(): v for k, v in response.headers.items()}
+                        out_headers["set-cookie"] = "\n".join(
+                            value for key, value in response.headers.items() if key.lower() == "set-cookie"
+                        )
+                        parsed = json.loads(text) if text.strip().startswith(("{", "[")) else text
+                        return response.status, parsed, out_headers
+                except Exception:
+                    pass
+            raise urllib.error.HTTPError(exc.url, 401, body_text, exc.hdrs, None)
         text = exc.read().decode("utf-8", "replace")
         out_headers = {"set-cookie": "\n".join(exc.headers.get_all("Set-Cookie") or [])}
         try:

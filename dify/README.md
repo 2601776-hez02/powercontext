@@ -15,6 +15,7 @@
 | **看第一句话会发生什么** | [`docs/evidence/first-messages.md`](docs/evidence/first-messages.md)（十种开场白的真实回答） | 十句都不冷场 |
 | **核对 seekdb 真的在干活** | [`docs/evidence/seekdb-explain.json`](docs/evidence/seekdb-explain.json)、[`engine-transcript.json`](docs/evidence/engine-transcript.json)、[`dify/`](docs/evidence/dify/) 截图 | 执行计划、账本流水、节点记录 |
 | **卡住了** | `bash scripts/07_doctor.sh` | 8 项环境体检，每项给修复命令 |
+| **看一次完整回归的结果** | [`docs/evidence/release-check.md`](docs/evidence/release-check.md)（干净目录跑 7 步） | 6 套检查全绿 + doctor 8/8 |
 | **看此刻系统状态** | [`docs/evidence/system-status.md`](docs/evidence/system-status.md) | 组件在线状态 + 三套断言的当前结果 |
 
 > 一句话：**这是一个会被 NPC 记住的文字酒馆**。Dify 编排，seekdb 存账本与记忆（全文 + HNSW），
@@ -544,6 +545,15 @@ bash scripts/07_doctor.sh
 * **重置**：`POST /admin/reset {"guest":"无名客"}` 或 `.venv/bin/python -m engine.cli reset --guest 无名客`，只清这个玩家，世界设定不动。
 
 ---
+
+### 7.3 跑单测（可选）
+
+单测只测纯逻辑（解析、判定、记忆合成、骰子可复现），不需要 Dify、不需要 seekdb、不需要网络：
+
+```bash
+pip install -r requirements-dev.txt
+pytest tests -q          # 32 passed
+```
 
 ## 8. 验证样例（摘要）
 
