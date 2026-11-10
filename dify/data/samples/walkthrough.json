@@ -4,43 +4,193 @@
   "turns": [
     {
       "utterance": "我在靠窗那张桌子坐下，先打量一圈。",
-      "parsed": {"verb": "look", "target": "", "item": "", "tone": "plain"}
+      "parsed": {
+        "verb": "look",
+        "target": "",
+        "item": "",
+        "tone": "plain"
+      },
+      "expect": {
+        "verdict": "observed",
+        "coins": 20,
+        "reputation": 0,
+        "wanted": 0,
+        "location": "大堂",
+        "ending": "",
+        "confide": false,
+        "secret": false
+      }
     },
     {
       "utterance": "要一壶桂花酿，铜板放在柜台上。",
-      "parsed": {"verb": "buy", "target": "aruo", "item": "wine_guihua", "tone": "plain"}
+      "parsed": {
+        "verb": "buy",
+        "target": "aruo",
+        "item": "wine_guihua",
+        "tone": "plain"
+      },
+      "expect": {
+        "verdict": "success",
+        "coins": 17,
+        "reputation": 2,
+        "wanted": 0,
+        "location": "大堂",
+        "ending": "",
+        "confide": true,
+        "secret": false
+      }
     },
     {
       "utterance": "我问阿箬：柜台后头那盏灯，为什么夜里从来不灭？",
-      "parsed": {"verb": "ask", "target": "aruo", "item": "lantern", "tone": "plain"}
+      "parsed": {
+        "verb": "ask",
+        "target": "aruo",
+        "item": "lantern",
+        "tone": "plain"
+      },
+      "expect": {
+        "verdict": "observed",
+        "coins": 17,
+        "reputation": 2,
+        "wanted": 0,
+        "location": "大堂",
+        "ending": "",
+        "confide": false,
+        "secret": false
+      }
     },
     {
       "utterance": "趁她低头算账，把柜台上的玉佩塞进袖子。",
-      "parsed": {"verb": "steal", "target": "aruo", "item": "jade_pei", "tone": "sneaky"}
+      "parsed": {
+        "verb": "steal",
+        "target": "aruo",
+        "item": "jade_pei",
+        "tone": "sneaky"
+      },
+      "expect": {
+        "verdict": "fail",
+        "coins": 17,
+        "reputation": 0,
+        "wanted": 1,
+        "location": "大堂",
+        "ending": "",
+        "confide": false,
+        "secret": false
+      }
     },
     {
       "utterance": "我低头跟阿箬道歉，说刚才手滑了。",
-      "parsed": {"verb": "apologize", "target": "aruo", "item": "", "tone": "plain"}
+      "parsed": {
+        "verb": "apologize",
+        "target": "aruo",
+        "item": "",
+        "tone": "plain"
+      },
+      "expect": {
+        "verdict": "success",
+        "coins": 17,
+        "reputation": 1,
+        "wanted": 1,
+        "location": "大堂",
+        "ending": "",
+        "confide": false,
+        "secret": false
+      }
     },
     {
       "utterance": "给老陶讲一个故事：有个客人偷了灯，灯却没有灭。",
-      "parsed": {"verb": "tell_story", "target": "laotao", "item": "", "tone": "plain"}
+      "parsed": {
+        "verb": "tell_story",
+        "target": "laotao",
+        "item": "",
+        "tone": "plain"
+      },
+      "expect": {
+        "verdict": "success",
+        "coins": 19,
+        "reputation": 4,
+        "wanted": 1,
+        "location": "大堂",
+        "ending": "",
+        "confide": false,
+        "secret": false
+      }
     },
     {
       "utterance": "去后厨，替小满把那一摞碗端出来。",
-      "parsed": {"verb": "help", "target": "xiaoman", "item": "", "tone": "plain"}
+      "parsed": {
+        "verb": "help",
+        "target": "xiaoman",
+        "item": "",
+        "tone": "plain"
+      },
+      "expect": {
+        "verdict": "success",
+        "coins": 20,
+        "reputation": 8,
+        "wanted": 1,
+        "location": "后厨",
+        "ending": "",
+        "confide": false,
+        "secret": true
+      }
     },
     {
       "utterance": "读心，看看小满现在在想什么。",
-      "parsed": {"verb": "read_mind", "target": "xiaoman", "item": "", "tone": "plain"}
+      "parsed": {
+        "verb": "read_mind",
+        "target": "xiaoman",
+        "item": "",
+        "tone": "plain"
+      },
+      "expect": {
+        "verdict": "observed",
+        "coins": 20,
+        "reputation": 8,
+        "wanted": 1,
+        "location": "后厨",
+        "ending": "",
+        "confide": false,
+        "secret": false
+      }
     },
     {
       "utterance": "回大堂，再要一壶烧刀子，我要跟老陶喝一杯。",
-      "parsed": {"verb": "buy", "target": "aruo", "item": "wine_shaodao", "tone": "plain"}
+      "parsed": {
+        "verb": "buy",
+        "target": "aruo",
+        "item": "wine_shaodao",
+        "tone": "plain"
+      },
+      "expect": {
+        "verdict": "success",
+        "coins": 18,
+        "reputation": 10,
+        "wanted": 1,
+        "location": "大堂",
+        "ending": "",
+        "confide": false,
+        "secret": false
+      }
     },
     {
       "utterance": "打烊了，我该走了。",
-      "parsed": {"verb": "close", "target": "", "item": "", "tone": "plain"}
+      "parsed": {
+        "verb": "close",
+        "target": "",
+        "item": "",
+        "tone": "plain"
+      },
+      "expect": {
+        "verdict": "closed",
+        "coins": 18,
+        "reputation": 10,
+        "wanted": 1,
+        "location": "大堂",
+        "ending": "常客",
+        "confide": false,
+        "secret": false
+      }
     }
   ]
 }

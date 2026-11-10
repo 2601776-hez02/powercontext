@@ -76,3 +76,7 @@ cat <<EOF
   seekdb：seekdb-mind-aruo.json / seekdb-explain.json
 Dify 侧截图与节点执行记录放在 docs/evidence/dify/。
 EOF
+
+# ---- 验证样例逐回合比对（把「预期表现」变成可执行断言）
+"$VENV/bin/python" -m engine.spec_check --engine "http://127.0.0.1:${PORT}" >/dev/null
+echo "逐回合比对：docs/evidence/walkthrough-check.md"

@@ -1,6 +1,10 @@
 # 验证样例 · 忘川酒馆
 
-> 一份可以照着敲的 10 回合剧本。判定是**确定性**的：骰子 = `blake2b(turn|动词|对象|物品|原话)`，
+> 一份可以照着敲的 10 回合剧本。**每回合的预期结果都写在 `data/samples/walkthrough.json` 的
+> `expect` 里**（verdict / 铜板 / 风评 / 被记账 / 地点 / 结局 / 是否出秘密），
+> `bash scripts/05_verify.sh` 会逐条断言，输出见
+> [`docs/evidence/walkthrough-check.md`](evidence/walkthrough-check.md)（10/10 PASS）。
+> 判定是**确定性**的：骰子 = `blake2b(turn|动词|对象|物品|原话)`，
 > **不含玩家名字**——所以任何名字、同一串输入，跑多少遍结果都一样（撮合验、截图、复核都靠这一点）。
 >
 > 剧本文件：`data/samples/walkthrough.json`；一键回放：`bash scripts/05_verify.sh`。

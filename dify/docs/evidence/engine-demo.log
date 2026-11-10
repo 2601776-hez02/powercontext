@@ -57,8 +57,8 @@
 回忆命中：
   - [老陶｜亲历｜6｜fts,vector｜0.1544] 他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。
   - [阿箬｜传闻｜6｜fts,vector｜0.1519] 渡口那边都在传：无名客讲过一段好故事。这话是从老陶那儿漏出来的。
-  - [阿箬｜杯边话｜2｜fts,vector｜0.0465] 他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。
-  - [阿箬｜亲历｜2｜fts,vector｜0.0419] 他要了桂花酿，铜板数得很慢，一个也没少给。
+  - [阿箬｜杯边话｜2｜fts,vector｜0.0468] 他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。
+  - [阿箬｜亲历｜2｜fts,vector｜0.0416] 他要了桂花酿，铜板数得很慢，一个也没少给。
 
 --- 第 7 回合 ---
 玩家：去后厨，替小满把那一摞碗端出来。
@@ -103,7 +103,7 @@ PowerContext：{
   "available": true,
   "written": true,
   "status": 200,
-  "artifact_id": "art_6df10bc375cf4f5296f6fc784e4e497c",
+  "artifact_id": "art_65563f9b75c34824b8115cb249dc54df",
   "revision": 1,
   "kind": "tavern-legend",
   "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
@@ -151,4 +151,4 @@ PowerContext：{
   "status": 200
 }
 
-[transcript] /root/tavern26/docs/evidence/engine-transcript.json
+[transcript] /root/tavern27/docs/evidence/engine-transcript.json
