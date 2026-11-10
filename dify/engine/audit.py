@@ -156,6 +156,47 @@ def sweep_odd_inputs(audit: Audit) -> None:
         audit.expect("__http_error__" not in payload, "odd.form_guest", f"guest={guest!r} -> {payload.get('__http_error__')}")
 
 
+def memory_scenarios(audit: Audit) -> None:
+    """记忆的来源必须合法：不在场的人只能「传闻」，不能「亲历/目击」。"""
+
+    guest = "记忆审计"
+    reset(guest)
+    # 玩家在大堂连着做五件事；小满在后厨，不该有任何亲历/目击
+    for utterance in [
+        "四处看看。",
+        "要一壶桂花酿。",
+        "给老陶讲个故事：渡口那盏灯从来没灭过。",
+        "我低头跟阿箬道歉。",
+        "把柜台上的玉佩塞进袖子。",
+    ]:
+        call("/act", {"guest": guest, "utterance": utterance, "session": "mem-a"})
+    away = call("/mind", {"guest": guest, "npc": "xiaoman", "limit": 20}).get("memories", [])
+    illegal = [row for row in away if int(row["turn"]) >= 1 and row["kind"] in {"亲历", "目击"}]
+    audit.expect(
+        not illegal,
+        "memory.absent_cannot_witness",
+        f"小满在后厨却记下了堂里的事：{[(r['turn'], r['kind'], str(r['text'])[:16]) for r in illegal[:3]]}",
+    )
+
+    # 走到后厨帮小满：这次她应该有「亲历」，而大堂的阿箬不该有这条亲历
+    call("/act", {"guest": guest, "utterance": "去后厨，替小满把碗端出来。", "session": "mem-a"})
+    xiaoman = call("/mind", {"guest": guest, "npc": "xiaoman", "limit": 20}).get("memories", [])
+    has_now = any(int(row["turn"]) >= 1 and row["kind"] in {"亲历", "目击"} for row in xiaoman)
+    audit.expect(has_now, "memory.present_witnesses", "走到后厨帮忙后，小满应当有亲历记忆")
+
+    aruo = call("/mind", {"guest": guest, "npc": "aruo", "limit": 20}).get("memories", [])
+    latest_turn = max((int(row["turn"]) for row in aruo), default=0)
+    帮_verb = any(
+        int(row["turn"]) == latest_turn and row["kind"] in {"亲历", "目击"} and "碗" in str(row["text"])
+        for row in aruo
+    )
+    audit.expect(
+        not 帮_verb,
+        "memory.absent_cannot_witness",
+        f"阿箬在大堂却记下了后厨的事：{[str(r['text'])[:20] for r in aruo if int(r['turn']) == latest_turn][:2]}",
+    )
+
+
 def stress_scenarios(audit: Audit) -> None:
     """评审会做的几件"奇怪但合理"的事：连点读心、一句话说三件事、说世界之外的话、用英文。"""
 
@@ -284,6 +325,7 @@ def main(argv: list[str] | None = None) -> int:
     sweep_branches(audit, "扫测客")
     sweep_odd_inputs(audit)
     stress_scenarios(audit)
+    memory_scenarios(audit)
     for index in range(args.guests):
         rng = random.Random(1000 + index)
         audit_guest(audit, f"审计{index}", args.turns, rng)
