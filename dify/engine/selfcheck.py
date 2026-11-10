@@ -582,6 +582,29 @@ def main(argv: list[str] | None = None) -> int:
             f"图一致={rest_same} 变量一致={only_url}",
         )
 
+    # ---- 3ad. DSL 里两个 LLM 节点都配了兜底文案（模型不可用时仍有输出）
+    dsl_path2 = pathlib.Path(__file__).resolve().parent.parent / "dsl" / "wangchuan-tavern.chatflow.yaml"
+    if dsl_path2.exists():
+        import yaml as _yaml2
+
+        dsl_doc = _yaml2.safe_load(dsl_path2.read_text(encoding="utf-8"))
+        nodes_map = {node["id"]: node["data"] for node in dsl_doc["workflow"]["graph"]["nodes"]}
+        ok_fallback = True
+        detail_bits = []
+        for node_id in ("llm_narrate", "llm_mind"):
+            data = nodes_map.get(node_id, {})
+            defaults = data.get("default_value") or []
+            text = "".join(str(item.get("value") or "") for item in defaults)
+            good = data.get("error_strategy") == "default-value" and len(text.strip()) >= 10
+            ok_fallback = ok_fallback and good
+            detail_bits.append(f"{node_id}={data.get('error_strategy')}/{len(text.strip())}字")
+        report.check(
+            "dsl.llm_fallback",
+            "模型不可用时仍有输出：两个 LLM 节点都设了 default-value 且兜底文案非空",
+            ok_fallback,
+            "｜".join(detail_bits),
+        )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []
