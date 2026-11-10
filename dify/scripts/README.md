@@ -16,6 +16,7 @@ Compose 编排，不依赖任何云服务。
 | `05_verify.sh` | 跑验证样例：引擎回放 + Dify 应用 API 调用 + seekdb 证据 | 每次改动后 |
 | `06_selfcheck.sh` | 声明一致性自检（59 条 PASS/FAIL）→ `docs/conformance.md` | 改规则或改文档后 |
 | `12_reviewer_check.sh` | **一键自检**：引擎 / 自检 / 样例 / 审计 / 文档 / 单测 / DSL 一致性，最后打一张汇总表 | 评审想快速确认时 |
+| `14_reproduce_all.sh` | **一条命令复现全部**：环境检查 → 起后端 → 导入 DSL → 11 步样例 → 9 项汇总 | 评审第一次跑 |
 
 ## 端口
 

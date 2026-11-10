@@ -44,6 +44,7 @@
 | **直接用浏览器玩** | 打开 <https://parents-pendant-stamps-pools.trycloudflare.com/chat/US2WZk6wfvkw7R4Q>（作者托管，可能下线） | 十秒内能看到三条规矩生效 |
 | **最快跑起来** | 导入 `dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型（**不需要起后端**，默认连作者的公网演示） | 两分钟就能玩 |
 | **完全本地跑** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.local.yaml` → 配模型 | 一条命令起后端并自检，不依赖作者侧服务 |
+| **一条命令复现全部** | `bash scripts/14_reproduce_all.sh`（检查 → 起后端 → 导入 DSL → 跑样例 → 打印结论） | 评审只要跑这一条 |
 | **一把梭：全部检查跑一遍** | `bash scripts/12_reviewer_check.sh` | 打一张 9 项汇总表，全 PASS 才 exit 0 |
 | **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md) | **59 条声明逐条 PASS/FAIL + 实测值** |
 | **核对「预期 vs 实际」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md) | **11 步样例逐条断言** |
