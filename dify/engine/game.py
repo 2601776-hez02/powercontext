@@ -70,10 +70,11 @@ def ensure_seed(db: SeekDB, seed: dict[str, Any]) -> dict[str, int]:
             stats["npcs"] += 1
         for item in seed["items"]:
             cursor.execute(
-                "INSERT INTO tw_item (item_id, name, price, kind, description, owner_npc, lore) "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s) "
+                "INSERT INTO tw_item (item_id, name, price, kind, description, owner_npc, lore, aliases) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
                 "ON DUPLICATE KEY UPDATE name=VALUES(name), price=VALUES(price), kind=VALUES(kind), "
-                "description=VALUES(description), owner_npc=VALUES(owner_npc), lore=VALUES(lore)",
+                "description=VALUES(description), owner_npc=VALUES(owner_npc), lore=VALUES(lore), "
+                "aliases=VALUES(aliases)",
                 (
                     item["id"],
                     item["name"],
@@ -82,6 +83,7 @@ def ensure_seed(db: SeekDB, seed: dict[str, Any]) -> dict[str, int]:
                     item["description"],
                     item.get("owner", ""),
                     item.get("lore", ""),
+                    json.dumps(item.get("aliases", []), ensure_ascii=False),
                 ),
             )
             stats["items"] += 1
@@ -128,7 +130,16 @@ def npcs_of(db: SeekDB) -> dict[str, dict]:
 
 def items_of(db: SeekDB) -> dict[str, dict]:
     rows = db.query("SELECT * FROM tw_item ORDER BY item_id")
-    return {row["item_id"]: row for row in rows}
+    result: dict[str, dict] = {}
+    for row in rows:
+        item = dict(row)
+        raw = item.get("aliases") or ""
+        try:
+            item["aliases"] = json.loads(raw) if raw else []
+        except ValueError:
+            item["aliases"] = []
+        result[item["item_id"]] = item
+    return result
 
 
 # ------------------------------------------------------------------- 玩家

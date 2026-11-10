@@ -67,6 +67,7 @@ DDL: tuple[str, ...] = (
         description VARCHAR(512) NOT NULL,
         owner_npc VARCHAR(32) NOT NULL DEFAULT '',
         lore VARCHAR(512) NOT NULL DEFAULT '',
+        aliases VARCHAR(512) NOT NULL DEFAULT '',
         PRIMARY KEY (item_id)
     ) DEFAULT CHARSET = utf8mb4
     """,
@@ -127,7 +128,7 @@ DDL: tuple[str, ...] = (
     """,
 )
 
-SCHEMA_VERSION = "3"
+SCHEMA_VERSION = "4"
 
 # 老库升级：ADD COLUMN 在 MySQL/seekdb 里没有 IF NOT EXISTS，重复执行会报 1060，
 # 这里逐条尝试并忽略「列已存在」。
@@ -135,6 +136,8 @@ MIGRATIONS: tuple[str, ...] = (
     "ALTER TABLE tw_npc ADD COLUMN confide VARCHAR(512) NOT NULL DEFAULT ''",
     # 被逐出时记下会话 id：下一个会话（新对话）视为「第二天」，可以再进门
     "ALTER TABLE tw_player ADD COLUMN ban_session VARCHAR(120) NOT NULL DEFAULT ''",
+    # 物品别名要落库，否则运行时从 DB 读出来的 item 没有 aliases，「那盏灯」认不出来
+    "ALTER TABLE tw_item ADD COLUMN aliases VARCHAR(512) NOT NULL DEFAULT ''",
 )
 
 

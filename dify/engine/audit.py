@@ -21,6 +21,9 @@ import urllib.request
 ENGINE = "http://127.0.0.1:9100"
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
+SEED = json.loads((ROOT / "data" / "seed" / "tavern.json").read_text(encoding="utf-8"))
+ITEM_KINDS = {item["id"]: item["kind"] for item in SEED["items"]}
+
 GIFT_UTTERANCES = [
     "请阿箬喝一壶桂花酿。",
     "请老陶喝一壶烧刀子。",
@@ -234,7 +237,8 @@ def audit_guest(audit: Audit, guest: str, turns: int, rng: random.Random) -> Non
             state["confided"].add(target)
         if action.get("verb") in {"buy", "gift"} and verdict == "success":
             item = action.get("item") or ""
-            is_drink = "wine" in item or action.get("verb") == "gift"
+            # 只有「酒」才换杯边话：送玉佩、送信不算
+            is_drink = ITEM_KINDS.get(item) == "酒" or (not item and action.get("verb") == "gift")
             if is_drink:
                 audit.expect(bool(confide) or target in state["confided"],
                              "rule1.confide_on_first_drink", f"{line} item={item} target={target}")

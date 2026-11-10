@@ -214,6 +214,27 @@ def main(argv: list[str] | None = None) -> int:
         f"风评={(legend.get('player') or {}).get('reputation')} 结局={(legend.get('ending') or {}).get('ending')}",
     )
 
+    # ---- 3e.「什么都记得」：观察、打听、没成的事也要留下记忆
+    reset()
+    act("四处看看。")
+    act("这灯为什么老不灭？")
+    act("给你讲个故事。")
+    mind_rows = call("/mind", {"guest": GUEST, "npc": "aruo", "limit": 12})[1].get("memories", [])
+    turns_with_memory = {int(row["turn"]) for row in mind_rows}
+    report.check(
+        "memory.remembers_everything",
+        "「什么都记得」为真：打量（1）、打听（2）、没成的事（3）都留了记忆",
+        {1, 2, 3} <= turns_with_memory,
+        f"有记忆的回合={sorted(turns_with_memory)[:8]}",
+    )
+    aliases_ok = any("旧灯笼" in str(row["text"]) for row in mind_rows)
+    report.check(
+        "memory.item_alias",
+        "物品别名在运行时也生效（「那盏灯」认成旧灯笼）",
+        aliases_ok,
+        "命中旧灯笼" if aliases_ok else f"记忆={[row['text'][:20] for row in mind_rows[:3]]}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

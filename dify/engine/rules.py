@@ -302,6 +302,16 @@ def compose_memories(
     rows: list[dict] = []
 
     if outcome.verdict in {"refused", "observed"}:
+        # 「什么都记得」也包括没成的事和只是在看：观察、打听、被拒绝都留一笔轻的
+        if outcome.verdict == "observed" and action.verb != "read_mind":
+            if action.verb == "look":
+                for npc_id in npcs:
+                    rows.append(_row(npc_id, "亲历", "他站在堂里看了我一会儿，眼神在我手上停了停。", "淡", 3))
+            elif target in npcs:
+                topic = item["name"] if item else "店里的事"
+                rows.append(_row(target, "亲历", f"他问起{topic}，我没往下说。", "淡", 3))
+        elif outcome.verdict == "refused" and target in npcs:
+            rows.append(_row(target, "亲历", f"他想{action.verb_cn}，没成；我记下了。", "淡", 3))
         return rows
 
     if action.verb == "buy" and outcome.coin_delta < 0:
