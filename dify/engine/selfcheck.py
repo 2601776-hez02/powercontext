@@ -373,6 +373,19 @@ def main(argv: list[str] | None = None) -> int:
         str(legend_facts).replace("\n", " ")[:50],
     )
 
+    # ---- 3q. 问价钱要报真实价格（来自 tw_item，不是写死的）
+    reset()
+    price = act("一壶桂花酿多少钱？")
+    price_detail = str((price.get("outcome") or {}).get("detail") or "")
+    seed = json.loads((pathlib.Path(__file__).resolve().parent.parent / "data" / "seed" / "tavern.json").read_text(encoding="utf-8"))
+    guihua = next(item for item in seed["items"] if item["id"] == "wine_guihua")
+    report.check(
+        "ask.price",
+        "问价钱时报出 tw_item 里的真实价格（桂花酿 = 3 个铜板）",
+        f"{int(guihua['price'])} 个铜板" in price_detail,
+        price_detail[:40],
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

@@ -244,6 +244,16 @@ def _ask_answer(utterance: str, action: Action, outcome: "rules.Outcome", npcs: 
         world = world_of(db)
         rules = "；".join(str(rule).split("：")[0] for rule in (world.get("rules") or [])[:3])
         return f"{name}：「规矩三条：{rules}。剩下的，你自己试。」"
+    # 问价钱：直接报 items 表里的真实价格
+    item_id = str(getattr(action, "item", "") or "")
+    if item_id and any(word in text for word in ("多少钱", "几文", "几个铜板", "价钱", "价格", "怎么卖")):
+        try:
+            item = items_of(db).get(item_id) or {}
+        except Exception:
+            item = {}
+        if item:
+            return f"{name}：「{item['name']}，{int(item['price'])} 个铜板。」"
+
     # 问到具体物件（灯、玉佩、烧刀子…）时，让在场的人就着这件东西说一句
     item_id = str(getattr(action, "item", "") or "")
     if item_id:
@@ -256,10 +266,21 @@ def _ask_answer(utterance: str, action: Action, outcome: "rules.Outcome", npcs: 
             if lure := lore:
                 return f"{name}瞟了一眼那{item['name']}：「{lure}」"
 
+    # 天气 / 时辰 / 渡口这类闲话，也给一句
+    if any(word in text for word in ("天气", "下雨", "下雪", "起风", "雾", "冷", "热")):
+        return f"{name}往门外瞥了一眼：「雾没散。这会儿要过江，船家不肯走。」"
+    if any(word in text for word in ("几点", "什么时辰", "天黑", "天亮", "时候")):
+        return f"{name}：「还早。渡口的船，要等雾散才开。」"
+    if any(word in text for word in ("渡口", "江", "船")):
+        return f"{name}：「渡口就在门外。雾散之前，谁也不肯撑船。」"
+
     if any(word in text for word in ("发生过", "故事", "听说", "旧事", "传闻", "出过")):
         if storyteller:
             return f"{storyteller}在角落里清了清嗓子：「要听旧事？先说好，听完别问我是听谁说的。」"
         return f"{name}：「渡口的事，问老陶去。我只管账。」"
+    if any(word in text for word in ("好吗", "过得怎么样", "最近怎么样", "还好吗")):
+        return f"{name}把抹布叠了叠：「老样子。灯亮着，人走进来，账记上。」"
+
     if any(word in text for word in ("谢谢", "多谢", "谢了")):
         return f"{name}摆摆手：「不用谢。账上记着就行。」"
 
