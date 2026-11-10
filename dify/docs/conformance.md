@@ -26,4 +26,4 @@
 | 19 | 骰子与玩家名字无关（换名字复现同一串判定） | **PASS** | `obse succ obse fail succ succ succ obse succ clos` |
 | 20 | 10 回合验证样例的判定与文档一致 | **PASS** | `obse succ obse fail succ succ succ obse succ clos` |
 | 21 | 跨会话记忆来自 seekdb 的账本（不依赖额外服务） | **PASS** | `mode=seekdb sources=['seekdb']` |
-| 22 | 打烊时把这一局写成「传说」存进 PowerContext | **PASS** | `{"available": true, "written": true, "status": 200, "artifact_id": "art_91738200` |
+| 22 | 打烊时把这一局写成「传说」存进 PowerContext | **PASS** | `{"available": true, "written": true, "status": 200, "artifact_id": "art_6b670cec` |

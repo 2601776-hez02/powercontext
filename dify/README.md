@@ -414,7 +414,7 @@ bash scripts/07_doctor.sh
 > 复跑前必须先把玩家洗回初始状态（`05_verify.sh` / `dify_walkthrough.py` 都会自动做 `POST /admin/reset`）：
 > 回合号会继续累加，骰子随之变化，所以「不重置直接再来一遍」的判定本来就和下表不同——这是设计，不是不确定。
 
-> 这 10 条预期不是写在文档里给人看的：`data/samples/walkthrough.json` 每回合都带
+> 这 11 条预期不是写在文档里给人看的：`data/samples/walkthrough.json` 每回合都带
 > `expect`（verdict / 铜板 / 风评 / 被记账 / 地点 / 结局 / 秘密），`scripts/05_verify.sh`
 > 会逐条断言并输出 PASS/FAIL 表——第 3 步跑完看到 10 个 PASS 就说明「结果与声明一致」。
 
@@ -429,7 +429,8 @@ bash scripts/07_doctor.sh
 | 7 | 去后厨，替小满把那一摞碗端出来。 | success（含挪步） | 好感过门槛 → **秘密解锁**（三花猫） |
 | 8 | 读心，看看小满现在在想什么。 | observed | 走 IF 分支调用 `/mind/form`，返回她脑子里真实的记忆（含传闻与杯边话）；这一下也记一回合 |
 | 9 | 回大堂，再要一壶烧刀子，我要跟老陶喝一杯。 | success | 回到大堂、继续记账 |
-| 10 | 打烊了，我该走了。 | closed | 结局「常客」；PowerContext 写入传说 |
+| 10 | 打烊了，我该走了。 | closed | 结局「常客」；这一夜写成「传说」落进 seekdb 的 `tw_legend` |
+| 11 | （**新开一局**）我又来了，还认得我吗？ | observed | 开场就带出「账本上还有你上一回的记录」，`tavern_memory.mode=seekdb`——**跨会话记忆** |
 
 每一回合的回答末尾都会带一行引擎写的事实行（详见 `docs/evidence/dify-walkthrough.json`）：
 

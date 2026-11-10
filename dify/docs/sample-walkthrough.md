@@ -251,3 +251,17 @@ curl -s -X POST localhost:9100/act -H 'Content-Type: application/json' \
 2. 确认是从初始状态开始（`POST /admin/reset`）；骰子与玩家名字无关，换名字不影响判定；
 3. 确认引擎版本一致（`GET /health` 里的 `uptime_s` 之外，脚本版本见 `engine/__init__.py` 的 `__version__`）；
 4. 真不一样就把 `docs/evidence/engine-transcript.json` 发出来——里面有每回合的 `roll`、`reason`、`recalls`。
+
+---
+
+## 2.11 第 11 步：新开一局（跨会话记忆）
+
+* 输入：新会话里的第一句话 `我又来了，还认得我吗？`
+* 判定：`observed / look`
+* 预期：开场场景里出现
+  「（账本上还有你上一回的记录：无名客 在忘川酒馆待了 10 回合，结局「常客」；…）」，
+  且 `tavern_memory.hits` 里带 `source=seekdb`
+* 实际：`bash scripts/05_verify.sh` 的最后一行 `（新开一局）… PASS 跨会话 hits=1 mode=seekdb`
+
+> 这一条对应赛题里「具有跨会话记忆的角色可以展示新会话中如何回应之前的互动」。
+> 它不依赖 PowerContext：账本在 seekdb 的 `tw_legend` 里，`POWERCONTEXT_ENABLED=0` 时同样成立。

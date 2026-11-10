@@ -79,6 +79,26 @@ def main(argv: list[str] | None = None) -> int:
         ok_all = ok_all and not diffs
         rows.append((index, turn["utterance"], status, f"{actual['verdict']}", "；".join(diffs)))
 
+    # —— 第二局：跨会话记忆（赛题要求「样例要与声明的能力对应」）
+    reenter = sample.get("reenter") or {}
+    reenter_result: dict[str, Any] = {}
+    if reenter and not args.write:
+        started = call("/session/start", {"guest": guest})
+        memory = started.get("tavern_memory") or {}
+        hits = memory.get("hits") or []
+        scene = str(started.get("scene") or "")
+        after = call("/act", {"guest": guest, "utterance": reenter["utterance"],
+                              "parsed": {"verb": "look", "target": "", "item": "", "tone": "plain"}})
+        expect = reenter.get("expect") or {}
+        checks = {
+            "memory_hits_min": len(hits) >= int(expect.get("memory_hits_min", 1)),
+            "memory_source": expect.get("memory_source") in {hit.get("source") for hit in hits},
+            "scene_mentions": str(expect.get("scene_mentions", "")) in scene,
+            "verdict": (after.get("outcome") or {}).get("verdict") == expect.get("verdict"),
+        }
+        reenter_result = {"checks": checks, "hits": len(hits), "mode": memory.get("mode")}
+        ok_all = ok_all and all(checks.values())
+
     if args.write:
         SAMPLE.write_text(json.dumps(sample, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
         print(f"[spec] 已写入 {len(sample['turns'])} 回合的 expect -> {SAMPLE}")
@@ -90,6 +110,12 @@ def main(argv: list[str] | None = None) -> int:
              "| # | 输入 | 结果 | 判定 | 差异 |", "| --- | --- | --- | --- | --- |"]
     for index, utterance, status, verdict, diff in rows:
         lines.append(f"| {index} | {utterance} | **{status}** | `{verdict}` | {diff or '-'} |")
+    if reenter_result:
+        checks = reenter_result["checks"]
+        status = "PASS" if all(checks.values()) else "FAIL"
+        detail = "，".join(f"{name}={'✓' if ok else '✗'}" for name, ok in checks.items())
+        lines.append(f"| 11 | （新开一局）{sample['reenter']['utterance']} | **{status}** | "
+                     f"`跨会话 hits={reenter_result['hits']} mode={reenter_result['mode']}` | {detail} |")
     text = "\n".join(lines) + "\n"
     EVIDENCE.parent.mkdir(parents=True, exist_ok=True)
     EVIDENCE.write_text(text, encoding="utf-8")

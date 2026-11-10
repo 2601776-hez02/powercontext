@@ -14,3 +14,4 @@
 | 8 | 读心，看看小满现在在想什么。 | **PASS** | `observed` | - |
 | 9 | 回大堂，再要一壶烧刀子，我要跟老陶喝一杯。 | **PASS** | `success` | - |
 | 10 | 打烊了，我该走了。 | **PASS** | `closed` | - |
+| 11 | （新开一局）我又来了，还认得我吗？ | **PASS** | `跨会话 hits=1 mode=seekdb` | memory_hits_min=✓，memory_source=✓，scene_mentions=✓，verdict=✓ |
