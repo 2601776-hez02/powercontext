@@ -14,6 +14,7 @@
 写进 seekdb 里的记忆表（ngram 全文 + HNSW 向量），下一次开口，他们记得你。
 
 * **想直接玩（零配置）**：<https://parents-pendant-stamps-pools.trycloudflare.com/chat/US2WZk6wfvkw7R4Q>
+* **只要 3 分钟**：`dify/QUICKSTART.md`（6 步一页纸）
 * **想最快跑起来**：导入 `dify/dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型（默认连作者的公网演示，不用起后端）
 * **想完全本地跑**：`cd dify && bash scripts/00_bringup.sh` → 导入 `dify/dsl/wangchuan-tavern.local.yaml` → 配模型
 * **想核对「声明 vs 实际」**：

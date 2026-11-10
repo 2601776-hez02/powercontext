@@ -29,6 +29,8 @@
 > 都能在 [`docs/conformance.md`](docs/conformance.md)（58 条）和
 > [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md)（11 步）里找到对应的断言。
 
+> **只想先跑起来？** 看一页纸的 [`QUICKSTART.md`](QUICKSTART.md)（6 步，3 分钟）。
+
 ## 评审速查（先看这 6 行）
 
 | 你想做什么 | 怎么做 | 结果 |
