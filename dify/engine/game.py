@@ -330,6 +330,9 @@ def _ask_answer(
     if any(word in text for word in ("地方", "哪里", "哪儿", "什么店", "这是哪")):
         line = voice.get("place") or "忘川酒馆。渡口最后一盏灯，什么都记得。"
         return f"{name}{gesture}：「{line}」"
+    if any(word in text for word in ("我是谁", "我叫什么", "我的名字")):
+        return f"{name}抬眼看了看你：「你？你叫{player['guest']}。这名字记在账上，错不了。」"
+
     if any(word in text for word in ("你是谁", "什么人", "你叫", "名字")):
         line = voice.get("who") or "阿箬。这店我看了十年，账本比人记得清楚。"
         return f"{name}{gesture}：「{line}」"
