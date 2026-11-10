@@ -271,6 +271,20 @@ def main(argv: list[str] | None = None) -> int:
         f"小满在堂里事件中的记忆回合={absent_turns}",
     )
 
+    # ---- 3i. 第一句话要有人接：问「这是什么地方 / 你是谁 / 怎么玩」必须真的回答
+    reset()
+    act("这是什么地方？")
+    where = call("/facts/form", form={"guest": GUEST}, text=True)[1]
+    reset()
+    act("这里有什么规矩？")
+    rules_facts = call("/facts/form", form={"guest": GUEST}, text=True)[1]
+    report.check(
+        "first_message.answers",
+        "第一句问「这是什么地方 / 有什么规矩」时，NPC 真的回答（不是「没有立刻接」）",
+        "忘川酒馆" in where and "规矩三条" in rules_facts,
+        f"地方={'忘川酒馆' in where} 规矩={'规矩三条' in rules_facts}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

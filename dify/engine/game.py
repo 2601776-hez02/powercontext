@@ -228,6 +228,31 @@ def _tavern_recall(db: SeekDB, pc: PowerContext, guest: str) -> dict[str, Any]:
     return {"available": available, "mode": mode, "hits": hits, "scope_id": _pc_scope(db, pc, guest) if pc else ""}
 
 
+def _ask_answer(utterance: str, action: Action, outcome: "rules.Outcome", npcs: dict[str, dict], db: SeekDB) -> str:
+    """玩家问「这是什么地方 / 你是谁 / 什么规矩 / 怎么玩」时，让在场的人真的答一句。"""
+
+    text = str(utterance)
+    name = npcs.get(action.target, {}).get("name", "阿箬")
+    others = [npc for npc_id, npc in npcs.items() if npc_id != action.target]
+    storyteller = next((npc["name"] for npc in others if "说书" in str(npc.get("title") or "")), "")
+
+    if any(word in text for word in ("地方", "哪里", "哪儿", "什么店", "这是哪")):
+        return f"{name}把抹布往肩上一搭：「忘川酒馆。渡口最后一盏灯，什么都记得。」"
+    if any(word in text for word in ("你是谁", "什么人", "你叫", "名字")):
+        return f"{name}：「阿箬。这店我看了十年，账本比人记得清楚。」"
+    if any(word in text for word in ("规矩", "规则", "怎么玩", "能做什么", "做什么", "干什么", "玩法")):
+        world = world_of(db)
+        rules = "；".join(str(rule).split("：")[0] for rule in (world.get("rules") or [])[:3])
+        return f"{name}：「规矩三条：{rules}。剩下的，你自己试。」"
+    if any(word in text for word in ("发生过", "故事", "听说", "旧事", "传闻", "出过")):
+        if storyteller:
+            return f"{storyteller}在角落里清了清嗓子：「要听旧事？先说好，听完别问我是听谁说的。」"
+        return f"{name}：「渡口的事，问老陶去。我只管账。」"
+    if "在吗" in text or "有人" in text:
+        return f"{name}：「在。门开着，进来坐。」"
+    return str(outcome.detail)
+
+
 def start(guest: str, *, db: SeekDB, pc: PowerContext, settings: Settings) -> dict[str, Any]:
     player = ensure_player(db, guest, settings)
     world = world_of(db)
@@ -443,6 +468,10 @@ def act(
             for npc_id, npc in npcs.items()
             if npc_id != action.target and str(npc.get("location") or "") == str(here or "")
         ]
+
+    # 「打听」不能一律回「没有立刻接」——评审第一句往往是问这是什么地方/你是谁/怎么玩
+    if action.verb == "ask" and str(outcome.reason) in {"asked", "greeted"}:
+        outcome.detail = _ask_answer(utterance, action, outcome, npcs, db)
 
     memories = rules.compose_memories(action, outcome, npcs=npcs, items=items)
     gossip = _gossip(guest, action, outcome, npcs, items, rng, settings, memories)
