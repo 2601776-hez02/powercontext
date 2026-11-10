@@ -12,6 +12,7 @@
 | **在本地跑起来** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型 | 一条命令起后端并自检 |
 | **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md) | **53 条声明逐条 PASS/FAIL + 实测值** |
 | **核对「预期 vs 实际」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md) | **11 步样例逐条断言** |
+| **看「刚打开应用」长什么样** | [`docs/evidence/dify/01-new-conversation.png`](docs/evidence/dify/01-new-conversation.png)（开场白 + 三件可做的事 + 一句「你好」的回应） | 30 秒知道怎么玩 |
 | **看「读心」长什么样** | [`docs/evidence/dify/03-read-mind.png`](docs/evidence/dify/03-read-mind.png)（读老陶的脑子：他记得你讲故事、买酒、那首诗） | 招牌玩法 |
 | **看「三次逐客」长什么样** | [`docs/evidence/dify/08-ban.png`](docs/evidence/dify/08-ban.png)（连发三次拍桌子 → 判定被逐出 + 结局逐客） | 规矩三当场兑现 |
 | **看「第一回合」长什么样** | [`docs/evidence/dify/07-first-turn.png`](docs/evidence/dify/07-first-turn.png)（全新名字、第 1 回合、判定行 + 杯边话 + 三条旁白） | 一眼看到这游戏怎么玩 |
