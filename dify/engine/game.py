@@ -292,6 +292,7 @@ def act(
     pc: PowerContext,
     settings: Settings,
     hint: dict[str, Any] | None = None,
+    session: str = "",
 ) -> dict[str, Any]:
     utterance = (utterance or "").strip()[:500]
     if not utterance:
@@ -303,7 +304,21 @@ def act(
     affinities = affinities_of(db, guest)
     inventory = inventory_of(db, guest)
 
-    # 已经被逐出（或自己打烊走了）的人，先推门再说
+    # 已经被逐出（或自己打烊走了）的人：同一个会话里只能被挡在门外；
+    # 换了一个会话（Dify 里「开启新对话」）就当作第二天，雾散了还能进门。
+    if player["status"] == "closed" and session and session != str(player.get("ban_session") or ""):
+        with db.transaction() as cursor:
+            cursor.execute(
+                # 第二天：门能进，账本上的记账也清零（这一夜本身仍记在传说与 NPC 记忆里）
+                "UPDATE tw_player SET status = 'open', location = '大堂', ban_session = '', wanted = 0, "
+                "updated_at = NOW() WHERE guest = %s",
+                (guest,),
+            )
+        player = get_player(db, guest) or player
+        reopened = True
+    else:
+        reopened = False
+
     if player["status"] == "closed":
         return {
             "ok": False,
@@ -313,7 +328,7 @@ def act(
             "outcome": {
                 "verdict": "turned_away",
                 "reason": "tavern_closed",
-                "detail": "门在你身后合上了。今晚酒馆不留客——换个名字，或者等明天再来。",
+                "detail": "门在你身后合上了。今晚酒馆不留客——点「开启新对话」就是第二天，或者换个「你的名字」现在就来。",
             },
             "player": {
                 "coins": int(player["coins"]),
@@ -326,7 +341,7 @@ def act(
                 f"｜被记账 {int(player['wanted'])}｜门外"
             ),
             "recalls": [],
-            "hints": ["换个「你的名字」就能重新开局，酒馆会把新名字当新客人。"],
+            "hints": ["点「开启新对话」＝第二天；换成别的「你的名字」＝换个客人。"],
         }
 
     location = player["location"]
@@ -371,6 +386,8 @@ def act(
         items=items,
         rng=rng,
     )
+    if reopened:
+        outcome.detail = f"第二天，雾散了，你又推门进来。{outcome.detail}"
     if move_to and outcome.verdict != "moved":
         outcome.detail = f"你走到{move_to}。{outcome.detail}"
 
@@ -400,6 +417,7 @@ def act(
     if wanted_after >= 3 and action.verb in {"steal", "threaten"} and outcome.verdict != "refused":
         outcome.verdict = "banned"
         outcome.detail = "阿箬把门板上了：「记到第三次，酒馆不留你。」门外的雾一下子涌进来。"
+        ban_session = session
         outcome.emotion = "沉"
 
     memories = rules.compose_memories(action, outcome, npcs=npcs, items=items)
@@ -424,7 +442,7 @@ def act(
         new_location = action.location if outcome.verdict == "moved" else (move_to or location)
         cursor.execute(
             "UPDATE tw_player SET coins = %s, reputation = %s, wanted = %s, turn = %s, location = %s, "
-            "status = %s, updated_at = NOW() WHERE guest = %s",
+            "status = %s, ban_session = %s, updated_at = NOW() WHERE guest = %s",
             (
                 max(0, int(player["coins"]) + outcome.coin_delta),
                 max(0, int(player["reputation"]) + outcome.reputation_delta),
@@ -432,6 +450,7 @@ def act(
                 turn,
                 new_location,
                 "closed" if outcome.verdict in {"closed", "banned"} else "open",
+                str(session or "")[:120] if outcome.verdict == "banned" else "",
                 guest,
             ),
         )

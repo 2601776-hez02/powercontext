@@ -150,6 +150,22 @@ def main(argv: list[str] | None = None) -> int:
                  after.get("outcome", {}).get("verdict") == "turned_away",
                  after.get("outcome", {}).get("verdict"))
 
+    # ---- 3b. 被逐出后：同一会话被挡在门外，换会话（新对话）当作第二天
+    reset()
+    call("/act/form", form={"guest": GUEST, "utterance": "把柜台上的玉佩塞进袖子。", "session": "conv-a"})
+    call("/act/form", form={"guest": GUEST, "utterance": "把柜台上的玉佩塞进袖子。", "session": "conv-a"})
+    third = call("/act/form", form={"guest": GUEST, "utterance": "把柜台上的玉佩塞进袖子。", "session": "conv-a"})[1]
+    same = call("/act/form", form={"guest": GUEST, "utterance": "我再喝一碗。", "session": "conv-a"})[1]
+    other = call("/act/form", form={"guest": GUEST, "utterance": "我又来了。", "session": "conv-b"})[1]
+    report.check(
+        "ban.session_scope",
+        "被逐出后同一会话进不来、换会话等于第二天还能进",
+        (third.get("outcome") or {}).get("verdict") == "banned"
+        and (same.get("outcome") or {}).get("verdict") == "turned_away"
+        and (other.get("outcome") or {}).get("verdict") != "turned_away",
+        f"banned={(third.get('outcome') or {}).get('verdict')} same={(same.get('outcome') or {}).get('verdict')} new={(other.get('outcome') or {}).get('verdict')}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

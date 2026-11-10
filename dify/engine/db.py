@@ -127,12 +127,14 @@ DDL: tuple[str, ...] = (
     """,
 )
 
-SCHEMA_VERSION = "2"
+SCHEMA_VERSION = "3"
 
 # 老库升级：ADD COLUMN 在 MySQL/seekdb 里没有 IF NOT EXISTS，重复执行会报 1060，
 # 这里逐条尝试并忽略「列已存在」。
 MIGRATIONS: tuple[str, ...] = (
     "ALTER TABLE tw_npc ADD COLUMN confide VARCHAR(512) NOT NULL DEFAULT ''",
+    # 被逐出时记下会话 id：下一个会话（新对话）视为「第二天」，可以再进门
+    "ALTER TABLE tw_player ADD COLUMN ban_session VARCHAR(120) NOT NULL DEFAULT ''",
 )
 
 

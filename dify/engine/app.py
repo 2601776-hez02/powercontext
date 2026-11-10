@@ -48,6 +48,7 @@ class StartBody(BaseModel):
 
 class ActBody(BaseModel):
     guest: str = Field(default="无名客", max_length=200)
+    session: str = Field(default="", max_length=120, description="Dify 的会话 id：换会话=第二天")
     # 空串、超长都不该让请求 422：引擎自己截断并给个合理回应
     utterance: str = Field(default="", max_length=4000, description="玩家这一回合说的话")
     # Dify 的 HTTP 节点会把 JSON 当字符串带上；这里两种都收，解析失败就当没给
@@ -162,7 +163,8 @@ def session_start(body: StartBody) -> dict[str, Any]:
 def act(body: ActBody) -> dict[str, Any]:
     _guard()
     return game.act(
-        _clean_guest(body.guest), (body.utterance or "").strip(), db=DB, pc=PC, settings=SETTINGS, hint=body.parsed_hint()
+        _clean_guest(body.guest), (body.utterance or "").strip(), db=DB, pc=PC, settings=SETTINGS,
+        hint=body.parsed_hint(), session=(body.session or "")[:120],
     )
 
 
@@ -171,6 +173,7 @@ def act_form(
     guest: str = Form("无名客"),
     utterance: str = Form(...),
     parsed: str = Form(""),
+    session: str = Form(""),
 ) -> dict[str, Any]:
     """表单版 /act：Dify 的 HTTP 节点用 x-www-form-urlencoded，玩家打引号也不会破坏 JSON。"""
 
@@ -182,7 +185,10 @@ def act_form(
             hint = loaded if isinstance(loaded, dict) else None
         except ValueError:
             hint = None
-    return game.act(_clean_guest(guest), (utterance or "").strip(), db=DB, pc=PC, settings=SETTINGS, hint=hint)
+    return game.act(
+        _clean_guest(guest), (utterance or "").strip(), db=DB, pc=PC, settings=SETTINGS,
+        hint=hint, session=(session or "")[:120],
+    )
 
 
 @app.post("/mind/form")

@@ -67,8 +67,8 @@
 状态：铜板 20｜风评 8｜被记账 1｜后厨
 回忆命中：
   - [小满｜秘密｜7｜fts,vector｜0.158] 后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。
-  - [小满｜亲历｜7｜fts,vector｜0.1531] 他帮我把活计收拾了，手上利落，不像是白帮忙的人。
-  - [小满｜旧事｜0｜fts,vector｜0.0338] 三年前有人给了她一块桂花糖，糖纸她留着，夹在后厨的柴火堆里。
+  - [小满｜亲历｜7｜fts,vector｜0.1528] 他帮我把活计收拾了，手上利落，不像是白帮忙的人。
+  - [小满｜旧事｜0｜fts,vector｜0.0341] 三年前有人给了她一块桂花糖，糖纸她留着，夹在后厨的柴火堆里。
 
 --- 第 8 回合 ---
 玩家：读心，看看小满现在在想什么。
@@ -103,7 +103,7 @@ PowerContext：{
   "available": true,
   "written": true,
   "status": 200,
-  "artifact_id": "art_560b5bfccab44b1e904ae9f6443feba2",
+  "artifact_id": "art_5a149a3925604df3a6f60fd9ce8d4d72",
   "revision": 1,
   "kind": "tavern-legend",
   "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
@@ -127,4 +127,4 @@ PowerContext：{
   "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
 }
 
-[transcript] /root/tavern31/docs/evidence/engine-transcript.json
+[transcript] /root/tavern33/docs/evidence/engine-transcript.json
