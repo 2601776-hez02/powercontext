@@ -38,35 +38,31 @@
 
 ## 评审速查
 
-| 你想做什么 | 怎么做 | 结果 |
-| --- | --- | --- |
-| **先看 10 秒动图** | [`docs/evidence/dify/playthrough.gif`](docs/evidence/dify/playthrough.gif)（真机录的 5 回合：买酒 / 赊账被拒 / 读心 / 打烊 / 第二天） | 一屏看完玩法 |
-| **直接用浏览器玩** | 打开 <https://parents-pendant-stamps-pools.trycloudflare.com/chat/US2WZk6wfvkw7R4Q>（作者托管，可能下线） | 十秒内能看到三条规矩生效 |
-| **最快跑起来** | 导入 `dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型（**不需要起后端**，默认连作者的公网演示） | 两分钟就能玩 |
-| **完全本地跑** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.local.yaml` → 配模型 | 一条命令起后端并自检，不依赖作者侧服务 |
-| **一条命令复现全部** | `bash scripts/14_reproduce_all.sh`（检查 → 起后端 → 导入 DSL → 跑样例 → 打印结论） | 评审只要跑这一条 |
-| **一把梭：全部检查跑一遍** | `bash scripts/12_reviewer_check.sh` | 打一张 9 项汇总表，全 PASS 才 exit 0 |
-| **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md) | **59 条声明逐条 PASS/FAIL + 实测值** |
-| **核对「预期 vs 实际」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md) | **11 步样例逐条断言** |
-| **克隆下来东西全不全** | [`docs/evidence/clone-check.md`](docs/evidence/clone-check.md)（全新 clone 后逐个链接核对） | 全部存在 |
-| **样例在在线演示上能不能复现** | [`docs/evidence/sample-on-demo.md`](docs/evidence/sample-on-demo.md)（10 回合逐项对照） | **10/10 一致** |
-| **最坏情况下还能看到什么** | [`docs/evidence/fallbacks.md`](docs/evidence/fallbacks.md)（没配模型 / 后端连不上 / 只发一句没用的话） | 判定行始终在 |
-| **看「刚打开应用」长什么样** | [`docs/evidence/dify/01-new-conversation.png`](docs/evidence/dify/01-new-conversation.png)（开场白 + 三件可做的事 + 一句「你好」的回应） | 30 秒知道怎么玩 |
-| **看「读心」长什么样** | [`docs/evidence/dify/03-read-mind.png`](docs/evidence/dify/03-read-mind.png)（读老陶的脑子：他记得你讲故事、买酒、那首诗） | 招牌玩法 |
-| **看「三次逐客」长什么样** | [`docs/evidence/dify/08-ban.png`](docs/evidence/dify/08-ban.png)（连发三次拍桌子 → 判定被逐出 + 结局逐客） | 规矩三当场兑现 |
-| **看「第一回合」长什么样** | [`docs/evidence/dify/07-first-turn.png`](docs/evidence/dify/07-first-turn.png)（全新名字、第 1 回合、判定行 + 杯边话 + 三条旁白） | 一眼看到这游戏怎么玩 |
-| **看「第二天」长什么样** | [`docs/evidence/dify/06-day-after.png`](docs/evidence/dify/06-day-after.png)（打烊 → 结局「过客」→ 第二天 →【酒馆记得你】上一回的账本） | 老陶：「认得，认得。雾一散，人就都回来了。」 |
-| **看三个人怎么说同一句话** | [`docs/evidence/three-voices.md`](docs/evidence/three-voices.md)（同一句「你是谁」问三位 NPC） | 口吻、动作、正文都不同 |
-| **看第一句话会发生什么** | [`docs/evidence/first-messages.md`](docs/evidence/first-messages.md)（十种开场白的真实回答） | 十句都不冷场 |
-| **核对 seekdb 真的在干活** | [`docs/evidence/seekdb-explain.json`](docs/evidence/seekdb-explain.json)、[`engine-transcript.json`](docs/evidence/engine-transcript.json)、[`dify/`](docs/evidence/dify/) 截图 | 执行计划、账本流水、节点记录 |
-| **卡住了** | `bash scripts/07_doctor.sh` | 8 项环境体检，每项给修复命令 |
-| **看一次完整回归的结果** | [`docs/evidence/release-check.md`](docs/evidence/release-check.md)（干净目录跑 7 步） | 6 套检查全绿 + doctor 8/8 |
-| **看此刻系统状态** | [`docs/evidence/system-status.md`](docs/evidence/system-status.md) | 组件在线状态 + 三套断言的当前结果 |
+| 你想做什么 | 怎么做 |
+| --- | --- |
+| **先看 10 秒动图** | [`docs/evidence/dify/playthrough.gif`](docs/evidence/dify/playthrough.gif)（真机 5 回合：买酒 / 赊账被拒 / 读心 / 打烊 / 第二天） |
+| **直接用浏览器玩** | <https://parents-pendant-stamps-pools.trycloudflare.com/chat/US2WZk6wfvkw7R4Q>（作者托管，可能下线） |
+| **最快跑起来（不用起后端）** | 导入 `dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型 |
+| **完全本地跑** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.local.yaml` → 配模型 |
+| **一条命令复现全部** | `bash scripts/14_reproduce_all.sh`（检查 → 起后端 → 导入 → 样例 → 结论） |
+| **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md)（59 条 PASS/FAIL） |
+| **核对「样例 vs 预期」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md)（11 步断言） |
+| **卡住了** | `bash scripts/07_doctor.sh`（8 项环境体检，每项给修复命令） |
 
-> 一句话：**这是一个会被 NPC 记住的文字酒馆**。Dify 编排，seekdb 存账本与记忆（全文 + HNSW），
-> 判定由引擎写在回答最前面，所以「声明」和「结果」永远对得上。
+## 证据索引
 
----
+| 想看什么 | 在哪 |
+| --- | --- |
+| 全部检查一次跑完 | `bash scripts/12_reviewer_check.sh`（9 项汇总，全 PASS 才 exit 0） |
+| 克隆下来东西全不全 | [`docs/evidence/clone-check.md`](docs/evidence/clone-check.md) |
+| 样例在在线演示上复现 | [`docs/evidence/sample-on-demo.md`](docs/evidence/sample-on-demo.md)（10 回合逐项对照） |
+| 最坏情况下的回答 | [`docs/evidence/fallbacks.md`](docs/evidence/fallbacks.md)（没配模型 / 后端不通 / 只发一句） |
+| 空库首次启动 | [`docs/evidence/fresh-db.md`](docs/evidence/fresh-db.md) |
+| Dify 到引擎的连通性 | [`docs/evidence/connectivity.md`](docs/evidence/connectivity.md)（容器内实测） |
+| 刚打开应用 / 读心 / 逐客 / 第一回合 / 第二天 | [`docs/evidence/dify/`](docs/evidence/dify/)（9 张实拍 + 动图 + 导出件） |
+| 三个人怎么说同一句话 | [`docs/evidence/three-voices.md`](docs/evidence/three-voices.md) |
+| 十种开场白的真实回答 | [`docs/evidence/first-messages.md`](docs/evidence/first-messages.md) |
+| seekdb 真的在干活 | [`docs/evidence/seekdb-explain.json`](docs/evidence/seekdb-explain.json)、[`engine-transcript.json`](docs/evidence/engine-transcript.json) |
 
 ## 30 秒看懂
 
