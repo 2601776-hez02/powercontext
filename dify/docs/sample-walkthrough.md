@@ -1,7 +1,7 @@
 # 验证样例 · 忘川酒馆
 
-> 一份可以照着敲的 10 回合剧本。判定是**确定性**的：骰子 = `blake2b(guest|turn|动词|对象|物品|原话)`，
-> 所以同一台机器、同一个玩家名、同一串输入，跑多少遍结果都一样（撮合验、截图、复核都靠这一点）。
+> 一份可以照着敲的 10 回合剧本。判定是**确定性**的：骰子 = `blake2b(turn|动词|对象|物品|原话)`，
+> **不含玩家名字**——所以任何名字、同一串输入，跑多少遍结果都一样（撮合验、截图、复核都靠这一点）。
 >
 > 剧本文件：`data/samples/walkthrough.json`；一键回放：`bash scripts/05_verify.sh`。
 
@@ -232,6 +232,6 @@ curl -s -X POST localhost:9100/act -H 'Content-Type: application/json' \
 ## 6. 如果结果和上表不一样
 
 1. 先确认玩家是干净的：`POST /admin/reset` 后再跑；
-2. 确认 `guest` 名字一致（骰子由它派生）；
+2. 确认是从初始状态开始（`POST /admin/reset`）；骰子与玩家名字无关，换名字不影响判定；
 3. 确认引擎版本一致（`GET /health` 里的 `uptime_s` 之外，脚本版本见 `engine/__init__.py` 的 `__version__`）；
 4. 真不一样就把 `docs/evidence/engine-transcript.json` 发出来——里面有每回合的 `roll`、`reason`、`recalls`。

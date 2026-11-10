@@ -110,6 +110,7 @@
 玩家：趁她低头算账，把柜台上的玉佩塞进袖子
   │
   ├─① Dify LLM「拆动作」 → {"verb":"steal","target":"aruo","item":"jade_pei","tone":"sneaky"}
+  │     这段 JSON 会随 /act/form 一起提交给引擎（表单字段 `parsed`），引擎校验对象/物品存在后采用它
   ├─② Dify HTTP → POST /act/form
   │     ├ seekdb：查账本/好感/在场（tw_player/tw_affinity/tw_npc）
   │     ├ 规则判定（骰子 = hash(guest,turn,动作)，可复现）→ 失败，被记账
@@ -321,7 +322,7 @@ python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
 
 ## 8. 验证样例（摘要）
 
-完整版见 [`docs/sample-walkthrough.md`](docs/sample-walkthrough.md)。10 回合剧本在 `data/samples/walkthrough.json`，判定是**确定性的**（骰子 = `blake2b(guest|turn|动词|对象|物品|原话)`）。
+完整版见 [`docs/sample-walkthrough.md`](docs/sample-walkthrough.md)。10 回合剧本在 `data/samples/walkthrough.json`，判定是**确定性的**：骰子 = `blake2b(turn|动词|对象|物品|原话)`——**不包含玩家名字**，所以评审换任何名字都复现出同一串判定。
 
 > 复跑前必须先把玩家洗回初始状态（`05_verify.sh` / `dify_walkthrough.py` 都会自动做 `POST /admin/reset`）：
 > 回合号会继续累加，骰子随之变化，所以「不重置直接再来一遍」的判定本来就和下表不同——这是设计，不是不确定。

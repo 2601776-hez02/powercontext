@@ -28,11 +28,15 @@ def mood_of(affinity: int) -> tuple[str, str]:
     return "警觉", MOOD_RULES[-1][2]
 
 
-def seeded_rng(guest: str, turn: int, action: Action) -> random.Random:
-    """同一玩家、同一回合、同一动作 → 同一个骰子。"""
+def seeded_rng(turn: int, action: Action) -> random.Random:
+    """同一回合、同一动作 → 同一个骰子。
+
+    刻意**不把玩家名字算进去**：验证样例写的判定必须对每个评审都一样，
+    换个名字就不成立的"确定性"等于没有。玩家名只用来区分账本与记忆（scope）。
+    """
 
     seed = hashlib.blake2b(
-        f"{guest}|{turn}|{action.verb}|{action.target}|{action.item}|{action.raw}".encode("utf-8"),
+        f"{turn}|{action.verb}|{action.target}|{action.item}|{action.raw}".encode("utf-8"),
         digest_size=8,
     ).digest()
     return random.Random(int.from_bytes(seed, "big"))

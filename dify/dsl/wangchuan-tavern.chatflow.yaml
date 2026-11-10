@@ -213,6 +213,8 @@ workflow:
         - role: system
           text: '你是《忘川酒馆》的动作解析器。玩家会用一句中文描述他想做的事，你把它翻成一个 JSON 对象，**只输出这个 JSON**，不要解释、不要代码块、不要多余文字。
 
+            这段 JSON 会原样交给酒馆引擎做判定，所以字段必须准确：verb 决定发生什么，target/item 决定对谁、对什么。
+
 
             字段：
 
@@ -435,7 +437,10 @@ workflow:
           - key: utterance
             type: text
             value: '{{#sys.query#}}'
-        desc: 酒馆引擎：判定 + 事务落库 + 记忆混合检索（表单提交，玩家打引号也不会破坏 JSON）
+          - key: parsed
+            type: text
+            value: '{{#llm_parse.text#}}'
+        desc: 酒馆引擎：判定 + 事务落库 + 记忆混合检索；把「拆动作」的 JSON 一起带上（引擎会校验后采用）
         headers: ''
         method: post
         params: ''

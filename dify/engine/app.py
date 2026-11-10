@@ -58,8 +58,14 @@ class ActBody(BaseModel):
         if isinstance(value, dict):
             return value
         if isinstance(value, str) and value.strip():
+            text = value.strip()
+            # 模型偶尔会裹一层 ```json 围栏，剥掉再解析
+            if text.startswith("```"):
+                text = text.strip("`")
+                if text.lower().startswith("json"):
+                    text = text[4:]
             try:
-                loaded = json.loads(value)
+                loaded = json.loads(text.strip())
             except ValueError:
                 return None
             return loaded if isinstance(loaded, dict) else None

@@ -183,7 +183,7 @@ def test_steal_is_deterministic_and_bounded():
             affinities={"aruo": 40},
             inventory={},
             items=ITEMS,
-            rng=rules.seeded_rng("无名客", turn, action),
+            rng=rules.seeded_rng(turn, action),
         )
         again = rules.resolve(
             action,
@@ -192,7 +192,7 @@ def test_steal_is_deterministic_and_bounded():
             affinities={"aruo": 40},
             inventory={},
             items=ITEMS,
-            rng=rules.seeded_rng("无名客", turn, action),
+            rng=rules.seeded_rng(turn, action),
         )
         assert first.verdict == again.verdict
         results.append(first.verdict)
@@ -210,7 +210,7 @@ def test_steal_failure_marks_ledger_and_memory():
             affinities={"aruo": 10},
             inventory={},
             items=ITEMS,
-            rng=rules.seeded_rng("无名客", turn, action),
+            rng=rules.seeded_rng(turn, action),
         )
         if outcome.verdict == "fail":
             caught = outcome
@@ -285,3 +285,47 @@ def test_drink_detection():
     noodle = parse("要一碗阳春面。", items=ITEMS, npcs=NPCS, default_target="aruo", hint={"verb": "buy", "target": "aruo", "item": "soup_noodle"})
     assert _counts_as_drink(wine, ITEMS) is True
     assert _counts_as_drink(noodle, ITEMS) is False
+
+
+# ------------------------------------------------- 说明与实现的边界
+
+
+def test_unknown_conversational_input_becomes_ask():
+    """看不出动作、但明显在说话 → 当成打听，而不是静默「打量」。"""
+
+    assert parse("你猜我想干嘛？", items=ITEMS, npcs=NPCS, default_target="aruo").verb == "ask"
+    assert parse("为什么要留下这盏灯？", items=ITEMS, npcs=NPCS, default_target="aruo").verb == "ask"
+
+
+def test_loose_phrasing_maps_to_actions():
+    cases = {
+        "我想顺走柜台上那块玉佩": ("steal", "jade_pei"),
+        "给我来一壶桂花酿": ("buy", "wine_guihua"),
+        "敬老板娘一杯": ("gift", ""),
+        "打听一下渡口的事": ("ask", ""),
+        "去后厨搭把手": ("help", ""),
+    }
+    for utterance, (verb, item) in cases.items():
+        action = parse(utterance, items=ITEMS, npcs=NPCS, default_target="aruo")
+        assert action.verb == verb, utterance
+        if item:
+            assert action.item == item, utterance
+
+
+def test_hint_wins_over_keywords_but_is_validated():
+    action = parse(
+        "把玉佩塞进袖子",
+        items=ITEMS,
+        npcs=NPCS,
+        default_target="aruo",
+        hint={"verb": "gift", "target": "aruo", "item": "jade_pei", "tone": "plain"},
+    )
+    # 模型说这是「送」，引擎照它判（hint 优先），但对象/物品要过校验
+    assert action.verb == "gift"
+    assert action.target == "aruo"
+    assert action.item == "jade_pei"
+
+
+def test_dice_does_not_depend_on_player_name():
+    action = make_action("把玉佩塞进袖子。", verb="steal", target="aruo", item="jade_pei")
+    assert rules.seeded_rng(3, action).random() == rules.seeded_rng(3, action).random()

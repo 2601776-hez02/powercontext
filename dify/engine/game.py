@@ -297,7 +297,7 @@ def act(
         )
 
     turn = int(player["turn"]) + 1
-    rng = rules.seeded_rng(guest, turn, action)
+    rng = rules.seeded_rng(turn, action)
     outcome = rules.resolve(
         action,
         player=located,

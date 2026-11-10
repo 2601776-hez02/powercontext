@@ -231,7 +231,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000142,
+          "memory_id": 1000202,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -239,7 +239,7 @@
           "emotion": "松",
           "source": "亲历",
           "importance": 8,
-          "score": 0.1546,
+          "score": 0.1543,
           "channels": [
             "fts",
             "vector"
@@ -250,7 +250,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000141,
+          "memory_id": 1000201,
           "npc": "aruo",
           "turn": 2,
           "kind": "亲历",
@@ -288,24 +288,6 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000143,
-          "npc": "laotao",
-          "turn": 2,
-          "kind": "传闻",
-          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
-          "emotion": "疑",
-          "source": "传闻",
-          "importance": 4,
-          "score": 0.1324,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "老陶"
-        },
-        {
           "memory_id": 5,
           "npc": "laotao",
           "turn": 0,
@@ -314,7 +296,7 @@
           "emotion": "沉",
           "source": "设定",
           "importance": 9,
-          "score": 0.0145,
+          "score": 0.0147,
           "channels": [
             "vector"
           ],
@@ -332,11 +314,29 @@
           "emotion": "酸",
           "source": "设定",
           "importance": 8,
-          "score": 0.0136,
+          "score": 0.0138,
           "channels": [
             "vector"
           ],
           "vector_similarity": -0.0011,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 6,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "他听脚步认人：走三步停一下的，多半心里有事。",
+          "emotion": "淡",
+          "source": "设定",
+          "importance": 6,
+          "score": 0.0135,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0415,
           "relevant": false,
           "origin": "world",
           "npc_name": "老陶"
@@ -352,11 +352,6 @@
           "npc": "阿箬",
           "kind": "杯边话",
           "text": "他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。"
-        },
-        {
-          "npc": "老陶",
-          "kind": "传闻",
-          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。"
         }
       ],
       "status_line": "> 铜板 17｜风评 2｜被记账 0｜大堂",
@@ -442,7 +437,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000142,
+          "memory_id": 1000202,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -499,24 +494,6 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000143,
-          "npc": "laotao",
-          "turn": 2,
-          "kind": "传闻",
-          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
-          "emotion": "疑",
-          "source": "传闻",
-          "importance": 4,
-          "score": 0.0786,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0473,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "老陶"
-        },
-        {
           "memory_id": 5,
           "npc": "laotao",
           "turn": 0,
@@ -525,7 +502,7 @@
           "emotion": "沉",
           "source": "设定",
           "importance": 9,
-          "score": 0.0147,
+          "score": 0.015,
           "channels": [
             "vector"
           ],
@@ -543,11 +520,29 @@
           "emotion": "酸",
           "source": "设定",
           "importance": 8,
-          "score": 0.0136,
+          "score": 0.0138,
           "channels": [
             "vector"
           ],
           "vector_similarity": -0.0003,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 6,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "他听脚步认人：走三步停一下的，多半心里有事。",
+          "emotion": "淡",
+          "source": "设定",
+          "importance": 6,
+          "score": 0.0133,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
           "relevant": false,
           "origin": "world",
           "npc_name": "老陶"
@@ -606,7 +601,7 @@
         "lose_item": "",
         "secret": "",
         "confide": "",
-        "roll": 0.941,
+        "roll": 0.598,
         "reason": "caught"
       },
       "deltas": {
@@ -641,7 +636,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000144,
+          "memory_id": 1000203,
           "npc": "aruo",
           "turn": 4,
           "kind": "亲历",
@@ -660,7 +655,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000142,
+          "memory_id": 1000202,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -698,7 +693,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000145,
+          "memory_id": 1000204,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -711,24 +706,6 @@
             "vector"
           ],
           "vector_similarity": 0.0495,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "老陶"
-        },
-        {
-          "memory_id": 1000143,
-          "npc": "laotao",
-          "turn": 2,
-          "kind": "传闻",
-          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
-          "emotion": "疑",
-          "source": "传闻",
-          "importance": 4,
-          "score": 0.0483,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0,
           "relevant": false,
           "origin": "personal",
           "npc_name": "老陶"
@@ -750,6 +727,24 @@
           "relevant": false,
           "origin": "world",
           "npc_name": "老陶"
+        },
+        {
+          "memory_id": 5,
+          "npc": "laotao",
+          "turn": 0,
+          "kind": "旧事",
+          "text": "二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听说，是他从水里爬出来时数的。",
+          "emotion": "沉",
+          "source": "设定",
+          "importance": 9,
+          "score": 0.014,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0008,
+          "relevant": false,
+          "origin": "world",
+          "npc_name": "老陶"
         }
       ],
       "memory_written": [
@@ -762,11 +757,6 @@
           "npc": "老陶",
           "kind": "目击",
           "text": "我听见动静，回头看见阿箬按着他的手腕。"
-        },
-        {
-          "npc": "小满",
-          "kind": "传闻",
-          "text": "我听说无名客动过柜台上的东西——阿箬亲口讲的，你信么？"
         }
       ],
       "status_line": "> 铜板 17｜风评 0｜被记账 1｜大堂",
@@ -854,7 +844,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000147,
+          "memory_id": 1000205,
           "npc": "aruo",
           "turn": 5,
           "kind": "亲历",
@@ -872,7 +862,25 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000144,
+          "memory_id": 1000206,
+          "npc": "laotao",
+          "turn": 5,
+          "kind": "传闻",
+          "text": "阿箬说，无名客认过错，也不知真假，我只说给你听。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.1316,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0035,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000203,
           "npc": "aruo",
           "turn": 4,
           "kind": "亲历",
@@ -890,7 +898,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000145,
+          "memory_id": 1000204,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -898,7 +906,7 @@
           "emotion": "惊",
           "source": "目击",
           "importance": 6,
-          "score": 0.0791,
+          "score": 0.0793,
           "channels": [
             "vector"
           ],
@@ -908,7 +916,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1000142,
+          "memory_id": 1000202,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -926,24 +934,6 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000143,
-          "npc": "laotao",
-          "turn": 2,
-          "kind": "传闻",
-          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
-          "emotion": "疑",
-          "source": "传闻",
-          "importance": 4,
-          "score": 0.0325,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0448,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "老陶"
-        },
-        {
           "memory_id": 5,
           "npc": "laotao",
           "turn": 0,
@@ -952,7 +942,7 @@
           "emotion": "沉",
           "source": "设定",
           "importance": 9,
-          "score": 0.0138,
+          "score": 0.014,
           "channels": [
             "vector"
           ],
@@ -969,7 +959,7 @@
           "text": "他低了头说上次是他不对。我认这句话。"
         },
         {
-          "npc": "小满",
+          "npc": "老陶",
           "kind": "传闻",
           "text": "阿箬说，无名客认过错，也不知真假，我只说给你听。"
         }
@@ -1059,7 +1049,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000149,
+          "memory_id": 1000207,
           "npc": "laotao",
           "turn": 6,
           "kind": "亲历",
@@ -1078,7 +1068,26 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1000142,
+          "memory_id": 1000208,
+          "npc": "aruo",
+          "turn": 6,
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客讲过一段好故事。这话是从老陶那儿漏出来的。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.1519,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.1034,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000202,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -1086,7 +1095,7 @@
           "emotion": "松",
           "source": "亲历",
           "importance": 8,
-          "score": 0.0474,
+          "score": 0.0465,
           "channels": [
             "fts",
             "vector"
@@ -1097,7 +1106,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000141,
+          "memory_id": 1000201,
           "npc": "aruo",
           "turn": 2,
           "kind": "亲历",
@@ -1105,7 +1114,7 @@
           "emotion": "淡",
           "source": "亲历",
           "importance": 4,
-          "score": 0.0421,
+          "score": 0.0419,
           "channels": [
             "fts",
             "vector"
@@ -1116,26 +1125,25 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1,
-          "npc": "aruo",
-          "turn": 0,
-          "kind": "旧事",
-          "text": "十年前，姓沈的客人说去渡口接人，把一枚玉佩押在柜台上，说天亮就回来。他没回来。",
-          "emotion": "淡",
-          "source": "设定",
-          "importance": 9,
-          "score": 0.0375,
+          "memory_id": 1000206,
+          "npc": "laotao",
+          "turn": 5,
+          "kind": "传闻",
+          "text": "阿箬说，无名客认过错，也不知真假，我只说给你听。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0784,
           "channels": [
-            "fts",
             "vector"
           ],
-          "vector_similarity": 0.0321,
-          "relevant": true,
-          "origin": "world",
-          "npc_name": "阿箬"
+          "vector_similarity": 0.0166,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
         },
         {
-          "memory_id": 1000145,
+          "memory_id": 1000204,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -1151,24 +1159,6 @@
           "relevant": false,
           "origin": "personal",
           "npc_name": "老陶"
-        },
-        {
-          "memory_id": 1000143,
-          "npc": "laotao",
-          "turn": 2,
-          "kind": "传闻",
-          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
-          "emotion": "疑",
-          "source": "传闻",
-          "importance": 4,
-          "score": 0.0234,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "老陶"
         }
       ],
       "memory_written": [
@@ -1176,6 +1166,11 @@
           "npc": "老陶",
           "kind": "亲历",
           "text": "他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。"
+        },
+        {
+          "npc": "阿箬",
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客讲过一段好故事。这话是从老陶那儿漏出来的。"
         }
       ],
       "status_line": "> 铜板 19｜风评 4｜被记账 1｜大堂",
@@ -1258,7 +1253,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000151,
+          "memory_id": 1000210,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "秘密",
@@ -1277,7 +1272,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1000150,
+          "memory_id": 1000209,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "亲历",
@@ -1325,6 +1320,11 @@
           "npc": "小满",
           "kind": "秘密",
           "text": "后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。"
+        },
+        {
+          "npc": "老陶",
+          "kind": "传闻",
+          "text": "我听说无名客替人搭过手——小满亲口讲的，你信么？"
         }
       ],
       "status_line": "> 铜板 20｜风评 8｜被记账 1｜后厨",
@@ -1405,7 +1405,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000151,
+          "memory_id": 1000210,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "秘密",
@@ -1413,7 +1413,7 @@
           "emotion": "沉",
           "source": "亲历",
           "importance": 10,
-          "score": 0.0799,
+          "score": 0.0803,
           "channels": [
             "vector"
           ],
@@ -1423,7 +1423,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1000150,
+          "memory_id": 1000209,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "亲历",
@@ -1431,7 +1431,7 @@
           "emotion": "暖",
           "source": "亲历",
           "importance": 5,
-          "score": 0.0784,
+          "score": 0.0786,
           "channels": [
             "vector"
           ],
@@ -1441,21 +1441,21 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1000148,
+          "memory_id": 10,
           "npc": "xiaoman",
-          "turn": 5,
-          "kind": "传闻",
-          "text": "阿箬说，无名客认过错，也不知真假，我只说给你听。",
-          "emotion": "疑",
-          "source": "传闻",
-          "importance": 4,
-          "score": 0.0321,
+          "turn": 0,
+          "kind": "旧事",
+          "text": "她怕黑，可夜里总是她提着灯去开后门——阿箬姐说，后门不能空着。",
+          "emotion": "怕",
+          "source": "设定",
+          "importance": 7,
+          "score": 0.014,
           "channels": [
             "vector"
           ],
           "vector_similarity": 0.0,
           "relevant": false,
-          "origin": "personal",
+          "origin": "world",
           "npc_name": "小满"
         }
       ],
@@ -1482,16 +1482,16 @@
             "text": "他帮我把活计收拾了，手上利落，不像是白帮忙的人。"
           },
           {
-            "turn": 5,
-            "kind": "传闻",
-            "source": "传闻",
-            "text": "阿箬说，无名客认过错，也不知真假，我只说给你听。"
+            "turn": 0,
+            "kind": "旧事",
+            "source": "设定",
+            "text": "她数得清柜台上有几个铜板，但从不多拿一个。"
           },
           {
-            "turn": 4,
-            "kind": "传闻",
-            "source": "传闻",
-            "text": "我听说无名客动过柜台上的东西——阿箬亲口讲的，你信么？"
+            "turn": 0,
+            "kind": "旧事",
+            "source": "设定",
+            "text": "她把剩菜悄悄送去渡口给一个乞丐，那人只在她放下碗的时候咳一声。"
           }
         ]
       },
@@ -1573,7 +1573,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000152,
+          "memory_id": 1000212,
           "npc": "aruo",
           "turn": 9,
           "kind": "亲历",
@@ -1592,7 +1592,43 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000149,
+          "memory_id": 1000213,
+          "npc": "laotao",
+          "turn": 9,
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.1316,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0002,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000211,
+          "npc": "laotao",
+          "turn": 7,
+          "kind": "传闻",
+          "text": "我听说无名客替人搭过手——小满亲口讲的，你信么？",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0483,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000207,
           "npc": "laotao",
           "turn": 6,
           "kind": "亲历",
@@ -1600,7 +1636,7 @@
           "emotion": "喜",
           "source": "亲历",
           "importance": 6,
-          "score": 0.0323,
+          "score": 0.0321,
           "channels": [
             "vector"
           ],
@@ -1610,7 +1646,25 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1000147,
+          "memory_id": 1000208,
+          "npc": "aruo",
+          "turn": 6,
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客讲过一段好故事。这话是从老陶那儿漏出来的。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0311,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0008,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000205,
           "npc": "aruo",
           "turn": 5,
           "kind": "亲历",
@@ -1626,60 +1680,6 @@
           "relevant": false,
           "origin": "personal",
           "npc_name": "阿箬"
-        },
-        {
-          "memory_id": 1000144,
-          "npc": "aruo",
-          "turn": 4,
-          "kind": "亲历",
-          "text": "他把手伸向玉佩，被我按住了。这笔账我记着。",
-          "emotion": "恼",
-          "source": "亲历",
-          "importance": 9,
-          "score": 0.0201,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0181,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "阿箬"
-        },
-        {
-          "memory_id": 1000145,
-          "npc": "laotao",
-          "turn": 4,
-          "kind": "目击",
-          "text": "我听见动静，回头看见阿箬按着他的手腕。",
-          "emotion": "惊",
-          "source": "目击",
-          "importance": 6,
-          "score": 0.0191,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "老陶"
-        },
-        {
-          "memory_id": 5,
-          "npc": "laotao",
-          "turn": 0,
-          "kind": "旧事",
-          "text": "二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听说，是他从水里爬出来时数的。",
-          "emotion": "沉",
-          "source": "设定",
-          "importance": 9,
-          "score": 0.015,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0267,
-          "relevant": false,
-          "origin": "world",
-          "npc_name": "老陶"
         }
       ],
       "memory_written": [
@@ -1689,9 +1689,9 @@
           "text": "他要了烧刀子，铜板数得很慢，一个也没少给。"
         },
         {
-          "npc": "小满",
+          "npc": "老陶",
           "kind": "传闻",
-          "text": "我听说无名客喝过一碗酒——阿箬亲口讲的，你信么？"
+          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。"
         }
       ],
       "status_line": "> 铜板 18｜风评 10｜被记账 1｜大堂",
@@ -1777,7 +1777,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000152,
+          "memory_id": 1000212,
           "npc": "aruo",
           "turn": 9,
           "kind": "亲历",
@@ -1785,7 +1785,7 @@
           "emotion": "淡",
           "source": "亲历",
           "importance": 4,
-          "score": 0.0774,
+          "score": 0.0773,
           "channels": [
             "vector"
           ],
@@ -1795,7 +1795,43 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000149,
+          "memory_id": 1000213,
+          "npc": "laotao",
+          "turn": 9,
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0773,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000211,
+          "npc": "laotao",
+          "turn": 7,
+          "kind": "传闻",
+          "text": "我听说无名客替人搭过手——小满亲口讲的，你信么？",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0321,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "老陶"
+        },
+        {
+          "memory_id": 1000207,
           "npc": "laotao",
           "turn": 6,
           "kind": "亲历",
@@ -1813,7 +1849,25 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1000147,
+          "memory_id": 1000208,
+          "npc": "aruo",
+          "turn": 6,
+          "kind": "传闻",
+          "text": "渡口那边都在传：无名客讲过一段好故事。这话是从老陶那儿漏出来的。",
+          "emotion": "疑",
+          "source": "传闻",
+          "importance": 4,
+          "score": 0.0232,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": 0.0,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000205,
           "npc": "aruo",
           "turn": 5,
           "kind": "亲历",
@@ -1821,7 +1875,7 @@
           "emotion": "缓",
           "source": "亲历",
           "importance": 5,
-          "score": 0.0183,
+          "score": 0.0181,
           "channels": [
             "vector"
           ],
@@ -1829,60 +1883,6 @@
           "relevant": false,
           "origin": "personal",
           "npc_name": "阿箬"
-        },
-        {
-          "memory_id": 1000144,
-          "npc": "aruo",
-          "turn": 4,
-          "kind": "亲历",
-          "text": "他把手伸向玉佩，被我按住了。这笔账我记着。",
-          "emotion": "恼",
-          "source": "亲历",
-          "importance": 9,
-          "score": 0.0166,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": -0.0015,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "阿箬"
-        },
-        {
-          "memory_id": 1000145,
-          "npc": "laotao",
-          "turn": 4,
-          "kind": "目击",
-          "text": "我听见动静，回头看见阿箬按着他的手腕。",
-          "emotion": "惊",
-          "source": "目击",
-          "importance": 6,
-          "score": 0.0166,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "老陶"
-        },
-        {
-          "memory_id": 5,
-          "npc": "laotao",
-          "turn": 0,
-          "kind": "旧事",
-          "text": "二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听说，是他从水里爬出来时数的。",
-          "emotion": "沉",
-          "source": "设定",
-          "importance": 9,
-          "score": 0.0143,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0,
-          "relevant": false,
-          "origin": "world",
-          "npc_name": "老陶"
         }
       ],
       "memory_written": [],
@@ -1908,7 +1908,7 @@
           "available": true,
           "written": true,
           "status": 200,
-          "artifact_id": "art_179eb152712e47babee86bab3ef1d011",
+          "artifact_id": "art_6d78e76029b345fd9924a729376d7e44",
           "revision": 1,
           "kind": "tavern-legend",
           "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
