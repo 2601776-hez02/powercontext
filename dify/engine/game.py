@@ -237,6 +237,25 @@ def _short_deed(detail: str, limit: int = 26) -> str:
     return body
 
 
+# 同一句问题，三个人有三种说法（否则问老陶「你是谁」他会自称阿箬）
+VOICE = {
+    "aruo": {
+        "place": "忘川酒馆。渡口最后一盏灯，什么都记得。",
+        "who": "阿箬。这店我看了十年，账本比人记得清楚。",
+        "rules": "规矩三条：一杯酒换一个秘密；酒钱不能欠；动手要记账。剩下的，你自己试。",
+    },
+    "laotao": {
+        "place": "忘川酒馆——渡口最后一盏灯。灯在，人就还在；人进来了，灯就记着他。",
+        "who": "老陶，说书的。这店里二十年的旧事，一半是我讲的，一半是我数的。",
+        "rules": "规矩？三条。一杯酒换个秘密，酒钱不能欠，动手要记账——记到第三次，门就不开了。戏文里也一样，都是要还的。",
+    },
+    "xiaoman": {
+        "place": "哎呀……这里是忘川酒馆。渡口边上，雾散了才开门。",
+        "who": "我……我叫小满。在后头洗碗的，客人有什么事，我去叫老板娘。",
+        "rules": "规矩我不敢多说……就是，喝酒要给钱，别惹老板娘，别动手。",
+    },
+}
+
 # 每个 NPC 的习惯动作（台词里的动作要跟着人走，不然张三会说李四的话）
 NPC_GESTURE = {
     "aruo": "把抹布往肩上一搭",
@@ -270,14 +289,20 @@ def _ask_answer(
     others = [npc for npc_id, npc in npcs.items() if npc_id != action.target]
     storyteller = next((npc["name"] for npc in others if "说书" in str(npc.get("title") or "")), "")
 
+    voice = VOICE.get(str(action.target), {})
+    gesture = NPC_GESTURE.get(str(action.target), "把手里的活停了停")
+
     if any(word in text for word in ("地方", "哪里", "哪儿", "什么店", "这是哪")):
-        return f"{name}把抹布往肩上一搭：「忘川酒馆。渡口最后一盏灯，什么都记得。」"
+        line = voice.get("place") or "忘川酒馆。渡口最后一盏灯，什么都记得。"
+        return f"{name}{gesture}：「{line}」"
     if any(word in text for word in ("你是谁", "什么人", "你叫", "名字")):
-        return f"{name}：「阿箬。这店我看了十年，账本比人记得清楚。」"
+        line = voice.get("who") or "阿箬。这店我看了十年，账本比人记得清楚。"
+        return f"{name}{gesture}：「{line}」"
     if any(word in text for word in ("规矩", "规则", "怎么玩", "能做什么", "做什么", "干什么", "玩法", "好玩", "有趣", "玩什么")):
         world = world_of(db)
         rules = "；".join(str(rule).split("：")[0] for rule in (world.get("rules") or [])[:3])
-        return f"{name}：「规矩三条：{rules}。剩下的，你自己试。」"
+        line = voice.get("rules") or f"规矩三条：{rules}。剩下的，你自己试。"
+        return f"{name}{gesture}：「{line}」"
     # 问另一个 NPC 的事（关系 / 近况）
     other = next(
         (npc_id for npc_id in npcs if npc_id != action.target and npcs[npc_id]["name"] in text),

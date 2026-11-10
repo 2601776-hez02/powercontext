@@ -451,6 +451,23 @@ def main(argv: list[str] | None = None) -> int:
         laotao_reply[:40],
     )
 
+    # ---- 3v. 三个人三个口吻：同一句「你是谁」不能互相串
+    reset()
+    answers = {}
+    for npc_name, npc_id in (("阿箬", "aruo"), ("老陶", "laotao"), ("小满", "xiaoman")):
+        reset()
+        reply = str((act(f"{npc_name}，你是谁？").get("outcome") or {}).get("detail") or "")
+        answers[npc_id] = reply
+    distinct = len(set(answers.values())) == 3
+    self_named = all(npc_name in answers[npc_id] for npc_name, npc_id in (("阿箬", "aruo"), ("老陶", "laotao"), ("小满", "xiaoman")))
+    crossed = "阿箬" in answers["laotao"] or "阿箬" in answers["xiaoman"]
+    report.check(
+        "voice.distinct_per_npc",
+        "问「你是谁」时三个人各有各的说法（老陶不会自称阿箬）",
+        distinct and self_named and not crossed,
+        f"三种说法={distinct}｜各自报名={self_named}｜没有串味={not crossed}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []
