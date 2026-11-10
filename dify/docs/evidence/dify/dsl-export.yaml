@@ -246,7 +246,8 @@ workflow:
         context:
           enabled: false
           variable_selector: []
-        desc: 把玩家一句话翻成结构化动作 JSON
+        desc: 把玩家一句话翻成结构化动作 JSON｜【换模型】导入后请把这个节点的模型换成你自己的（原来用 deepseek-flash）；它只做一件事：把一句话拆成
+          JSON 动作。
         model:
           completion_params:
             max_tokens: 256
@@ -410,7 +411,7 @@ workflow:
         - key: text
           type: string
           value: （你盯着她看了一会儿，她能感觉到。）
-        desc: 把真实记忆行写成「他此刻在想什么」
+        desc: 把真实记忆行写成「他此刻在想什么」｜【换模型】导入后请把这个节点的模型换成你自己的（原来用 deepseek-flash）；它负责把读心读到的记忆行写成一段。
         error_strategy: default-value
         model:
           completion_params:
@@ -542,7 +543,7 @@ workflow:
         - key: text
           type: string
           value: （灯芯爆了一声，屋里静了下来。这一回合的判定与账本见上方。）
-        desc: 按引擎给出的事实写小说体叙事，必须引用 NPC 想起的旧事
+        desc: 按引擎给出的事实写小说体叙事，必须引用 NPC 想起的旧事｜【换模型】导入后请把这个节点的模型换成你自己的（原来用 deepseek-flash）；它负责写小说正文，事实行不归它管。
         error_strategy: default-value
         model:
           completion_params:
