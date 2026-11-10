@@ -386,6 +386,25 @@ def main(argv: list[str] | None = None) -> int:
         price_detail[:40],
     )
 
+    # ---- 3r. 问自己：多少钱 / 风评 / 干过什么
+    reset()
+    act("要一壶桂花酿。")
+    coins_reply = str((act("我身上还有多少钱？").get("outcome") or {}).get("detail") or "")
+    rep_reply = str((act("我的风评怎么样？").get("outcome") or {}).get("detail") or "")
+    report.check(
+        "ask.self_state",
+        "问「我还有多少钱 / 我的风评怎么样」时，报出的数字与账本一致",
+        ("17 个铜板" in coins_reply) and ("风评是 2" in rep_reply),
+        f"{coins_reply[:20]}｜{rep_reply[:20]}",
+    )
+    deeds_reply = str((act("我都干过什么？").get("outcome") or {}).get("detail") or "")
+    report.check(
+        "ask.my_deeds",
+        "问「我都干过什么」时，从 tw_event 里念出真实做过的事",
+        ("账本念" in deeds_reply) and ("第1回合" in deeds_reply),
+        deeds_reply[:44],
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

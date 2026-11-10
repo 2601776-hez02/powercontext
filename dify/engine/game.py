@@ -228,7 +228,23 @@ def _tavern_recall(db: SeekDB, pc: PowerContext, guest: str) -> dict[str, Any]:
     return {"available": available, "mode": mode, "hits": hits, "scope_id": _pc_scope(db, pc, guest) if pc else ""}
 
 
-def _ask_answer(utterance: str, action: Action, outcome: "rules.Outcome", npcs: dict[str, dict], db: SeekDB) -> str:
+def _short_deed(detail: str, limit: int = 26) -> str:
+    """把一条事件描述压成账本里的一句：不切在引号中间，也不留重复标点。"""
+
+    body = str(detail or "").split("「")[0].rstrip("。；：，、 ")
+    if len(body) > limit:
+        body = body[:limit].rstrip("。；：，、 ")
+    return body
+
+
+def _ask_answer(
+    utterance: str,
+    action: Action,
+    outcome: "rules.Outcome",
+    npcs: dict[str, dict],
+    db: SeekDB,
+    player: dict[str, Any],
+) -> str:
     """玩家问「这是什么地方 / 你是谁 / 什么规矩 / 怎么玩」时，让在场的人真的答一句。"""
 
     text = str(utterance)
@@ -244,6 +260,25 @@ def _ask_answer(utterance: str, action: Action, outcome: "rules.Outcome", npcs: 
         world = world_of(db)
         rules = "；".join(str(rule).split("：")[0] for rule in (world.get("rules") or [])[:3])
         return f"{name}：「规矩三条：{rules}。剩下的，你自己试。」"
+    # 问自己：我有多少钱 / 我名声怎么样 / 我都干过什么
+    if any(word in text for word in ("我有多", "我还有多少", "我身上", "我的钱", "我剩")):
+        return f"{name}瞟了一眼你袖口：「你身上还有 {int(player['coins'])} 个铜板。」"
+    if any(word in text for word in ("风评", "名声", "口碑", "我怎么样")):
+        return f"{name}把算盘珠子拨了一下：「你的风评是 {int(player['reputation'])}。这店里，风评比铜板值钱。」"
+    if any(word in text for word in ("我做过", "我干了", "我干过", "我的账", "我做过的", "干过什么", "做过什么", "干了什么")):
+        rows = db.query(
+            "SELECT turn, detail FROM tw_event WHERE guest = %s "
+            "AND verdict <> 'turned_away' AND verb <> 'ask' "
+            "ORDER BY turn DESC, id DESC LIMIT 3",
+            (player["guest"],),
+        )
+        if rows:
+            deeds = "；".join(
+                f"第{int(row['turn'])}回合·{_short_deed(row['detail'])}" for row in reversed(rows)
+            )
+            return f"{name}翻开账本念：「{deeds}。」"
+        return f"{name}：「账本上还没有你的字。」"
+
     # 问价钱：直接报 items 表里的真实价格
     item_id = str(getattr(action, "item", "") or "")
     if item_id and any(word in text for word in ("多少钱", "几文", "几个铜板", "价钱", "价格", "怎么卖")):
@@ -520,7 +555,7 @@ def act(
 
     # 「打听」不能一律回「没有立刻接」——评审第一句往往是问这是什么地方/你是谁/怎么玩
     if action.verb == "ask" and str(outcome.reason) in {"asked", "greeted"}:
-        outcome.detail = _ask_answer(utterance, action, outcome, npcs, db)
+        outcome.detail = _ask_answer(utterance, action, outcome, npcs, db, player)
 
     memories = rules.compose_memories(action, outcome, npcs=npcs, items=items)
     gossip = _gossip(guest, action, outcome, npcs, items, rng, settings, memories)
