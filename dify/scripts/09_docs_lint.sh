@@ -43,14 +43,17 @@ for path in sorted(root.rglob("*.md")):
         if len(counts) > 1:
             problems.append(f"{path}:{block[0][0]} 表格列数不一致：{[c for c in sorted(counts)]}")
 
-# README 里的相对链接
-readme = pathlib.Path("README.md")
-for match in re.finditer(r"\]\(([^)#][^)]*)\)", readme.read_text(encoding="utf-8")):
-    target = match.group(1).split("#")[0].strip()
-    if not target or target.startswith(("http://", "https://", "mailto:")):
+# 所有 markdown 里的相对链接（评审在 GitHub 上点开就是这些）
+link_re = re.compile(r"\]\(([^)#][^)]*)\)")
+for md in sorted(root.rglob("*.md")):
+    if any(part in {".venv", ".cache", "node_modules"} for part in md.parts):
         continue
-    if not (readme.parent / target).exists():
-        problems.append(f"README.md 链接指向不存在的文件：{target}")
+    for match in link_re.finditer(md.read_text(encoding="utf-8")):
+        target = match.group(1).split("#")[0].strip()
+        if not target or target.startswith(("http://", "https://", "mailto:")):
+            continue
+        if not (md.parent / target).exists():
+            problems.append(f"{md} 链接指向不存在的文件：{target}")
 
 if problems:
     print("文档自检失败：")
@@ -58,7 +61,7 @@ if problems:
         print("  -", item)
     sys.exit(1)
 
-print("文档自检通过：表格列数一致，README 相对链接全部存在")
+print("文档自检通过：表格列数一致，所有 markdown 的相对链接都能打开")
 PY
 
 # ---- 条数一致性：文档里写的「NN 条」必须和 conformance.md 的实际条数一致 ----

@@ -47,6 +47,7 @@
 | **一把梭：全部检查跑一遍** | `bash scripts/12_reviewer_check.sh` | 打一张 9 项汇总表，全 PASS 才 exit 0 |
 | **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md) | **59 条声明逐条 PASS/FAIL + 实测值** |
 | **核对「预期 vs 实际」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md) | **11 步样例逐条断言** |
+| **克隆下来东西全不全** | [`docs/evidence/clone-check.md`](docs/evidence/clone-check.md)（全新 clone 后逐个链接核对） | 全部存在 |
 | **样例在在线演示上能不能复现** | [`docs/evidence/sample-on-demo.md`](docs/evidence/sample-on-demo.md)（10 回合逐项对照） | **10/10 一致** |
 | **最坏情况下还能看到什么** | [`docs/evidence/fallbacks.md`](docs/evidence/fallbacks.md)（没配模型 / 后端连不上 / 只发一句没用的话） | 判定行始终在 |
 | **看「刚打开应用」长什么样** | [`docs/evidence/dify/01-new-conversation.png`](docs/evidence/dify/01-new-conversation.png)（开场白 + 三件可做的事 + 一句「你好」的回应） | 30 秒知道怎么玩 |
