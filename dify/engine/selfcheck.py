@@ -434,6 +434,23 @@ def main(argv: list[str] | None = None) -> int:
         f"打烊时 {before_coins}｜第二天回答 {after_reply[:24]}",
     )
 
+    # ---- 3u. 问 NPC 之间的关系，要有人答；而且动作要跟着人走
+    reset()
+    relation = str((act("你俩是什么关系？").get("outcome") or {}).get("detail") or "")
+    report.check(
+        "ask.relation",
+        "问「你俩是什么关系」时，在场的人能说出他们之间的关系",
+        ("二十年书" in relation) or ("捡回来" in relation),
+        relation[:44],
+    )
+    laotao_reply = str((act("老陶最近怎么样？").get("outcome") or {}).get("detail") or "")
+    report.check(
+        "ask.gesture_matches_npc",
+        "台词里的动作跟着人说：老陶不会去叠抹布",
+        ("醒木" in laotao_reply) and ("抹布" not in laotao_reply),
+        laotao_reply[:40],
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

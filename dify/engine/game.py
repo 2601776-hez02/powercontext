@@ -237,6 +237,24 @@ def _short_deed(detail: str, limit: int = 26) -> str:
     return body
 
 
+# 每个 NPC 的习惯动作（台词里的动作要跟着人走，不然张三会说李四的话）
+NPC_GESTURE = {
+    "aruo": "把抹布往肩上一搭",
+    "laotao": "把醒木在桌面上按了按",
+    "xiaoman": "把手在围裙上擦了擦",
+}
+
+# 谁怎么看谁：问「你俩什么关系」时用来回答
+RELATIONS = {
+    ("aruo", "laotao"): "他在这店里说了二十年书。靠窗那张桌是他的，谁也抢不走。",
+    ("aruo", "xiaoman"): "小满是我从渡口捡回来的。那时候她还不会说话，先学会的是洗碗。",
+    ("laotao", "aruo"): "老板娘？她算她的账，我讲我的书。十年了，谁也没欠过谁。",
+    ("laotao", "xiaoman"): "灶上那个丫头，听我讲了三年的书，从没问过一个字。",
+    ("xiaoman", "aruo"): "老板娘嘴上凶，我病了那回，是她守到天亮的。",
+    ("xiaoman", "laotao"): "老陶讲的案子我都记得。他说到那个孩子的时候，总要多喝一口。",
+}
+
+
 def _ask_answer(
     utterance: str,
     action: Action,
@@ -260,6 +278,29 @@ def _ask_answer(
         world = world_of(db)
         rules = "；".join(str(rule).split("：")[0] for rule in (world.get("rules") or [])[:3])
         return f"{name}：「规矩三条：{rules}。剩下的，你自己试。」"
+    # 问另一个 NPC 的事（关系 / 近况）
+    other = next(
+        (npc_id for npc_id in npcs if npc_id != action.target and npcs[npc_id]["name"] in text),
+        "",
+    )
+    asks_relation = any(word in text for word in ("关系", "你俩", "你们俩", "认识", "熟", "走得近", "喜欢"))
+    if asks_relation:
+        # 没点名时，用「此刻在场的另一个人」兜底（「你俩什么关系？」）
+        if not other:
+            here = str(player.get("location") or "")
+            other = next(
+                (
+                    npc_id
+                    for npc_id, npc in npcs.items()
+                    if npc_id != action.target and str(npc.get("location") or "") == here
+                ),
+                "",
+            )
+        line = RELATIONS.get((str(action.target), other))
+        if line:
+            gesture = NPC_GESTURE.get(str(action.target), "把手里的活停了停")
+            return f"{name}{gesture}：「{line}」"
+
     # 问自己：我有多少钱 / 我名声怎么样 / 我都干过什么 / 记了几次账
     if any(word in text for word in ("记账", "记了几次", "记过几次", "被记")):
         wanted = int(player["wanted"])
@@ -321,7 +362,8 @@ def _ask_answer(
             return f"{storyteller}在角落里清了清嗓子：「要听旧事？先说好，听完别问我是听谁说的。」"
         return f"{name}：「渡口的事，问老陶去。我只管账。」"
     if any(word in text for word in ("好吗", "过得怎么样", "最近怎么样", "还好吗")):
-        return f"{name}把抹布叠了叠：「老样子。灯亮着，人走进来，账记上。」"
+        gesture = NPC_GESTURE.get(str(action.target), "把手里的活停了停")
+        return f"{name}{gesture}：「老样子。灯亮着，人走进来，账记上。」"
 
     if any(word in text for word in ("谢谢", "多谢", "谢了")):
         return f"{name}摆摆手：「不用谢。账上记着就行。」"
