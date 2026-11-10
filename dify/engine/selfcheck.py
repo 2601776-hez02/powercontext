@@ -659,6 +659,40 @@ def main(argv: list[str] | None = None) -> int:
         " ".join(rows_ok),
     )
 
+    # ---- 3af. rules.json（机器可读的规则声明）逐条按 say 跑一遍
+    rules_path = ROOT / "rules.json"
+    if rules_path.exists():
+        rules_doc = json.loads(rules_path.read_text(encoding="utf-8"))
+        results = []
+        all_ok = True
+        for rule in rules_doc.get("rules", []):
+            reset()
+            payload = act(rule["say"])
+            for _ in range(int(rule.get("repeat", 1)) - 1):
+                payload = act(rule["say"])
+            if rule.get("then"):
+                payload = act(rule["then"])
+            outcome = payload.get("outcome") or {}
+            player = payload.get("player") or {}
+            _, facts_text = call("/facts/form", form={"guest": GUEST}, text=True)
+            haystack = f"{outcome.get('detail', '')}\n{facts_text}"
+            verdict_ok = str(outcome.get("verdict")) == str(rule.get("expect_verdict"))
+            contains_ok = all(str(word) in haystack for word in rule.get("expect_contains", []))
+            state_ok = all(int(player.get(key) or 0) == int(value) for key, value in (rule.get("expect_state") or {}).items())
+            kinds_ok = True
+            for npc_id, kind in (rule.get("expect_kinds") or {}).items():
+                rows = call("/mind", {"guest": GUEST, "npc": npc_id, "limit": 8})[1].get("memories", [])
+                kinds_ok = kinds_ok and any(str(row["kind"]) == kind for row in rows)
+            ok = verdict_ok and contains_ok and state_ok and kinds_ok
+            all_ok = all_ok and ok
+            results.append(("OK" if ok else "X") + rule["id"][:6])
+        report.check(
+            "rules_json.matches_behavior",
+            "rules.json 里声明的每条规则，按 say 发出去都能得到 expect 的结果",
+            all_ok,
+            " ".join(results),
+        )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

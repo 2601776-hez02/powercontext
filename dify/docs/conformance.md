@@ -1,12 +1,12 @@
 # 声明一致性自检（自动生成）
 
-> `python3 -m engine.selfcheck` 生成；共 58 条，**58 PASS / 0 FAIL**。
+> `python3 -m engine.selfcheck` 生成；共 59 条，**59 PASS / 0 FAIL**。
 > 每条都写明「声明」「实测」，只用到引擎 HTTP 接口与 seekdb，不需要 Dify 与模型。
 
 | # | 声明 | 结果 | 实测 |
 | --- | --- | --- | --- |
 | 1 | seekdb 与引擎可用 | **PASS** | `seekdb=5.7.25-OceanBase seekdb-v1.4.0.0` |
-| 2 | 初始化后应有 3 NPC / 11 物品 / 不少于 12 条前置记忆 | **PASS** | `npc=3 item=11 memory=2859 (≥12)` |
+| 2 | 初始化后应有 3 NPC / 11 物品 / 不少于 12 条前置记忆 | **PASS** | `npc=3 item=11 memory=3089 (≥12)` |
 | 3 | NPC 记忆有全文索引（ngram 分词） | **PASS** | `tw_memory.FULLTEXT` |
 | 4 | NPC 记忆有 HNSW 向量索引 | **PASS** | `tw_memory.VECTOR` |
 | 5 | 向量排序走向量索引扫描（不是全表扫） | **PASS** | `VECTOR INDEX ADAPTIVE SCAN (PRE-FILTER)` |
@@ -50,16 +50,17 @@
 | 43 | 两份 DSL（默认连公网 / local 连本机）的节点与开场白完全一致，只有 TAVERN_ENGINE_URL 不同 | **PASS** | `图一致=True 变量一致=True` |
 | 44 | 模型不可用时仍有输出：两个 LLM 节点都设了 default-value 且兜底文案非空 | **PASS** | `llm_narrate=default-value/30字｜llm_mind=default-value/18字` |
 | 45 | README 最上面那张对照表的六行，逐行与实现一致 | **PASS** | `① ② ③ ④ ⑤ ⑥` |
-| 46 | 好感过门槛 → NPC 说出守了多年的秘密（事实行里也写出来） | **PASS** | `kinds_has_secret=True facts_has_secret=True` |
-| 47 | 只说「来壶酒」也能真的买到（引擎按场景补最便宜的酒） | **PASS** | `item=wine_shaodao verdict=success` |
-| 48 | 目标在别的区域时会自己走过去（「帮小满收拾」→ 后厨） | **PASS** | `at=后厨 verdict=success` |
-| 49 | 事实行里写出「一杯酒换来的那句杯边话」（模型改写不了） | **PASS** | `【第 1 回合 · 判定：成功】阿箬收下 3 个铜板，把桂花酿推到你面前。 【阿箬的杯边话】客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔` |
-| 50 | 「请你喝一壶桂花酿」走送礼分支，返回正常结果而不是报错 | **PASS** | `verdict=success detail=阿箬收下 3 个铜板，把桂花酿推到你面前。` |
-| 51 | 读心返回 NPC 脑子里的真实记忆行 | **PASS** | `6 条` |
-| 52 | 读心也算一个回合（回合号推进） | **PASS** | `turn=3` |
-| 53 | 回答末尾的判定行由引擎生成（含判定与状态） | **PASS** | `【第 3 回合 · 判定：只是看着】你盯着阿箬的眼睛，看见了一些不该看见的。 > 铜板 17｜风评 2｜被记账 0｜大堂 ` |
-| 54 | 记忆里有「亲历 / 目击 / 传闻 / 杯边话」多种来源 | **PASS** | `kinds=['亲历', '旧事', '杯边话']` |
-| 55 | 骰子与玩家名字无关（换名字复现同一串判定） | **PASS** | `obse succ obse fail succ succ succ obse succ clos` |
-| 56 | 10 回合验证样例的判定与文档一致 | **PASS** | `obse succ obse fail succ succ succ obse succ clos` |
-| 57 | 跨会话记忆来自 seekdb 的账本（不依赖额外服务） | **PASS** | `mode=seekdb sources=['seekdb']` |
-| 58 | 打烊时把这一局写成「传说」存进 PowerContext | **PASS** | `{"available": true, "written": true, "status": 200, "artifact_id": "art_05650654` |
+| 46 | rules.json 里声明的每条规则，按 say 发出去都能得到 expect 的结果 | **PASS** | `OKdrink_ OKno_cre OKevery_ OKcross_ OKread_m OKevery_` |
+| 47 | 好感过门槛 → NPC 说出守了多年的秘密（事实行里也写出来） | **PASS** | `kinds_has_secret=True facts_has_secret=True` |
+| 48 | 只说「来壶酒」也能真的买到（引擎按场景补最便宜的酒） | **PASS** | `item=wine_shaodao verdict=success` |
+| 49 | 目标在别的区域时会自己走过去（「帮小满收拾」→ 后厨） | **PASS** | `at=后厨 verdict=success` |
+| 50 | 事实行里写出「一杯酒换来的那句杯边话」（模型改写不了） | **PASS** | `【第 1 回合 · 判定：成功】阿箬收下 3 个铜板，把桂花酿推到你面前。 【阿箬的杯边话】客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔` |
+| 51 | 「请你喝一壶桂花酿」走送礼分支，返回正常结果而不是报错 | **PASS** | `verdict=success detail=阿箬收下 3 个铜板，把桂花酿推到你面前。` |
+| 52 | 读心返回 NPC 脑子里的真实记忆行 | **PASS** | `6 条` |
+| 53 | 读心也算一个回合（回合号推进） | **PASS** | `turn=3` |
+| 54 | 回答末尾的判定行由引擎生成（含判定与状态） | **PASS** | `【第 3 回合 · 判定：只是看着】你盯着阿箬的眼睛，看见了一些不该看见的。 > 铜板 17｜风评 2｜被记账 0｜大堂 ` |
+| 55 | 记忆里有「亲历 / 目击 / 传闻 / 杯边话」多种来源 | **PASS** | `kinds=['亲历', '旧事', '杯边话']` |
+| 56 | 骰子与玩家名字无关（换名字复现同一串判定） | **PASS** | `obse succ obse fail succ succ succ obse succ clos` |
+| 57 | 10 回合验证样例的判定与文档一致 | **PASS** | `obse succ obse fail succ succ succ obse succ clos` |
+| 58 | 跨会话记忆来自 seekdb 的账本（不依赖额外服务） | **PASS** | `mode=seekdb sources=['seekdb']` |
+| 59 | 打烊时把这一局写成「传说」存进 PowerContext | **PASS** | `{"available": true, "written": true, "status": 200, "artifact_id": "art_66a32d6c` |

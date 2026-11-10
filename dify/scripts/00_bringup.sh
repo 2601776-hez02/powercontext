@@ -62,7 +62,7 @@ step "检查环境" run_check
 step "起 seekdb" run_seekdb
 step "装依赖 + 建表 + 起引擎" run_engine
 step "跑验证样例（11 步）" run_verify
-step "声明一致性自检（58 条）" run_selfcheck
+step "声明一致性自检（59 条）" run_selfcheck
 
 printf '\n== 汇总 ==\n'
 for line in "${SUMMARY[@]}"; do printf '  %s\n' "$line"; done
@@ -79,7 +79,7 @@ cat <<EOF
 验收用的样例与预期结果：
   docs/sample-walkthrough.md     逐步对照
   docs/evidence/walkthrough-check.md   刚刚跑出来的 11/11 PASS
-  docs/conformance.md            58 条声明的 PASS/FAIL
+  docs/conformance.md            59 条声明的 PASS/FAIL
 
 EOF
 

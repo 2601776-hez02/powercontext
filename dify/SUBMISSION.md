@@ -47,6 +47,6 @@
 
 ## 验证材料
 
-* 声明逐条：`docs/conformance.md`（58 条 PASS/FAIL，含实测值，`bash scripts/06_selfcheck.sh` 生成）
+* 声明逐条：`docs/conformance.md`（59 条 PASS/FAIL，含实测值，`bash scripts/06_selfcheck.sh` 生成）
 * 样例逐条：`docs/evidence/walkthrough-check.md`（11 步逐条断言）
 * 运行证据：`docs/evidence/`（10 回合叙事、seekdb 执行计划与记忆行、Dify 截图、连通性、空库启动）

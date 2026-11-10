@@ -1,0 +1,93 @@
+{
+  "app": "忘川酒馆",
+  "task": "Just for Fun：用 Dify 做一个好玩的智能应用",
+  "summary": "一句话一回合的中文文字酒馆；三个 NPC 把你做过的事写进 seekdb，下次开口他们记得。",
+  "how_to_play": "在 Dify 应用里发一句中文，就是一个回合。",
+  "rules": [
+    {
+      "id": "drink_buys_secret",
+      "text": "一杯酒换一个秘密：请人喝一杯，他会多说一句只在杯边说的事",
+      "say": "要一壶桂花酿。",
+      "expect_verdict": "success",
+      "expect_contains": [
+        "判定：成功",
+        "杯边话"
+      ],
+      "expect_state": {
+        "coins": 17
+      }
+    },
+    {
+      "id": "no_credit",
+      "text": "酒钱不能欠：说赊账会被当场回绝",
+      "say": "先赊一壶桂花酿。",
+      "expect_verdict": "refused",
+      "expect_contains": [
+        "不赊账"
+      ],
+      "expect_state": {
+        "coins": 20
+      }
+    },
+    {
+      "id": "every_strike_is_marked",
+      "text": "动手要记账：偷东西/威胁都记一笔，记到第三次逐出酒馆",
+      "say": "拍桌子吓唬阿箬。",
+      "repeat": 3,
+      "expect_verdict": "banned",
+      "expect_contains": [
+        "判定：被逐出",
+        "结局"
+      ],
+      "expect_state": {
+        "wanted": 3
+      }
+    },
+    {
+      "id": "cross_session_memory",
+      "text": "记忆跨会话：打烊后第二天再来，NPC 记得上一回的账",
+      "say": "打烊了，我该走了。",
+      "then": "我又来了。",
+      "expect_verdict": "observed",
+      "expect_contains": [
+        "第二天",
+        "酒馆记得你"
+      ],
+      "expect_state": {}
+    },
+    {
+      "id": "read_mind",
+      "text": "读心：直接看到 NPC 记忆表里的真实行",
+      "say": "读心，看看阿箬现在在想什么。",
+      "expect_verdict": "observed",
+      "expect_contains": [
+        "判定：只是看着"
+      ],
+      "expect_state": {}
+    },
+    {
+      "id": "every_npc_remembers",
+      "text": "每个 NPC 各写一条：亲历 / 目击 / 传闻",
+      "say": "要一壶桂花酿。",
+      "expect_kinds": {
+        "aruo": "亲历",
+        "laotao": "目击",
+        "xiaoman": "传闻"
+      },
+      "expect_verdict": "success",
+      "expect_contains": [],
+      "expect_state": {}
+    }
+  ],
+  "tech": {
+    "dify": "Chatflow 11 节点：拆动作 → IF 读心 → HTTP 结算 → 叙事 → 拼事实行",
+    "seekdb": "唯一事实源：玩家账本 / NPC 记忆（FULLTEXT ngram + VECTOR HNSW）/ 事件流水",
+    "powercontext": "每局结束写一条「传说」到长期记忆，下次新会话先读它（可关）"
+  },
+  "how_to_verify": {
+    "one_command": "bash scripts/12_reviewer_check.sh",
+    "claims": "bash scripts/06_selfcheck.sh → docs/conformance.md",
+    "sample": "bash scripts/05_verify.sh → docs/evidence/walkthrough-check.md",
+    "machine_readable": "dify/rules.json（本文件）"
+  }
+}

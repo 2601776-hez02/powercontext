@@ -26,9 +26,12 @@
 > **这两种情况下 Dify 会在工作流开始前就拒绝执行，节点的兜底救不了** —— 所以务必先做。
 >
 > 这六行就是"核心玩法结果"与"声明规则"的对应关系：每一行的左列是**声明**，右列是**实际输出**，
-> 都能在 [`docs/conformance.md`](docs/conformance.md)（58 条）和
+> 都能在 [`docs/conformance.md`](docs/conformance.md)（59 条）和
 > [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md)（11 步）里找到对应的断言。
 
+> **想用机器读规则？** [`rules.json`](rules.json) 是六条规则的机器可读声明（每条带 `say` 与 `expect`），
+> `06_selfcheck.sh` 会**按这个文件逐条跑一遍**并断言——所以它是可执行的，不是纯文档。
+>
 > **要填平台表单里的「作品说明」？** 直接复制 [`SUBMISSION.md`](SUBMISSION.md)（逐条对照过实现）。
 >
 > **只想先跑起来？** 看一页纸的 [`QUICKSTART.md`](QUICKSTART.md)（6 步，3 分钟）。
@@ -42,7 +45,7 @@
 | **最快跑起来** | 导入 `dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型（**不需要起后端**，默认连作者的公网演示） | 两分钟就能玩 |
 | **完全本地跑** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.local.yaml` → 配模型 | 一条命令起后端并自检，不依赖作者侧服务 |
 | **一把梭：全部检查跑一遍** | `bash scripts/12_reviewer_check.sh` | 打一张 9 项汇总表，全 PASS 才 exit 0 |
-| **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md) | **58 条声明逐条 PASS/FAIL + 实测值** |
+| **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md) | **59 条声明逐条 PASS/FAIL + 实测值** |
 | **核对「预期 vs 实际」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md) | **11 步样例逐条断言** |
 | **样例在在线演示上能不能复现** | [`docs/evidence/sample-on-demo.md`](docs/evidence/sample-on-demo.md)（10 回合逐项对照） | **10/10 一致** |
 | **最坏情况下还能看到什么** | [`docs/evidence/fallbacks.md`](docs/evidence/fallbacks.md)（没配模型 / 后端连不上 / 只发一句没用的话） | 判定行始终在 |
@@ -72,7 +75,7 @@
 | seekdb 干什么 | 唯一事实源：账本、好感、物品、事件流水 + NPC 记忆（`FULLTEXT ngram` + `VECTOR HNSW`，RRF 融合） |
 | PowerContext 干什么 | 每局结束再写一份「传说」到长期记忆层；关掉也不影响玩法（seekdb 的 `tw_legend` 是主来源） |
 | 怎么跑 | 本地：`bash scripts/00_bringup.sh` 一条命令起后端并自检；零配置体验：导入 `dsl/wangchuan-tavern.local.yaml` + 配一个对话模型；全本地（可复现）：`scripts/02_dify.sh` → `03_engine.sh` → `04_powercontext.sh` → `deploy/dify_provision.py` |
-| 怎么核 | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md)：**58 条声明逐条 PASS/FAIL**；`bash scripts/08_audit.sh` 再随机跑 8×40 回合验不变式 |
+| 怎么核 | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md)：**59 条声明逐条 PASS/FAIL**；`bash scripts/08_audit.sh` 再随机跑 8×40 回合验不变式 |
 | 证据在哪 | [`docs/evidence/`](docs/evidence/)：Dify 编排与对话截图、10 回合叙事、seekdb 执行计划与记忆行 |
 | 已验证版本 | Dify 1.19.0 + seekdb 1.4.0 + PowerContext 1.5.0 + `deepseek-flash`（任何 OpenAI 兼容模型可替换） |
 
@@ -359,7 +362,7 @@ dify/
 ├── tests/test_phrasings.py       35 条「评审会怎么说」的解析用例
 └── docs/
     ├── sample-walkthrough.md     验证样例：初始状态 / 输入 / 预期 / 实际
-    ├── conformance.md            声明一致性自检报告（58 条 PASS/FAIL，自动生成）
+    ├── conformance.md            声明一致性自检报告（59 条 PASS/FAIL，自动生成）
     ├── evidence/                 截图与日志（seekdb 证据、Dify 节点记录）
     └── limitations.md            已知边界
 ```
@@ -405,7 +408,7 @@ bash scripts/00_bringup.sh
 ```
 
 它依次做：环境检查 → 起 seekdb（`02b_seekdb.sh`）→ 装依赖/建表/起引擎（`03_engine.sh`）
-→ 跑验证样例（11 步，逐条断言）→ 声明一致性自检（58 条），最后打印汇总和"接下来只剩两步"。
+→ 跑验证样例（11 步，逐条断言）→ 声明一致性自检（59 条），最后打印汇总和"接下来只剩两步"。
 看到 `后端已就绪：http://127.0.0.1:9100` 就可以去 Dify 导入 DSL 了。
 
 - 已经有现成的 seekdb：`SKIP_SEEKDB=1 bash scripts/00_bringup.sh`
@@ -546,7 +549,7 @@ DSL 里三个 HTTP 节点的地址都写成 `{{#env.TAVERN_ENGINE_URL#}}/...`，
 ```bash
 bash scripts/07_doctor.sh                                  # 环境体检：8 项，一路查到「能跑通一回合」
 bash scripts/05_verify.sh                                  # 引擎侧：10 回合逐条比对 + 记忆/检索/执行计划
-bash scripts/06_selfcheck.sh                               # 声明一致性自检：58 条 PASS/FAIL
+bash scripts/06_selfcheck.sh                               # 声明一致性自检：59 条 PASS/FAIL
 bash scripts/08_audit.sh                                   # 全分支扫测 + 奇怪输入 + 压力场景 + 随机 8×40 回合（约 1090 项）
 python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
         --engine http://127.0.0.1:9100 --guest 无名客       # Dify 侧：走完整条 Chatflow
@@ -555,7 +558,7 @@ python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
 第一个脚本清洗玩家状态、跑完 10 回合剧本、**逐回合比对 `walkthrough.json` 里的 `expect`**、
 把证据写进 `docs/evidence/`（比对表见 [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md)）；
 第二个脚本把 README 与样样例里「会怎样」的每一条都跑一遍，生成
-[`docs/conformance.md`](docs/conformance.md)（**本次 58 条 58 PASS / 0 FAIL**，只依赖 seekdb + 引擎，
+[`docs/conformance.md`](docs/conformance.md)（**本次 59 条 59 PASS / 0 FAIL**，只依赖 seekdb + 引擎，
 不需要 Dify 和模型）；第三个脚本用 Dify 的应用 API 逐句发送同样的 10 句，把每轮叙事存成
 `docs/evidence/dify-walkthrough.json`。逐条对照见 [`docs/sample-walkthrough.md`](docs/sample-walkthrough.md)。
 
@@ -677,7 +680,7 @@ pytest tests -q          # 32 passed
 | **DSL 无法正常执行**（节点缺字段、变量引用错、导出与实际不一致） | 每次改完 DSL 都重新导入 + 发布 + **导出比对**（节点字段 0 差异），见 `docs/evidence/dify/dsl-export.yaml` |
 | 项目无法启动（依赖/SDK 不兼容、没等服务就绪） | `scripts/00_bringup.sh` 会等 `/health` 再自检；`07_doctor.sh` 8 项逐项给修复命令 |
 | **服务无法连通**（Dify 访问错误地址、隧道失效） | 默认 `http://172.17.0.1:9100`（Docker 访问宿主引擎）；**从 Dify 容器内实测**直连与经 ssrf_proxy 都是 200，见 [`docs/evidence/connectivity.md`](docs/evidence/connectivity.md)。另给 `http://<宿主IP>:9100`、`http://host.docker.internal:9100`（macOS/Windows）；公网 本地版另有一份 DSL |
-| 记忆没有实际复用（写死示例、读了不用） | 每条记忆都来自玩家真实输入，**原话另存在 `tw_memory.raw`**（判题可直接查：`SELECT raw FROM tw_memory WHERE guest='你的名字'`），并在「读心」「目击」和【酒馆记得你】里被读回来；32 项单测 + 58 条自检覆盖 |
+| 记忆没有实际复用（写死示例、读了不用） | 每条记忆都来自玩家真实输入，**原话另存在 `tw_memory.raw`**（判题可直接查：`SELECT raw FROM tw_memory WHERE guest='你的名字'`），并在「读心」「目击」和【酒馆记得你】里被读回来；32 项单测 + 59 条自检覆盖 |
 | 没有真实组件接入（mock / SQLite / JSON 冒充） | 真 seekdb（`tw_memory` 有 `FULLTEXT ngram` + `VECTOR HNSW` 两个索引，执行计划见 `docs/evidence/seekdb-explain.json`）+ 真 PowerContext（HTTP 接入，可关） |
 | 验证范围不足（只有 YAML 检查 / 单测 / 截图） | 真实 Dify 1.19 + 真 seekdb + 真 PowerContext 跑完 10 回合；`scripts/05_verify.sh` 逐条断言 |
 
