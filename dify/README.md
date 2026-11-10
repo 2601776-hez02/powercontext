@@ -15,7 +15,7 @@
 | **看第一句话会发生什么** | [`docs/evidence/first-messages.md`](docs/evidence/first-messages.md)（十种开场白的真实回答） | 十句都不冷场 |
 | **核对 seekdb 真的在干活** | [`docs/evidence/seekdb-explain.json`](docs/evidence/seekdb-explain.json)、[`engine-transcript.json`](docs/evidence/engine-transcript.json)、[`dify/`](docs/evidence/dify/) 截图 | 执行计划、账本流水、节点记录 |
 | **卡住了** | `bash scripts/07_doctor.sh` | 8 项环境体检，每项给修复命令 |
-| **看此刻系统状态** | [`docs/evidence/system-status.md`](docs/evidence/system-status.md) | 组件在线状态 + 三套断言的当前结果 | | `bash scripts/07_doctor.sh` | 8 项环境体检，每项给修复命令 |
+| **看此刻系统状态** | [`docs/evidence/system-status.md`](docs/evidence/system-status.md) | 组件在线状态 + 三套断言的当前结果 |
 
 > 一句话：**这是一个会被 NPC 记住的文字酒馆**。Dify 编排，seekdb 存账本与记忆（全文 + HNSW），
 > 判定由引擎写在回答最前面，所以「声明」和「结果」永远对得上。
@@ -30,8 +30,7 @@
 | Dify 干什么 | Chatflow 11 节点：拆动作（LLM）→ 是否读心（IF）→ 调引擎 / 读心接口 → 叙事（LLM）→ 拼事实行 → 回答 |
 | seekdb 干什么 | 唯一事实源：账本、好感、物品、事件流水 + NPC 记忆（`FULLTEXT ngram` + `VECTOR HNSW`，RRF 融合） |
 | PowerContext 干什么 | 每局结束再写一份「传说」到长期记忆层；关掉也不影响玩法（seekdb 的 `tw_legend` 是主来源） |
-| 怎么跑 | 本地：`bash scripts/00_bringup.sh` 一条命令起后端并自检；零配置体验：导入 `dsl/wangchuan-tavern.demo.yaml` + 配一个对话模型；
-| | 全本地（可复现）：`scripts/02_dify.sh` → `03_engine.sh` → `04_powercontext.sh` → `deploy/dify_provision.py` |
+| 怎么跑 | 本地：`bash scripts/00_bringup.sh` 一条命令起后端并自检；零配置体验：导入 `dsl/wangchuan-tavern.demo.yaml` + 配一个对话模型；全本地（可复现）：`scripts/02_dify.sh` → `03_engine.sh` → `04_powercontext.sh` → `deploy/dify_provision.py` |
 | 怎么核 | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md)：**35 条声明逐条 PASS/FAIL**；`bash scripts/08_audit.sh` 再随机跑 8×40 回合验不变式 |
 | 证据在哪 | [`docs/evidence/`](docs/evidence/)：Dify 编排与对话截图、10 回合叙事、seekdb 执行计划与记忆行 |
 | 已验证版本 | Dify 1.19.0 + seekdb 1.4.0 + PowerContext 1.5.0 + `deepseek-flash`（任何 OpenAI 兼容模型可替换） |
