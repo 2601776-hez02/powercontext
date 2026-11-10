@@ -560,7 +560,7 @@ def main(argv: list[str] | None = None) -> int:
     # ---- 3ac. 两份 DSL 只差一个环境变量（防止改了一份忘同步另一份）
     dsl_dir = pathlib.Path(__file__).resolve().parent.parent / "dsl"
     main_yaml = dsl_dir / "wangchuan-tavern.chatflow.yaml"
-    demo_yaml = dsl_dir / "wangchuan-tavern.demo.yaml"
+    demo_yaml = dsl_dir / "wangchuan-tavern.local.yaml"
     if main_yaml.exists() and demo_yaml.exists():
         import yaml as _yaml
 
@@ -577,7 +577,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         report.check(
             "dsl.two_variants_consistent",
-            "两份 DSL 的节点/开场白完全一致，只有 TAVERN_ENGINE_URL 不同",
+            "两份 DSL（默认连公网 / local 连本机）的节点与开场白完全一致，只有 TAVERN_ENGINE_URL 不同",
             rest_same and only_url and main_vars["TAVERN_ENGINE_URL"] != demo_vars["TAVERN_ENGINE_URL"],
             f"图一致={rest_same} 变量一致={only_url}",
         )

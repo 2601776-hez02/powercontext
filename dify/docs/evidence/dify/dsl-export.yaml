@@ -39,7 +39,7 @@ workflow:
     selector:
     - env
     - TAVERN_ENGINE_URL
-    value: http://172.17.0.1:9100
+    value: https://presence-hierarchy-necessarily-females.trycloudflare.com
     value_type: string
   features:
     file_upload:
@@ -383,9 +383,9 @@ workflow:
           retry_interval: 1000
         selected: false
         timeout:
-          max_connect_timeout: 0
-          max_read_timeout: 0
-          max_write_timeout: 0
+          max_connect_timeout: 10
+          max_read_timeout: 60
+          max_write_timeout: 10
         title: 读心接口
         type: http-request
         url: '{{#env.TAVERN_ENGINE_URL#}}/mind/form'
@@ -515,9 +515,9 @@ workflow:
           retry_interval: 1000
         selected: false
         timeout:
-          max_connect_timeout: 0
-          max_read_timeout: 0
-          max_write_timeout: 0
+          max_connect_timeout: 10
+          max_read_timeout: 60
+          max_write_timeout: 10
         title: 酒馆引擎 /act
         type: http-request
         url: '{{#env.TAVERN_ENGINE_URL#}}/act/form'
@@ -642,9 +642,9 @@ workflow:
           retry_interval: 1000
         selected: false
         timeout:
-          max_connect_timeout: 0
-          max_read_timeout: 0
-          max_write_timeout: 0
+          max_connect_timeout: 10
+          max_read_timeout: 60
+          max_write_timeout: 10
         title: 事实行 /facts
         type: http-request
         url: '{{#env.TAVERN_ENGINE_URL#}}/facts/form'
@@ -690,9 +690,9 @@ workflow:
           retry_interval: 1000
         selected: false
         timeout:
-          max_connect_timeout: 0
-          max_read_timeout: 0
-          max_write_timeout: 0
+          max_connect_timeout: 10
+          max_read_timeout: 60
+          max_write_timeout: 10
         title: 事实行（读心）
         type: http-request
         url: '{{#env.TAVERN_ENGINE_URL#}}/facts/form'

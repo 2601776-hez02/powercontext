@@ -9,7 +9,8 @@
 | 你想做什么 | 怎么做 | 结果 |
 | --- | --- | --- |
 | **直接用浏览器玩** | 打开 <https://parents-pendant-stamps-pools.trycloudflare.com/chat/US2WZk6wfvkw7R4Q>（作者托管，可能下线） | 十秒内能看到三条规矩生效 |
-| **在本地跑起来** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型 | 一条命令起后端并自检 |
+| **最快跑起来** | 导入 `dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型（**不需要起后端**，默认连作者的公网演示） | 两分钟就能玩 |
+| **完全本地跑** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.local.yaml` → 配模型 | 一条命令起后端并自检，不依赖作者侧服务 |
 | **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md) | **56 条声明逐条 PASS/FAIL + 实测值** |
 | **核对「预期 vs 实际」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md) | **11 步样例逐条断言** |
 | **看「刚打开应用」长什么样** | [`docs/evidence/dify/01-new-conversation.png`](docs/evidence/dify/01-new-conversation.png)（开场白 + 三件可做的事 + 一句「你好」的回应） | 30 秒知道怎么玩 |
@@ -37,7 +38,7 @@
 | Dify 干什么 | Chatflow 11 节点：拆动作（LLM）→ 是否读心（IF）→ 调引擎 / 读心接口 → 叙事（LLM）→ 拼事实行 → 回答 |
 | seekdb 干什么 | 唯一事实源：账本、好感、物品、事件流水 + NPC 记忆（`FULLTEXT ngram` + `VECTOR HNSW`，RRF 融合） |
 | PowerContext 干什么 | 每局结束再写一份「传说」到长期记忆层；关掉也不影响玩法（seekdb 的 `tw_legend` 是主来源） |
-| 怎么跑 | 本地：`bash scripts/00_bringup.sh` 一条命令起后端并自检；零配置体验：导入 `dsl/wangchuan-tavern.demo.yaml` + 配一个对话模型；全本地（可复现）：`scripts/02_dify.sh` → `03_engine.sh` → `04_powercontext.sh` → `deploy/dify_provision.py` |
+| 怎么跑 | 本地：`bash scripts/00_bringup.sh` 一条命令起后端并自检；零配置体验：导入 `dsl/wangchuan-tavern.local.yaml` + 配一个对话模型；全本地（可复现）：`scripts/02_dify.sh` → `03_engine.sh` → `04_powercontext.sh` → `deploy/dify_provision.py` |
 | 怎么核 | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md)：**56 条声明逐条 PASS/FAIL**；`bash scripts/08_audit.sh` 再随机跑 8×40 回合验不变式 |
 | 证据在哪 | [`docs/evidence/`](docs/evidence/)：Dify 编排与对话截图、10 回合叙事、seekdb 执行计划与记忆行 |
 | 已验证版本 | Dify 1.19.0 + seekdb 1.4.0 + PowerContext 1.5.0 + `deepseek-flash`（任何 OpenAI 兼容模型可替换） |
@@ -295,7 +296,7 @@ dify/
 ├── README.md                     ← 本文（运行说明）
 ├── dsl/
 │   ├── wangchuan-tavern.chatflow.yaml   Dify Chatflow 的 DSL（默认，连本地后端，验收用）
-│   └── wangchuan-tavern.demo.yaml      Dify Chatflow 的 DSL（连作者公网后端，零配置体验）
+│   └── wangchuan-tavern.local.yaml      Dify Chatflow 的 DSL（连作者公网后端，零配置体验）
 ├── engine/                       酒馆引擎（FastAPI + pymysql）
 │   ├── app.py                    HTTP 接口
 │   ├── game.py                   一回合的编排
@@ -463,16 +464,14 @@ DSL 里 3 个 LLM 节点都写的是 `deepseek-flash`；**你可以照这个名�
 
 | 文件 | 默认后端 | 适合什么场景 |
 | --- | --- | --- |
-| `dsl/wangchuan-tavern.chatflow.yaml` | `http://172.17.0.1:9100`（你机器上起的引擎） | **验收默认**：完全可复现，数据都在你机器上，不依赖作者侧任何服务 |
-| `dsl/wangchuan-tavern.demo.yaml` | 作者托管的公网演示后端（已填好） | **零配置先玩一把**：不想起后端时用，导入 + 配模型即可 |
+| `dsl/wangchuan-tavern.chatflow.yaml` | 作者托管的公网演示后端（已填好） | **开箱即用（验收默认）**：导入 + 配一个模型就能跑，不需要在你机器上起任何服务 |
+| `dsl/wangchuan-tavern.local.yaml` | `http://172.17.0.1:9100`（你机器上起的引擎） | **完全本地复现**：数据都在你机器上，不依赖作者侧任何服务 |
 
-> 实测：把 `wangchuan-tavern.demo.yaml` 以**全新应用**导入一个 Dify，发布后直接聊三句
-> （你好 / 这是什么地方 / 要一壶桂花酿），全部正常返回——不需要在本机起任何服务。
+> 两份文件除了 `TAVERN_ENGINE_URL` 这一个环境变量，节点、连线、提示词、开场白**完全一致**
+> （`06_selfcheck.sh` 里有一条自检专门守着这一点，防止改一份忘同步另一份）。
 >
-> 公网演示后端是作者临时托管的（`https://presence-hierarchy-necessarily-females.trycloudflare.com`），
-> 可能随时下线、数据也是共享的——所以**默认那份连本地**，验收不受作者侧服务影响。
-> 想临时体验又不想起后端，就把默认 DSL 里的 `TAVERN_ENGINE_URL` 改成这个公网地址，
-> 或者直接导入 `demo` 版。
+> 公网演示后端由作者临时托管（`https://presence-hierarchy-necessarily-females.trycloudflare.com`），
+> 可能随时下线、数据也是共享的。**要完全不依赖作者侧服务，请用 `local` 版**并按第 5 节起后端。
 >
 > `docs/evidence/dify/dsl-export.yaml` 是运行中实例的导出件，与 `wangchuan-tavern.chatflow.yaml`
 > **逐字段一致**（节点/连线/提示词/环境变量都一样）。
@@ -633,7 +632,7 @@ pytest tests -q          # 32 passed
 | 交付材料不完整（缺 DSL / 源码 / 运行说明 / 验证样例） | 四样都在：`dsl/`、`engine/`、本 README、`data/samples/` + `docs/evidence/` |
 | **DSL 无法正常执行**（节点缺字段、变量引用错、导出与实际不一致） | 每次改完 DSL 都重新导入 + 发布 + **导出比对**（节点字段 0 差异），见 `docs/evidence/dify/dsl-export.yaml` |
 | 项目无法启动（依赖/SDK 不兼容、没等服务就绪） | `scripts/00_bringup.sh` 会等 `/health` 再自检；`07_doctor.sh` 8 项逐项给修复命令 |
-| **服务无法连通**（Dify 访问错误地址、隧道失效） | 默认 `http://172.17.0.1:9100`（Docker 访问宿主引擎）；**从 Dify 容器内实测**直连与经 ssrf_proxy 都是 200，见 [`docs/evidence/connectivity.md`](docs/evidence/connectivity.md)。另给 `http://<宿主IP>:9100`、`http://host.docker.internal:9100`（macOS/Windows）；公网 demo 版另有一份 DSL |
+| **服务无法连通**（Dify 访问错误地址、隧道失效） | 默认 `http://172.17.0.1:9100`（Docker 访问宿主引擎）；**从 Dify 容器内实测**直连与经 ssrf_proxy 都是 200，见 [`docs/evidence/connectivity.md`](docs/evidence/connectivity.md)。另给 `http://<宿主IP>:9100`、`http://host.docker.internal:9100`（macOS/Windows）；公网 本地版另有一份 DSL |
 | 记忆没有实际复用（写死示例、读了不用） | 每条记忆都来自玩家真实输入，**原话另存在 `tw_memory.raw`**（判题可直接查：`SELECT raw FROM tw_memory WHERE guest='你的名字'`），并在「读心」「目击」和【酒馆记得你】里被读回来；32 项单测 + 54 条自检覆盖 |
 | 没有真实组件接入（mock / SQLite / JSON 冒充） | 真 seekdb（`tw_memory` 有 `FULLTEXT ngram` + `VECTOR HNSW` 两个索引，执行计划见 `docs/evidence/seekdb-explain.json`）+ 真 PowerContext（HTTP 接入，可关） |
 | 验证范围不足（只有 YAML 检查 / 单测 / 截图） | 真实 Dify 1.19 + 真 seekdb + 真 PowerContext 跑完 10 回合；`scripts/05_verify.sh` 逐条断言 |
@@ -666,7 +665,7 @@ pytest tests -q          # 32 passed
 
 | 题目要求 | 位置 |
 | --- | --- |
-| Dify DSL + 导入顺序 | ① `dsl/wangchuan-tavern.chatflow.yaml`（默认，连本地后端，验收用）② `dsl/wangchuan-tavern.demo.yaml`（连作者公网后端，零配置体验）——两者只需导入一个 |
+| Dify DSL + 导入顺序 | ① `dsl/wangchuan-tavern.chatflow.yaml`（默认，连本地后端，验收用）② `dsl/wangchuan-tavern.local.yaml`（连作者公网后端，零配置体验）——两者只需导入一个 |
 | 运行说明 | 本文 |
 | 验证样例（初始状态/输入/步骤/预期/实际） | `docs/sample-walkthrough.md` + `data/samples/walkthrough.json` |
 | 实际运行结果与证据 | `docs/evidence/`（引擎日志、seekdb 查询、Dify 节点记录与截图） |
