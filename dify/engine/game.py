@@ -306,7 +306,11 @@ def act(
 
     # 已经被逐出（或自己打烊走了）的人：同一个会话里只能被挡在门外；
     # 换了一个会话（Dify 里「开启新对话」）就当作第二天，雾散了还能进门。
-    if player["status"] == "closed" and session and session != str(player.get("ban_session") or ""):
+    ban_session = str(player.get("ban_session") or "")
+    current_session = str(session or "default")
+    # 自己打烊不会锁门（下次进门就是「第二天」）；被逐出才锁，且只锁逐出时那一段对话
+    may_reopen = player["status"] == "closed" and (not ban_session or current_session != ban_session)
+    if may_reopen:
         with db.transaction() as cursor:
             cursor.execute(
                 # 第二天：门能进，账本上的记账也清零（这一夜本身仍记在传说与 NPC 记忆里）
@@ -450,7 +454,7 @@ def act(
                 turn,
                 new_location,
                 "closed" if outcome.verdict in {"closed", "banned"} else "open",
-                str(session or "")[:120] if outcome.verdict == "banned" else "",
+                (str(session or "default")[:120]) if outcome.verdict == "banned" else "",
                 guest,
             ),
         )
@@ -785,7 +789,13 @@ def facts(guest: str, *, db: SeekDB, pc: PowerContext | None = None) -> str:
         else:
             lines.append(f"【{who}守了多年的事】{body}")
 
-    if turn == 1:
+    # 什么时候显示「它记得你」：本局第一回合，或者上一回合是打烊/被逐出（也就是「第二天」）
+    previous = db.one(
+        "SELECT verdict FROM tw_event WHERE guest = %s AND turn < %s ORDER BY turn DESC LIMIT 1",
+        (guest, turn),
+    )
+    starts_new_day = previous is not None and str(previous["verdict"]) in {"closed", "banned"}
+    if turn == 1 or starts_new_day:
         recall = _tavern_recall(db, pc, guest) if pc is not None else {"hits": _legend_hits(db, guest)}
         for hit in (recall.get("hits") or [])[:1]:
             lines.append(f"【酒馆记得你】{str(hit.get('text', ''))[:120]}")

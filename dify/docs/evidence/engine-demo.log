@@ -56,7 +56,7 @@
 状态：铜板 19｜风评 4｜被记账 1｜大堂
 回忆命中：
   - [老陶｜亲历｜6｜fts,vector｜0.1544] 他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。
-  - [阿箬｜传闻｜6｜fts,vector｜0.1519] 渡口那边都在传：无名客讲过一段好故事。这话是从老陶那儿漏出来的。
+  - [阿箬｜传闻｜6｜fts,vector｜0.1516] 渡口那边都在传：无名客讲过一段好故事。这话是从老陶那儿漏出来的。
   - [阿箬｜杯边话｜2｜fts,vector｜0.0468] 他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。
   - [阿箬｜亲历｜2｜fts,vector｜0.0416] 他要了桂花酿，铜板数得很慢，一个也没少给。
 
@@ -66,8 +66,8 @@
 秘密解锁：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。
 状态：铜板 20｜风评 8｜被记账 1｜后厨
 回忆命中：
-  - [小满｜秘密｜7｜fts,vector｜0.158] 后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。
-  - [小满｜亲历｜7｜fts,vector｜0.1528] 他帮我把活计收拾了，手上利落，不像是白帮忙的人。
+  - [小满｜秘密｜7｜fts,vector｜0.1583] 后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。
+  - [小满｜亲历｜7｜fts,vector｜0.1525] 他帮我把活计收拾了，手上利落，不像是白帮忙的人。
   - [小满｜旧事｜0｜fts,vector｜0.0341] 三年前有人给了她一块桂花糖，糖纸她留着，夹在后厨的柴火堆里。
 
 --- 第 8 回合 ---
@@ -103,7 +103,7 @@ PowerContext：{
   "available": true,
   "written": true,
   "status": 200,
-  "artifact_id": "art_6ffa034eb61941a0a23ab3c64d0b9f24",
+  "artifact_id": "art_1ae65ca199764c109c640c19c1812e99",
   "revision": 1,
   "kind": "tavern-legend",
   "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
@@ -127,4 +127,4 @@ PowerContext：{
   "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
 }
 
-[transcript] /root/tavern35/docs/evidence/engine-transcript.json
+[transcript] /root/clean1/docs/evidence/engine-transcript.json

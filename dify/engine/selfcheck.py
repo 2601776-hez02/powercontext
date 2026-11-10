@@ -45,8 +45,11 @@ def call(path: str, body: dict | None = None, *, form: dict[str, str] | None = N
 import urllib.parse  # noqa: E402  （放在 call 之后，保持上面的可读顺序）
 
 
+SESSION = "conv-a"
+
+
 def act(utterance: str, guest: str = GUEST) -> dict:
-    _, payload = call("/act", {"guest": guest, "utterance": utterance})
+    _, payload = call("/act/form", form={"guest": guest, "utterance": utterance, "session": SESSION})
     return payload
 
 
@@ -164,6 +167,51 @@ def main(argv: list[str] | None = None) -> int:
         and (same.get("outcome") or {}).get("verdict") == "turned_away"
         and (other.get("outcome") or {}).get("verdict") != "turned_away",
         f"banned={(third.get('outcome') or {}).get('verdict')} same={(same.get('outcome') or {}).get('verdict')} new={(other.get('outcome') or {}).get('verdict')}",
+    )
+
+    # ---- 3c. 开场白承诺的「照这三件事做」逐条兑现
+    reset()
+    act("请阿箬喝一壶桂花酿。")
+    guide1 = call("/facts/form", form={"guest": GUEST}, text=True)[1]
+    report.check(
+        "guide.step1",
+        "开场白第 1 件：请他喝酒 → 第一回合就看到【杯边话】",
+        "杯边话】" in guide1,
+        guide1.replace("\n", " ")[:70],
+    )
+
+    reset()
+    for _ in range(3):
+        third = act("把柜台上的玉佩塞进袖子。")
+    report.check(
+        "guide.step2",
+        "开场白第 2 件：连偷三次 → 第三次【判定：被逐出】",
+        (third.get("outcome") or {}).get("verdict") == "banned",
+        f"verdict={(third.get('outcome') or {}).get('verdict')} wanted={(third.get('player') or {}).get('wanted')}",
+    )
+
+    reset()
+    act("打烊了，我该走了。")
+    guided = act("我又来了，还认得我吗？")
+    guide3 = call("/facts/form", form={"guest": GUEST}, text=True)[1]
+    report.check(
+        "guide.step3",
+        "开场白第 3 件：打烊后再进门 → 第二天 + 账本上还有你上一回",
+        str((guided.get("outcome") or {}).get("detail", "")).startswith("第二天")
+        and "酒馆记得你" in guide3,
+        f"detail={str((guided.get('outcome') or {}).get('detail'))[:24]} 记得你={'酒馆记得你' in guide3}",
+    )
+
+    # ---- 3d. 风评攒够 → 结局「传说」
+    reset()
+    for _ in range(12):
+        act("给老陶讲一个故事：有个客人偷了灯，灯却没有灭。")
+    legend = act("打烊了，我该走了。")
+    report.check(
+        "ending.legend",
+        "风评攒够 25 → 结局「传说」",
+        (legend.get("ending") or {}).get("ending") == "传说",
+        f"风评={(legend.get('player') or {}).get('reputation')} 结局={(legend.get('ending') or {}).get('ending')}",
     )
 
     # ---- 4. 好感过门槛说秘密
