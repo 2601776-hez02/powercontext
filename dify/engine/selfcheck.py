@@ -336,6 +336,19 @@ def main(argv: list[str] | None = None) -> int:
         f"第二杯 confide={bool((second.get('outcome') or {}).get('confide'))}",
     )
 
+    # ---- 3n. 被逐出以后，事实行不能还停在「被逐出」
+    reset()
+    for _ in range(3):
+        act("拍桌子吓唬阿箬。")
+    act("我又来了。")
+    turned_facts = call("/facts/form", form={"guest": GUEST}, text=True)[1]
+    report.check(
+        "ban.facts_turn_away",
+        "被逐出后再说话，事实行变成「门外」并写出结局，而不是重复上一次的「被逐出」",
+        "门外" in str(turned_facts) and "结局" in str(turned_facts),
+        str(turned_facts).replace("\n", " ")[:60],
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

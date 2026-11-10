@@ -363,6 +363,19 @@ def act(
         reopened = False
 
     if player["status"] == "closed":
+        # 门已经关上：也要留一条事件，否则事实行会一直停在「被逐出」那一回合
+        with db.transaction() as cursor:
+            cursor.execute(
+                "INSERT INTO tw_event (guest, turn, verb, target_npc, item_id, verdict, "
+                "utterance, detail, created_at) "
+                "VALUES (%s, %s, 'turned_away', '', '', 'turned_away', %s, %s, NOW())",
+                (
+                    guest,
+                    int(player["turn"]),
+                    str(utterance)[:500],
+                    "门在你身后合上了。这间酒馆今晚不待客——点「开启新对话」就是第二天。",
+                ),
+            )
         return {
             "ok": False,
             "guest": guest,
@@ -820,6 +833,7 @@ def facts(guest: str, *, db: SeekDB, pc: PowerContext | None = None) -> str:
         "moved": "挪了步",
         "closed": "打烊了",
         "banned": "被逐出",
+        "turned_away": "门关着",
         "turned_away": "门外",
     }.get(str(event["verdict"]), str(event["verdict"]))
     lines = [f"【第 {int(event['turn'])} 回合 · 判定：{verdict_cn}】{event['detail']}"]
@@ -856,6 +870,13 @@ def facts(guest: str, *, db: SeekDB, pc: PowerContext | None = None) -> str:
         f"> 铜板 {int(player['coins'])}｜风评 {int(player['reputation'])}"
         f"｜被记账 {int(player['wanted'])}｜{player['location']}"
     )
+
+    # 这一局已经结束（打烊或被逐出）时，把结局写出来
+    if str(player["status"]) == "closed":
+        ending, _ = rules.ending_of(player)
+        if ending:
+            lines.append(f"> 结局：{ending}")
+
     return "\n".join(lines)
 
 
