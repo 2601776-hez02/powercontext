@@ -15,6 +15,7 @@
 | **看第一句话会发生什么** | [`docs/evidence/first-messages.md`](docs/evidence/first-messages.md)（十种开场白的真实回答） | 十句都不冷场 |
 | **核对 seekdb 真的在干活** | [`docs/evidence/seekdb-explain.json`](docs/evidence/seekdb-explain.json)、[`engine-transcript.json`](docs/evidence/engine-transcript.json)、[`dify/`](docs/evidence/dify/) 截图 | 执行计划、账本流水、节点记录 |
 | **卡住了** | `bash scripts/07_doctor.sh` | 8 项环境体检，每项给修复命令 |
+| **看此刻系统状态** | [`docs/evidence/system-status.md`](docs/evidence/system-status.md) | 组件在线状态 + 三套断言的当前结果 | | `bash scripts/07_doctor.sh` | 8 项环境体检，每项给修复命令 |
 
 > 一句话：**这是一个会被 NPC 记住的文字酒馆**。Dify 编排，seekdb 存账本与记忆（全文 + HNSW），
 > 判定由引擎写在回答最前面，所以「声明」和「结果」永远对得上。
