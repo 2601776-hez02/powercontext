@@ -277,6 +277,17 @@ def resolve(
             reason="story_told",
         )
 
+    # ---------------------------------------------------------------- 骂人
+    if verb == "insult":
+        return Outcome(
+            "refused",
+            f"{name}把手里的活放下：「客人，有话好好说。这店里不兴骂人。」",
+            emotion="冷",
+            reputation_delta=-1,
+            affinity_delta={target: -3},
+            reason="insulted",
+        )
+
     # ---------------------------------------------------------------- 打听
     if verb == "ask":
         raw = str(getattr(action, "raw", "") or "")
@@ -338,7 +349,9 @@ def compose_memories(
                 topic = item["name"] if item else "店里的事"
                 rows.append(_row(target, "亲历", f"他问起{topic}，我没往下说。", "淡", 3))
         elif outcome.verdict == "refused" and target in npcs:
-            if str(outcome.reason) == "no_coins":
+            if str(outcome.reason) == "insulted":
+                rows.append(_row(target, "亲历", "他张口骂人。这话我记着。", "怒", 5))
+            elif str(outcome.reason) == "no_coins":
                 rows.append(_row(target, "亲历", f"他要{item_name}，铜板不够；这账我记着。", "淡", 4))
             else:
                 rows.append(_row(target, "亲历", f"他想{action.verb_cn}，没成；我记下了。", "淡", 3))

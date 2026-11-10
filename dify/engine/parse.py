@@ -168,6 +168,10 @@ def detect_item(text: str, items: dict[str, dict]) -> str:
     return best[2]
 
 
+INSULT_WORDS = (
+    "闭嘴", "笨蛋", "蠢", "滚", "骗子", "混蛋", "废物", "傻", "狗东西", "去死", "白痴",
+)
+
 TALK_MARKERS = (
     "吗", "呢", "什么", "怎么", "为什么", "能不能", "你是不是", "听说", "告诉我", "？", "?",
     "你好", "您好", "在吗", "有人", "嗨", "哈喽", "老板", "掌柜",
@@ -223,7 +227,9 @@ def parse(
     move_to = detect_move(text)
 
     verb = str(hint.get("verb") or "").strip()
-    if verb not in VERB_CN:
+    if any(word in text for word in INSULT_WORDS):
+        verb = "insult"  # 骂人是一个独立动作，别被 look 吞掉
+    elif verb not in VERB_CN:
         verb = _first_hit(text, VERBS) or ""
         # 「请阿箬喝一碗」里的「喝一」会抢成买酒，这里按「请/敬 + 人」纠正为请客
         if verb in {"buy", "look"} and re.search(TREAT_PATTERN, text) and "给" not in text[:2]:

@@ -479,6 +479,19 @@ def main(argv: list[str] | None = None) -> int:
             f"出现 {dsl_text.count('人称：')} 次",
         )
 
+    # ---- 3x. 骂人要有反应，而且被记住
+    reset()
+    rude = act("你个笨蛋。")
+    rude_detail = str((rude.get("outcome") or {}).get("detail") or "")
+    rude_rows = call("/mind", {"guest": GUEST, "npc": "aruo", "limit": 6})[1].get("memories", [])
+    remembered = any("骂人" in str(row["text"]) for row in rude_rows)
+    report.check(
+        "insult.reacts",
+        "骂人时 NPC 会当场表态并记下来（不是当作「打量」忽略）",
+        ("不兴骂人" in rude_detail) and remembered,
+        f"{rude_detail[:24]}｜记住={remembered}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []
