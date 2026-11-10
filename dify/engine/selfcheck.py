@@ -605,6 +605,60 @@ def main(argv: list[str] | None = None) -> int:
             "｜".join(detail_bits),
         )
 
+    # ---- 3ae. README 最上面那张「声明的规则 vs 实际结果」表，六行逐条验
+    rows_ok: list[str] = []
+    # ① 一杯酒换一个秘密
+    reset()
+    one = act("要一壶桂花酿。")
+    rows_ok.append(
+        "①" if (
+            (one.get("outcome") or {}).get("verdict") == "success"
+            and (one.get("outcome") or {}).get("confide")
+            and int((one.get("player") or {}).get("coins") or 0) == 17
+        ) else "①✗"
+    )
+    # ② 酒钱不能欠（赊账）
+    reset()
+    two = act("先赊一壶桂花酿。")
+    rows_ok.append("②" if "不赊账" in str((two.get("outcome") or {}).get("detail")) else "②✗")
+    # ③ 动手要记账（三次威胁 → 逐出）
+    reset()
+    for _ in range(3):
+        three = act("拍桌子吓唬阿箬。")
+    rows_ok.append("③" if (three.get("outcome") or {}).get("verdict") == "banned" else "③✗")
+    # ④ 记忆跨会话（打烊 → 我又来了）
+    reset()
+    act("打烊了，我该走了。")
+    four = act("我又来了。")
+    four_detail = str((four.get("outcome") or {}).get("detail") or "")
+    rows_ok.append("④" if "第二天" in four_detail else "④✗")
+    # ⑤ 读心返回真实记忆行
+    reset()
+    act("要一壶桂花酿。")
+    five = act("读心，看看阿箬现在在想什么。")
+    five_rows = (five.get("mind") or {}).get("memories") or []
+    rows_ok.append("⑤" if five_rows and any(m.get("kind") == "亲历" for m in five_rows) else "⑤✗")
+    # ⑥ 三个 NPC 各一条（亲历 / 目击 / 传闻）
+    reset()
+    act("要一壶桂花酿。")
+    kinds = {}
+    for npc_id in ("aruo", "laotao", "xiaoman"):
+        memories = call("/mind", {"guest": GUEST, "npc": npc_id, "limit": 8})[1].get("memories", [])
+        kinds[npc_id] = {str(row["kind"]) for row in memories if int(row["turn"]) >= 1}
+    six_ok = (
+        "亲历" in kinds["aruo"]
+        and "目击" in kinds["laotao"]
+        and "传闻" in kinds["xiaoman"]
+    )
+    rows_ok.append("⑥" if six_ok else "⑥✗")
+
+    report.check(
+        "readme.rules_vs_results",
+        "README 最上面那张对照表的六行，逐行与实现一致",
+        all("✗" not in item for item in rows_ok),
+        " ".join(rows_ok),
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []
