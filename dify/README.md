@@ -296,7 +296,13 @@ python3 deploy/dify_provision.py chat --message "要一壶桂花酿，铜板放�
 ```
 
 也可以走界面：控制台 → 创建应用 → **导入 DSL** → 选 `dsl/wangchuan-tavern.chatflow.yaml`
-→ 右上角「发布」。DSL 里两个 LLM 节点写的是 `deepseek-flash`，换成你自己的模型名即可。
+→ 右上角「发布」。DSL 里 3 个 LLM 节点都写的是 `deepseek-flash`；**你可以照这个名字配模型**
+（最省事），也可以在应用里把这 3 个节点的模型换成你已有的任意对话模型。
+
+> 已核对「导出的工作流与实际运行版本一致」：用 Dify 的导出功能把运行中的应用导出，
+> 与仓库里的 `dsl/wangchuan-tavern.chatflow.yaml` **语义完全相同**（节点、连线、环境变量、
+> 模型绑定都一样），导出件存在 [`docs/evidence/dify/dsl-export.yaml`](docs/evidence/dify/dsl-export.yaml)
+> 供比对。
 
 **4.4 引擎地址：改 DSL 环境变量，不用编辑节点**
 
@@ -339,6 +345,17 @@ python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
 | --- | --- |
 | ![编排](docs/evidence/dify/00-workflow-canvas.png) | Chatflow 的 11 个节点：开始 → 拆动作 → 是否读心（IF）→ 两条分支（引擎/读心 → 叙事 → 事实行）→ 回答 |
 | ![对话](docs/evidence/dify/02-chat-memory.png) | 真实对话：阿箬说「客人上回也是这么数铜板的，一个也没少给」——她引用的是上一局留在 seekdb 里的记忆 |
+
+### 5.1 跑不起来时先看这张表
+
+| 现象 | 原因 | 处理 |
+| --- | --- | --- |
+| 应用报 `Model deepseek-flash not exist` | 没配模型，或模型名不一致 | 按 4.2 配同名模型，或在应用里把 3 个 LLM 节点的模型改成你有的 |
+| 应用报 `blocked by SSRF protection` | Dify 的 HTTP 节点禁止访问私网 | 见 4.4：`.env` 放行网段并 `--force-recreate ssrf_proxy` |
+| 应用报连接超时 / 502 | 引擎没起，或 `TAVERN_ENGINE_URL` 不对 | `curl http://<你的地址>:9100/health` 先通；改 DSL 环境变量 |
+| 引擎报 `Access denied for user` | seekdb 密码不对 | 改 `deploy/.env` 的 `SEEKDB_PASSWORD`，与 Dify `.env` 里的 `OCEANBASE_VECTOR_PASSWORD` 一致 |
+| 插件装不上（`permission denied` / 卡住） | 卷属主不对 / 网络慢 | `scripts/02_dify.sh` 已处理属主；镜像源见 `docs/limitations.md` §9 |
+| 回答里没有「判定」那一行 | DSL 少了 `/facts` 节点，或引擎版本旧 | 用仓库里的 DSL 重新导入，并确认 `GET /health` 里 `ok=true` |
 
 ---
 

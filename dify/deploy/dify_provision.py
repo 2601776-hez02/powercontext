@@ -372,15 +372,34 @@ def cmd_apikey(args: argparse.Namespace) -> int:
 
 
 def cmd_export(args: argparse.Namespace) -> int:
+    """导出应用 DSL。Dify 返回的是一个 zip（内含 app.yaml / manifest.yaml），
+    所以这里按二进制落盘，不要当文本解码。"""
+
     base = args.base
     require_auth(base)
     app_id = args.app_id or load_state().get("app_id")
-    status, payload, _ = request(base, f"/apps/{app_id}/export?include_secret=false")
+    state = load_state()
+    cookies = state.get("cookies") or {}
+    url = base.rstrip("/") + f"/console/api/apps/{app_id}/export?include_secret=false"
+    req = urllib.request.Request(
+        url,
+        headers={
+            "Cookie": "; ".join(f"{k}={v}" for k, v in cookies.items() if v),
+            "X-CSRF-Token": cookies.get("csrf_token", ""),
+        },
+    )
     out = pathlib.Path(args.out)
     if not out.is_absolute():
         out = ROOT / out
-    out.write_text(payload if isinstance(payload, str) else json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-    print("[export]", status, "->", out)
+    try:
+        with urllib.request.urlopen(req, timeout=120) as response:
+            data = response.read()
+            status = response.status
+    except urllib.error.HTTPError as exc:
+        print("[export-failed]", exc.code, exc.read().decode("utf-8", "replace")[:300])
+        return 1
+    out.write_bytes(data)
+    print("[export]", status, "->", out, f"({len(data)} bytes)")
     return 0 if status == 200 else 1
 
 
