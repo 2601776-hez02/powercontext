@@ -455,7 +455,7 @@ DSL 里三个 HTTP 节点的地址都写成 `{{#env.TAVERN_ENGINE_URL#}}/...`，
 bash scripts/07_doctor.sh                                  # 环境体检：8 项，一路查到「能跑通一回合」
 bash scripts/05_verify.sh                                  # 引擎侧：10 回合逐条比对 + 记忆/检索/执行计划
 bash scripts/06_selfcheck.sh                               # 声明一致性自检：33 条 PASS/FAIL
-bash scripts/08_audit.sh                                   # 全分支扫测 + 奇怪输入 + 压力场景 + 随机 8×40 回合（约 1100 项）
+bash scripts/08_audit.sh                                   # 全分支扫测 + 奇怪输入 + 压力场景 + 随机 8×40 回合（约 1090 项）
 python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
         --engine http://127.0.0.1:9100 --guest 无名客       # Dify 侧：走完整条 Chatflow
 ```
