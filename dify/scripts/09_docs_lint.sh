@@ -60,3 +60,36 @@ if problems:
 
 print("文档自检通过：表格列数一致，README 相对链接全部存在")
 PY
+
+# ---- 条数一致性：文档里写的「NN 条」必须和 conformance.md 的实际条数一致 ----
+PY_CHECK="${PYTHON:-python3}"
+if [ -x ".venv/bin/python" ]; then PY_CHECK=".venv/bin/python"; fi
+"$PY_CHECK" - <<'PY' || exit 1
+import pathlib, re, sys
+
+conf = pathlib.Path("docs/conformance.md").read_text(encoding="utf-8")
+m = re.search(r"共 (\d+) 条", conf)
+if not m:
+    print("!! conformance.md 里找不到条数")
+    sys.exit(1)
+actual = int(m.group(1))
+
+files = ["README.md", "QUICKSTART.md", "SUBMISSION.md", "scripts/README.md",
+         "docs/sample-walkthrough.md", "docs/evidence/release-check.md", "docs/evidence/fallbacks.md"]
+bad = []
+for name in files:
+    path = pathlib.Path(name)
+    if not path.exists():
+        continue
+    for line_no, line in enumerate(path.read_text(encoding="utf-8").splitlines(), start=1):
+        for found in re.finditer(r"(\d+) 条(?:声明|自检|PASS)", line):
+            if int(found.group(1)) != actual:
+                bad.append(f"{name}:{line_no} 写了 {found.group(1)} 条，实际 {actual}")
+
+if bad:
+    print("!! 条数不一致：")
+    for item in bad:
+        print("   ", item)
+    sys.exit(1)
+print(f"条数一致性通过：文档里的「{actual} 条」都对得上")
+PY
