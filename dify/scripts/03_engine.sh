@@ -28,6 +28,16 @@ export SEEKDB_PASSWORD="${SEEKDB_PASSWORD:-difyai123456}"
 export SEEKDB_DATABASE="${SEEKDB_DATABASE:-test}"
 export POWERCONTEXT_URL="${POWERCONTEXT_URL:-http://127.0.0.1:8010}"
 export POWERCONTEXT_TOKEN="${POWERCONTEXT_TOKEN:-tavern-local-token}"
+
+# seekdb 不通时，直接告诉评审下一步该跑什么（别让人对着 traceback 猜）
+if [ "$(command -v timeout >/dev/null 2>&1 && echo yes || echo no)" = "yes" ]; then
+  if ! timeout 3 bash -c "exec 3<>/dev/tcp/${SEEKDB_HOST}/${SEEKDB_PORT}" 2>/dev/null; then
+    echo "连不上 seekdb（${SEEKDB_HOST}:${SEEKDB_PORT}）。" >&2
+    echo "  - 已经有自己的 Dify / seekdb：把 deploy/.env 的 SEEKDB_* 改成你的连接信息" >&2
+    echo "  - 还没有：先跑 bash scripts/02b_seekdb.sh（或 scripts/02_dify.sh）" >&2
+    exit 1
+  fi
+fi
 export POWERCONTEXT_ENABLED="${POWERCONTEXT_ENABLED:-1}"
 
 mkdir -p "$ROOT/.cache"

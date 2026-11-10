@@ -194,7 +194,7 @@ dify/
 ├── data/
 │   ├── seed/tavern.json          世界设定：3 个 NPC、11 件物品、12 条前置记忆
 │   └── samples/walkthrough.json  验证样例的剧本（10 回合）
-├── scripts/                      一键脚本（01 检查 → 02 Dify → 03 引擎 → 04 PowerContext → 05 验证 → 06 自检 → 07 体检）
+├── scripts/                      一键脚本（01 检查 → 02 Dify / 02b 只起 seekdb → 03 引擎 → 04 PowerContext → 05 验证 → 06 自检 → 07 体检 → 08 审计）
 ├── deploy/
 │   ├── .env.example              引擎与记忆层的配置模板
 │   ├── dify_provision.py         导入 DSL / 安装模型插件 / 配置模型 / 发布 / 建 API Key / 对话
@@ -247,6 +247,18 @@ bash scripts/01_check.sh
 ```bash
 bash scripts/02_dify.sh
 ```
+
+> **已经有自己的 Dify？** 跳过 02，只补一台库就行——酒馆引擎把 seekdb 当业务库，
+> 没有它应用跑不起来：
+>
+> ```bash
+> bash scripts/02b_seekdb.sh     # 用 docker run 起一台 seekdb（参数与官方 compose 的 seekdb 服务一致）
+> bash scripts/03_engine.sh      # 建表 + 灌数据 + 起引擎
+> ```
+>
+> 脚本会把 `SEEKDB_HOST/PORT/USER/PASSWORD/DB` 写进 `deploy/.env`；默认容器名 `seekdb`、
+> 端口 `2881`、密码 `difyai123456`，可用 `SEEKDB_CONTAINER` / `SEEKDB_PORT` / `SEEKDB_PASSWORD`
+> 覆盖。它也能接你已有的 seekdb 实例（把 `SEEKDB_*` 改成你的连接信息，跳过 02b 直接 03）。
 
 脚本做三件事：取 Dify 1.19.0 的 `docker/` 目录 → 写 `.env`（`COMPOSE_PROFILES=seekdb,postgresql`、`VECTOR_STORE=seekdb`）和 `envs/security.env`（`SECRET_KEY`、`INIT_PASSWORD`）→ `docker compose up -d` 并等到 `:8080/console/api/setup` 可用。
 
