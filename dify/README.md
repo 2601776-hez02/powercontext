@@ -474,3 +474,14 @@ bash scripts/07_doctor.sh
 | 数据/初始化方式 | `data/seed/tavern.json` + `scripts/03_engine.sh`（`engine.cli init`） |
 | 预置记忆/互动状态的标识方式 | 玩家标识 = Dify 会话里的 `guest` 输入（DSL 变量）；PowerContext scope = `wangchuan-tavern/<guest>` |
 | 现成插件 | 仅用 Dify 官方的模型供应商插件（OpenAI-API-compatible / DeepSeek），无第三方自定义插件 |
+
+### 11.1 关于凭据
+
+仓库里**没有任何真实的 API Key、账号密码或令牌**：
+
+* 模型服务凭据（`api_key`）只在本地 `deploy/.env` 与你自己的 Dify 里，`.env` 已 gitignore，
+  仓库里只有 `deploy/.env.example` 的占位值。
+* `DifyTavern2026`（Dify 初始管理员密码）、`tavern-local-token`（PowerContext 本地 Bearer）、
+  `difyai123456`（seekdb 默认密码）都是**脚本本地生成的演示默认值**，不对应任何真实账号；
+  部署到公网前请改掉（分别对应 `envs/security.env`、`POWERCONTEXT_TOKEN`、`SEEKDB_PASSWORD`）。
+* 深度求索（DeepSeek）的 key 从未进入仓库：`grep -r "sk-" .` 为空。
