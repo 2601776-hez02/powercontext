@@ -4,6 +4,22 @@
 >
 > Dify 1.19.0 × seekdb 1.4.0 × PowerContext 1.5.0
 
+## 评审速查（先看这 6 行）
+
+| 你想做什么 | 怎么做 | 结果 |
+| --- | --- | --- |
+| **直接用浏览器玩** | 打开 <https://parents-pendant-stamps-pools.trycloudflare.com/chat/US2WZk6wfvkw7R4Q>（作者托管，可能下线） | 十秒内能看到三条规矩生效 |
+| **在本地跑起来** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型 | 一条命令起后端并自检 |
+| **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md) | **33 条声明逐条 PASS/FAIL + 实测值** |
+| **核对「预期 vs 实际」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md) | **11 步样例逐条断言** |
+| **核对 seekdb 真的在干活** | [`docs/evidence/seekdb-explain.json`](docs/evidence/seekdb-explain.json)、[`engine-transcript.json`](docs/evidence/engine-transcript.json)、[`dify/`](docs/evidence/dify/) 截图 | 执行计划、账本流水、节点记录 |
+| **卡住了** | `bash scripts/07_doctor.sh` | 8 项环境体检，每项给修复命令 |
+
+> 一句话：**这是一个会被 NPC 记住的文字酒馆**。Dify 编排，seekdb 存账本与记忆（全文 + HNSW），
+> 判定由引擎写在回答最前面，所以「声明」和「结果」永远对得上。
+
+---
+
 ## 30 秒看懂
 
 | 问题 | 答案 |
