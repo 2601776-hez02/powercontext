@@ -185,7 +185,7 @@ def facts_form(guest: str = Form("无名客")):
     这样"成功/失败 + 状态行"是引擎写的，模型改不了。"""
 
     _guard()
-    text = game.facts(guest, db=DB)
+    text = game.facts(guest, db=DB, pc=PC)
     return PlainTextResponse(text + ("\n" if text else ""))
 
 

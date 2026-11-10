@@ -103,7 +103,7 @@ PowerContext：{
   "available": true,
   "written": true,
   "status": 200,
-  "artifact_id": "art_6639e753c310403fbca0573021a94551",
+  "artifact_id": "art_c017c83687d3443a8ce29b84cc26c26c",
   "revision": 1,
   "kind": "tavern-legend",
   "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
@@ -151,4 +151,4 @@ PowerContext：{
   "status": 200
 }
 
-[transcript] /root/tavern19/docs/evidence/engine-transcript.json
+[transcript] /root/tavern21/docs/evidence/engine-transcript.json

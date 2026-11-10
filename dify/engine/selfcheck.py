@@ -152,14 +152,19 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- 4. 好感过门槛说秘密
     reset()
-    for _ in range(2):
+    facts_during = []
+    for _ in range(3):
         act("去后厨，替小满把那一摞碗端出来。")
+        facts_during.append(call("/facts/form", form={"guest": GUEST}, text=True)[1])
         act("回大堂。")
         act("去后厨，帮小满擦灶台。")
+        facts_during.append(call("/facts/form", form={"guest": GUEST}, text=True)[1])
     mind = call("/mind", {"guest": GUEST, "npc": "xiaoman", "limit": 10})[1]
     kinds = [row["kind"] for row in mind.get("memories", [])]
-    report.check("rule4.secret", "好感过门槛 → NPC 说出守了多年的秘密",
-                 "秘密" in kinds, f"kinds={kinds}")
+    has_secret = any("守了多年的事" in text for text in facts_during)
+    report.check("rule4.secret", "好感过门槛 → NPC 说出守了多年的秘密（事实行里也写出来）",
+                 "秘密" in kinds and has_secret,
+                 f"kinds_has_secret={'秘密' in kinds} facts_has_secret={has_secret}")
 
     # ---- 4b. 自由说法：没指定对象/物品时按场景补
     reset()
@@ -177,6 +182,17 @@ def main(argv: list[str] | None = None) -> int:
         "目标在别的区域时会自己走过去（「帮小满收拾」→ 后厨）",
         walk.get("location") == "后厨" and walk.get("outcome", {}).get("verdict") == "success",
         f"at={walk.get('location')} verdict={walk.get('outcome', {}).get('verdict')}",
+    )
+
+    # ---- 4c. 声明的效果必须出现在事实行里（不靠模型自觉）
+    reset()
+    act("要一壶桂花酿，铜板放在柜台上。")
+    drink_facts = call("/facts/form", form={"guest": GUEST}, text=True)[1]
+    report.check(
+        "facts.confide",
+        "事实行里写出「一杯酒换来的那句杯边话」（模型改写不了）",
+        "杯边话】" in drink_facts,
+        drink_facts.replace("\n", " ")[:80],
     )
 
     # ---- 5. 读心

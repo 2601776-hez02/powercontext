@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import random
+import re
 from dataclasses import replace
 from pathlib import Path
 from typing import Any
@@ -310,6 +311,7 @@ def act(
         )
 
     turn = int(player["turn"]) + 1
+    action = _normalize_target(action, items=items)
     action = _fill_defaults(action, npcs=npcs, items=items)
     rng = rules.seeded_rng(turn, action)
     outcome = rules.resolve(
@@ -664,8 +666,13 @@ def mind(guest: str, npc_id: str, *, db: SeekDB, limit: int = 8, text: str = "")
     }
 
 
-def facts(guest: str, *, db: SeekDB) -> str:
-    """最近一回合的事实行（纯文本）。Dify 的 Answer 节点直接拼它，模型改不了。"""
+def facts(guest: str, *, db: SeekDB, pc: PowerContext | None = None) -> str:
+    """最近一回合的事实行（纯文本）。Dify 的 Answer 节点直接拼它，模型改不了。
+
+    除了「判定 + 状态」，这里还会把**这一回合新揭开的秘密**（杯边话 / 多年旧事 / 逐客）
+    以及**跨会话记忆**原文写进去。原因：这些都是开场声明的规则会产生的效果，
+    如果只靠叙事模型“照着说”，模型一偷懒，玩家就会觉得“声明说会这样，结果没有”。
+    """
 
     event = db.one(
         "SELECT turn, verb, verdict, detail FROM tw_event WHERE guest = %s ORDER BY turn DESC, id DESC LIMIT 1",
@@ -674,6 +681,7 @@ def facts(guest: str, *, db: SeekDB) -> str:
     player = get_player(db, guest)
     if not event or not player:
         return ""
+
     verdict_cn = {
         "success": "成功",
         "fail": "失败",
@@ -684,11 +692,35 @@ def facts(guest: str, *, db: SeekDB) -> str:
         "banned": "被逐出",
         "turned_away": "门外",
     }.get(str(event["verdict"]), str(event["verdict"]))
-    return (
-        f"【第 {int(event['turn'])} 回合 · 判定：{verdict_cn}】{event['detail']}\n"
+    lines = [f"【第 {int(event['turn'])} 回合 · 判定：{verdict_cn}】{event['detail']}"]
+
+    turn = int(event["turn"])
+    revealed = db.query(
+        "SELECT kind, npc, body FROM tw_memory WHERE guest = %s AND turn = %s "
+        "AND kind IN ('杯边话', '秘密') ORDER BY id ASC",
+        (guest, turn),
+    )
+    npcs = npcs_of(db)
+    for row in revealed:
+        who = npcs.get(str(row["npc"]), {}).get("name", str(row["npc"]))
+        body = str(row["body"])
+        if row["kind"] == "杯边话":
+            quoted = re.search(r"「(.+?)」", body)
+            body = quoted.group(1) if quoted else body
+            lines.append(f"【{who}的杯边话】{body}")
+        else:
+            lines.append(f"【{who}守了多年的事】{body}")
+
+    if turn == 1 and pc is not None:
+        recall = pc.recall(_pc_scope(db, pc, guest)) if pc else {"hits": []}
+        for hit in (recall.get("hits") or [])[:1]:
+            lines.append(f"【酒馆记得你】{hit.get('text', '')[:120]}")
+
+    lines.append(
         f"> 铜板 {int(player['coins'])}｜风评 {int(player['reputation'])}"
         f"｜被记账 {int(player['wanted'])}｜{player['location']}"
     )
+    return "\n".join(lines)
 
 
 def ledger(guest: str, *, db: SeekDB, limit: int = 10) -> dict[str, Any]:
@@ -718,6 +750,22 @@ def reset(guest: str, *, db: SeekDB) -> dict[str, Any]:
 
 
 # ------------------------------------------------------------------ 辅助
+
+
+def _normalize_target(action: Action, *, items: dict[str, dict]) -> Action:
+    """买酒/偷东西的对象必须是这件东西的主人（酒在老板娘柜台里）。
+
+    否则「我要跟老陶喝一杯」会被模型解析成「向老陶买酒」，叙事里就出现老陶卖酒——
+    玩法规则说「酒钱给柜台」，结果对不上。
+    """
+
+    item = items.get(action.item)
+    if item is None:
+        return action
+    owner = str(item.get("owner_npc") or "")
+    if owner and action.verb in {"buy", "steal"} and action.target != owner:
+        return replace(action, target=owner)
+    return action
 
 
 def _fill_defaults(action: Action, *, npcs: dict[str, dict], items: dict[str, dict]) -> Action:
