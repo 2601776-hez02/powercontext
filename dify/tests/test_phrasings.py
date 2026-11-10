@@ -41,6 +41,8 @@ CASES: list[tuple[str, str, str, str]] = [
     # 威胁
     ("拍桌子。", "threaten", "aruo", ""),
     ("你信不信我把这店砸了。", "threaten", "aruo", ""),
+    ("我要打死老陶。", "threaten", "laotao", ""),
+    ("把阿箬的账本撕了。", "threaten", "aruo", ""),
     # 讲故事
     ("给老陶讲个故事。", "tell_story", "laotao", ""),
     ("我说段评书。", "tell_story", "", ""),
