@@ -499,7 +499,7 @@ python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
 | 截图 | 说明 |
 | --- | --- |
 | ![编排](docs/evidence/dify/00-workflow-canvas.png) | Chatflow 的 11 个节点：开始 → 拆动作 → 是否读心（IF）→ 两条分支（引擎/读心 → 叙事 → 事实行）→ 回答 |
-| ![对话](docs/evidence/dify/02-chat-memory.png) | 真实对话：开场给出「照着做就能看到三条规矩」的引导；一壶桂花酿后，回答**最前面**是引擎写的判定行 + 【阿箬的杯边话】，后面才是叙事 |
+| ![对话](docs/evidence/dify/02-chat-memory.png) | 真实对话：去后厨帮小满端碗 → 好感过门槛，她说了守了三年的事（【小满守了多年的事】）；接着读心，能看到她脑子里**真实的那几行**——猫、你刚才干的活、老陶提过的酒，后面才是叙事 |
 
 ### 5.1 跑不起来时：先跑 `07_doctor.sh`
 
