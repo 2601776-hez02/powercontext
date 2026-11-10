@@ -282,6 +282,13 @@ def resolve(
 # --------------------------------------------------------------------- 记忆
 
 
+def _present_cast(target: str, outcome: Outcome, npcs: dict[str, dict]) -> list[str]:
+    """当时真正在场的人：当事人 + 目击者。不含没在同一地点的人。"""
+
+    cast = ([target] if target in npcs else []) + [w for w in outcome.witnesses if w in npcs]
+    return list(dict.fromkeys(cast))
+
+
 def compose_memories(
     action: Action,
     outcome: Outcome,
@@ -305,7 +312,8 @@ def compose_memories(
         # 「什么都记得」也包括没成的事和只是在看：观察、打听、被拒绝都留一笔轻的
         if outcome.verdict == "observed" and action.verb != "read_mind":
             if action.verb == "look":
-                for npc_id in npcs:
+                # 只有在同一地点的人「看见」了；后厨的小满不该知道你在堂里东张西望
+                for npc_id in _present_cast(target, outcome, npcs):
                     rows.append(_row(npc_id, "亲历", "他站在堂里看了我一会儿，眼神在我手上停了停。", "淡", 3))
             elif target in npcs:
                 topic = item["name"] if item else "店里的事"
@@ -361,7 +369,7 @@ def compose_memories(
         )
     elif action.verb == "move":
         where = action.location or "别处"
-        for npc_id in npcs:
+        for npc_id in _present_cast(target, outcome, npcs):
             rows.append(_row(npc_id, "亲历", f"他往{where}去了，脚步我听着呢。", "淡", 3))
 
     # 旁观者也要有记忆（偷窃/威胁已有更具体的目击行，这里只补其余动作）

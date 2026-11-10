@@ -124,11 +124,6 @@
           "npc": "老陶",
           "kind": "亲历",
           "text": "他站在堂里看了我一会儿，眼神在我手上停了停。"
-        },
-        {
-          "npc": "小满",
-          "kind": "亲历",
-          "text": "他站在堂里看了我一会儿，眼神在我手上停了停。"
         }
       ],
       "status_line": "> 铜板 20｜风评 0｜被记账 0｜大堂",
@@ -219,7 +214,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1015912,
+          "memory_id": 1017716,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -238,7 +233,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015910,
+          "memory_id": 1017714,
           "npc": "aruo",
           "turn": 2,
           "kind": "亲历",
@@ -257,7 +252,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015911,
+          "memory_id": 1017715,
           "npc": "laotao",
           "turn": 2,
           "kind": "目击",
@@ -276,7 +271,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015908,
+          "memory_id": 1017713,
           "npc": "laotao",
           "turn": 1,
           "kind": "亲历",
@@ -294,7 +289,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015907,
+          "memory_id": 1017712,
           "npc": "aruo",
           "turn": 1,
           "kind": "亲历",
@@ -432,7 +427,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1015913,
+          "memory_id": 1017717,
           "npc": "aruo",
           "turn": 3,
           "kind": "亲历",
@@ -451,7 +446,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015912,
+          "memory_id": 1017716,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -489,7 +484,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015911,
+          "memory_id": 1017715,
           "npc": "laotao",
           "turn": 2,
           "kind": "目击",
@@ -507,7 +502,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015908,
+          "memory_id": 1017713,
           "npc": "laotao",
           "turn": 1,
           "kind": "亲历",
@@ -637,7 +632,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1015914,
+          "memory_id": 1017718,
           "npc": "aruo",
           "turn": 4,
           "kind": "亲历",
@@ -656,7 +651,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015912,
+          "memory_id": 1017716,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -694,7 +689,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015915,
+          "memory_id": 1017719,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -712,7 +707,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015911,
+          "memory_id": 1017715,
           "npc": "laotao",
           "turn": 2,
           "kind": "目击",
@@ -730,7 +725,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015908,
+          "memory_id": 1017713,
           "npc": "laotao",
           "turn": 1,
           "kind": "亲历",
@@ -847,7 +842,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1015917,
+          "memory_id": 1017721,
           "npc": "laotao",
           "turn": 5,
           "kind": "目击",
@@ -866,7 +861,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015916,
+          "memory_id": 1017720,
           "npc": "aruo",
           "turn": 5,
           "kind": "亲历",
@@ -884,7 +879,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015914,
+          "memory_id": 1017718,
           "npc": "aruo",
           "turn": 4,
           "kind": "亲历",
@@ -902,7 +897,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015915,
+          "memory_id": 1017719,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -920,7 +915,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015913,
+          "memory_id": 1017717,
           "npc": "aruo",
           "turn": 3,
           "kind": "亲历",
@@ -938,7 +933,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015911,
+          "memory_id": 1017715,
           "npc": "laotao",
           "turn": 2,
           "kind": "目击",
@@ -1060,7 +1055,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1015919,
+          "memory_id": 1017723,
           "npc": "laotao",
           "turn": 6,
           "kind": "亲历",
@@ -1079,7 +1074,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015920,
+          "memory_id": 1017724,
           "npc": "aruo",
           "turn": 6,
           "kind": "目击",
@@ -1098,7 +1093,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015913,
+          "memory_id": 1017717,
           "npc": "aruo",
           "turn": 3,
           "kind": "亲历",
@@ -1117,7 +1112,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015912,
+          "memory_id": 1017716,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -1136,7 +1131,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015917,
+          "memory_id": 1017721,
           "npc": "laotao",
           "turn": 5,
           "kind": "目击",
@@ -1154,7 +1149,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015915,
+          "memory_id": 1017719,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -1264,7 +1259,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1015922,
+          "memory_id": 1017726,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "秘密",
@@ -1283,7 +1278,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1015921,
+          "memory_id": 1017725,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "亲历",
@@ -1416,7 +1411,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1015922,
+          "memory_id": 1017726,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "秘密",
@@ -1424,7 +1419,7 @@
           "emotion": "沉",
           "source": "亲历",
           "importance": 10,
-          "score": 0.0799,
+          "score": 0.0801,
           "channels": [
             "vector"
           ],
@@ -1434,7 +1429,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1015921,
+          "memory_id": 1017725,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "亲历",
@@ -1452,7 +1447,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1015918,
+          "memory_id": 1017722,
           "npc": "xiaoman",
           "turn": 5,
           "kind": "传闻",
@@ -1499,10 +1494,10 @@
             "text": "老陶说，无名客认过错，也不知真假，我只说给你听。"
           },
           {
-            "turn": 1,
-            "kind": "亲历",
-            "source": "亲历",
-            "text": "他站在堂里看了我一会儿，眼神在我手上停了停。"
+            "turn": 0,
+            "kind": "旧事",
+            "source": "设定",
+            "text": "她数得清柜台上有几个铜板，但从不多拿一个。"
           }
         ]
       },
@@ -1586,7 +1581,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1015924,
+          "memory_id": 1017728,
           "npc": "aruo",
           "turn": 9,
           "kind": "亲历",
@@ -1605,7 +1600,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015925,
+          "memory_id": 1017729,
           "npc": "laotao",
           "turn": 9,
           "kind": "目击",
@@ -1624,7 +1619,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015911,
+          "memory_id": 1017715,
           "npc": "laotao",
           "turn": 2,
           "kind": "目击",
@@ -1643,7 +1638,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015908,
+          "memory_id": 1017713,
           "npc": "laotao",
           "turn": 1,
           "kind": "亲历",
@@ -1661,7 +1656,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015907,
+          "memory_id": 1017712,
           "npc": "aruo",
           "turn": 1,
           "kind": "亲历",
@@ -1679,7 +1674,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015920,
+          "memory_id": 1017724,
           "npc": "aruo",
           "turn": 6,
           "kind": "目击",
@@ -1799,7 +1794,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1015927,
+          "memory_id": 1017731,
           "npc": "laotao",
           "turn": 10,
           "kind": "目击",
@@ -1818,7 +1813,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015925,
+          "memory_id": 1017729,
           "npc": "laotao",
           "turn": 9,
           "kind": "目击",
@@ -1836,7 +1831,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015911,
+          "memory_id": 1017715,
           "npc": "laotao",
           "turn": 2,
           "kind": "目击",
@@ -1854,7 +1849,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1015907,
+          "memory_id": 1017712,
           "npc": "aruo",
           "turn": 1,
           "kind": "亲历",
@@ -1872,7 +1867,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015924,
+          "memory_id": 1017728,
           "npc": "aruo",
           "turn": 9,
           "kind": "亲历",
@@ -1890,7 +1885,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1015920,
+          "memory_id": 1017724,
           "npc": "aruo",
           "turn": 6,
           "kind": "目击",
@@ -1937,7 +1932,7 @@
           "available": true,
           "written": true,
           "status": 200,
-          "artifact_id": "art_c01a971e29a443018bfccc54983c388e",
+          "artifact_id": "art_fb846495041c45dc9543bfa06d0bb6e1",
           "revision": 1,
           "kind": "tavern-legend",
           "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"

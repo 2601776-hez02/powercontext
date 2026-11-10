@@ -259,6 +259,18 @@ def main(argv: list[str] | None = None) -> int:
         f"老陶的目击行={[r['kind'] for r in witness_rows if int(r['turn']) >= 1][:3]}",
     )
 
+    # ---- 3h. 不在场的人不该「看见」：小满在后厨，不该有堂里打量的记忆
+    reset()
+    act("四处看看。")
+    absent_rows = call("/mind", {"guest": GUEST, "npc": "xiaoman", "limit": 8})[1].get("memories", [])
+    absent_turns = [int(row["turn"]) for row in absent_rows if int(row["turn"]) >= 1]
+    report.check(
+        "memory.no_peeking",
+        "不在同一地点的人不会「看见」：后厨的小满没有堂里打量的记忆",
+        not absent_turns,
+        f"小满在堂里事件中的记忆回合={absent_turns}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

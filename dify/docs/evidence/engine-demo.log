@@ -75,7 +75,7 @@
 判定：observed（mind_read）你盯着小满的眼睛，看见了一些不该看见的。
 状态：铜板 20｜风评 8｜被记账 1｜后厨
 回忆命中：
-  - [小满｜秘密｜7｜vector｜0.0799] 后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。
+  - [小满｜秘密｜7｜vector｜0.0801] 后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。
   - [小满｜亲历｜7｜vector｜0.0784] 他帮我把活计收拾了，手上利落，不像是白帮忙的人。
   - [小满｜传闻｜5｜vector｜0.0321] 老陶说，无名客认过错，也不知真假，我只说给你听。
 
@@ -103,7 +103,7 @@ PowerContext：{
   "available": true,
   "written": true,
   "status": 200,
-  "artifact_id": "art_c01a971e29a443018bfccc54983c388e",
+  "artifact_id": "art_fb846495041c45dc9543bfa06d0bb6e1",
   "revision": 1,
   "kind": "tavern-legend",
   "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
