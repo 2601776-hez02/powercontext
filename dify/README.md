@@ -152,7 +152,7 @@ dify/
 ├── deploy/
 │   ├── .env.example              引擎与记忆层的配置模板
 │   └── dify_provision.py         导入 DSL / 发布 / 建 API Key 的小工具
-├── tests/test_logic.py           22 项单测（不需要数据库与模型）
+├── tests/test_logic.py           25 项单测（不需要数据库与模型）
 └── docs/
     ├── sample-walkthrough.md     验证样例：初始状态 / 输入 / 预期 / 实际
     ├── evidence/                 截图与日志（seekdb 证据、Dify 节点记录）
