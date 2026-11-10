@@ -79,7 +79,7 @@ cat <<EOF
 验收用的样例与预期结果：
   docs/sample-walkthrough.md     逐步对照
   docs/evidence/walkthrough-check.md   刚刚跑出来的 11/11 PASS
-  docs/conformance.md            24 条声明的 PASS/FAIL
+  docs/conformance.md            58 条声明的 PASS/FAIL
 
 EOF
 

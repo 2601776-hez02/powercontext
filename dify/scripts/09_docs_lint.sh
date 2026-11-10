@@ -75,6 +75,7 @@ if not m:
 actual = int(m.group(1))
 
 files = ["README.md", "QUICKSTART.md", "SUBMISSION.md", "scripts/README.md",
+         "scripts/00_bringup.sh", "scripts/01_check.sh", "scripts/12_reviewer_check.sh",
          "docs/sample-walkthrough.md", "docs/evidence/release-check.md", "docs/evidence/fallbacks.md"]
 bad = []
 for name in files:
