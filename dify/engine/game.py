@@ -655,6 +655,8 @@ def read_mind(
     player = ensure_player(db, guest, settings)
     result = mind(guest, npc_id, db=db, limit=limit, text=text)
     if not result.get("ok"):
+        result.setdefault("detail", "酒馆里没有这个人——现在只有阿箬、老陶、小满。")
+        result.setdefault("status_line", "")
         return result
     npc = result["npc"]
     turn = int(player["turn"]) + 1
@@ -674,17 +676,22 @@ def read_mind(
             "UPDATE tw_player SET turn = %s, updated_at = NOW() WHERE guest = %s",
             (turn, guest),
         )
-        cursor.execute(
-            "INSERT INTO tw_memory (guest, npc, turn, kind, body, emotion, importance, source, embedding, created_at) "
-            "VALUES (%s, %s, %s, '亲历', %s, '疑', 4, '亲历', %s, NOW())",
-            (
-                guest,
-                npc["id"],
-                turn,
-                f"他盯着我的眼睛看了很久，像是要看穿我。",
-                _literal(f"他盯着我的眼睛看了很久，像是要看穿我。"),
-            ),
+        # 反复读心不该在对方脑子里堆一排一模一样的记忆：只有第一次（或隔了 5 回合）才写
+        recent = int(
+            db.scalar(
+                "SELECT COUNT(*) FROM tw_memory WHERE guest = %s AND npc = %s AND kind = '亲历' "
+                "AND body LIKE '%%盯着我的眼睛%%' AND turn >= %s",
+                (guest, npc["id"], max(0, turn - 5)),
+            )
+            or 0
         )
+        if recent == 0:
+            body = "他盯着我的眼睛看了很久，像是要看穿我。"
+            cursor.execute(
+                "INSERT INTO tw_memory (guest, npc, turn, kind, body, emotion, importance, source, embedding, created_at) "
+                "VALUES (%s, %s, %s, '亲历', %s, '疑', 4, '亲历', %s, NOW())",
+                (guest, npc["id"], turn, body, _literal(body)),
+            )
     row = get_player(db, guest)
     status_line = ""
     if row:
@@ -842,11 +849,15 @@ def _fill_defaults(action: Action, *, npcs: dict[str, dict], items: dict[str, di
     结果却什么都不发生，等于把确定性赌在玩家的措辞上。
     """
 
-    if action.verb == "buy" and not action.item:
-        drinks = [item for item in items.values() if item["price"] > 0 and item["kind"] == "酒"]
-        if drinks:
-            cheapest = min(drinks, key=lambda item: item["price"])
-            return replace(action, item=cheapest["item_id"])
+    if action.verb == "buy":
+        current = items.get(action.item) if action.item else None
+        # 没认出东西，或认出的东西根本不卖（比如「买壶酒顺便把玉佩塞袖子里」认成了玉佩），
+        # 都退回「最便宜的那壶酒」——比回一句「要什么，直说」有用得多
+        if current is None or current["price"] <= 0:
+            drinks = [item for item in items.values() if item["price"] > 0 and item["kind"] == "酒"]
+            if drinks:
+                cheapest = min(drinks, key=lambda item: item["price"])
+                return replace(action, item=cheapest["item_id"])
 
     if action.verb == "steal" and not action.item:
         owned = [

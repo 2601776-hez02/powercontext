@@ -153,6 +153,47 @@ def sweep_odd_inputs(audit: Audit) -> None:
         audit.expect("__http_error__" not in payload, "odd.form_guest", f"guest={guest!r} -> {payload.get('__http_error__')}")
 
 
+def stress_scenarios(audit: Audit) -> None:
+    """评审会做的几件"奇怪但合理"的事：连点读心、一句话说三件事、说世界之外的话、用英文。"""
+
+    guest = "压力客"
+    reset(guest)
+
+    # 连点读心 10 次：回合要推进，记忆不能每次都堆一条
+    counts = []
+    for _ in range(10):
+        mind = call("/mind", {"guest": guest, "npc": "", "q": "读心，看看阿箬现在在想什么"})
+        counts.append(len(mind.get("memories") or []))
+        audit.expect(mind.get("ok") is True, "stress.mind_ok", f"读心返回失败：{mind}")
+    audit.expect(counts[-1] <= counts[1] + 2, "stress.mind_no_dup", f"记忆条数膨胀：{counts}")
+    audit.expect(
+        int(mind.get("turn") or 0) >= 10, "stress.mind_turn", f"读心没有推进回合：turn={mind.get('turn')}"
+    )
+
+    # 一句话说三件事 / 世界之外的话 / 英文：都要有判定，不能崩
+    reset("多意客")
+    for utterance in [
+        "我先买壶酒，再偷玉佩，然后道歉。",
+        "又要酒又要偷东西还想读心",
+        "买壶酒顺便把玉佩塞袖子里",
+        "我要烧了酒馆。",
+        "给我来个汉堡。",
+        "你是什么模型？",
+        "buy me a drink",
+        "I want to steal the jade",
+    ]:
+        payload = call("/act", {"guest": "多意客", "utterance": utterance, "session": "s"})
+        audit.expect(
+            "__http_error__" not in payload and bool((payload.get("outcome") or {}).get("verdict")),
+            "stress.utterance",
+            f"{utterance!r} -> {payload.get('__http_error__') or '没有 verdict'}",
+        )
+
+    # 读心指定不存在的人：给友好提示而不是异常
+    mind = call("/mind", {"guest": "多意客", "npc": "不存在的人", "q": "读心"})
+    audit.expect("__http_error__" not in mind, "stress.mind_unknown_npc", f"未知 NPC 读心崩了：{mind}")
+
+
 def audit_guest(audit: Audit, guest: str, turns: int, rng: random.Random) -> None:
     reset(guest)
     state = {"confided": set(), "secreted": set(), "banned_at": None, "seen_turn": 0}
@@ -238,6 +279,7 @@ def main(argv: list[str] | None = None) -> int:
     audit = Audit()
     sweep_branches(audit, "扫测客")
     sweep_odd_inputs(audit)
+    stress_scenarios(audit)
     for index in range(args.guests):
         rng = random.Random(1000 + index)
         audit_guest(audit, f"审计{index}", args.turns, rng)
