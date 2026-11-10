@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import argparse
+import pathlib
 import json
 import random
 import sys
@@ -18,6 +19,15 @@ import urllib.error
 import urllib.request
 
 ENGINE = "http://127.0.0.1:9100"
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+GIFT_UTTERANCES = [
+    "请阿箬喝一壶桂花酿。",
+    "请老陶喝一壶烧刀子。",
+    "给小满一壶桂花酿。",
+    "把玉佩送给阿箬。",
+    "给老陶讲讲那个灯笼。",
+]
 
 UTTERANCES = [
     "要一壶桂花酿。",
@@ -37,7 +47,7 @@ UTTERANCES = [
     "问问阿箬，柜台后头那盏灯为什么夜里不灭。",
     "读心，看看阿箬现在在想什么。",
     "打烊了，我该走了。",
-]
+] + GIFT_UTTERANCES
 
 
 def call(path: str, body: dict | None = None) -> dict:
@@ -66,6 +76,44 @@ class Audit:
         self.checks += 1
         if not ok:
             self.failures.append(f"[{label}] {detail}")
+
+
+def sweep_branches(audit: Audit, guest: str) -> None:
+    """把「动词 × 物品 × NPC」的笛卡尔积都打一遍：任何一个分支抛异常都会被当场抓住。
+
+    这条是补课的：之前只随机说了些话，漏掉了「送礼 + 具体物品」这个分支，
+    结果 rules.py 里 `item["id"]` 写错键名（应为 item_id）造成 500，一直没人发现。
+    """
+
+    seed = json.loads((ROOT / "data" / "seed" / "tavern.json").read_text(encoding="utf-8"))
+    item_ids = [item["id"] for item in seed["items"]]
+    npc_ids = [npc["id"] for npc in seed["npcs"]]
+    verbs = ["buy", "gift", "steal", "threaten", "tell_story", "help", "apologize", "ask", "look", "read_mind", "close"]
+
+    for verb in verbs:
+        for item_id in item_ids + [""]:
+            for npc_id in npc_ids:
+                reset(guest)
+                payload = call(
+                    "/act",
+                    {
+                        "guest": guest,
+                        "utterance": f"（全分支扫测 {verb} {item_id} {npc_id}）",
+                        "parsed": {"verb": verb, "target": npc_id, "item": item_id, "tone": "plain"},
+                    },
+                )
+                if "__http_error__" in payload:
+                    audit.expect(
+                        False,
+                        "sweep.no_http_error",
+                        f"verb={verb} item={item_id or '-'} npc={npc_id} -> {payload.get('__http_error__')} {payload.get('detail','')}",
+                    )
+                    continue
+                audit.expect(
+                    isinstance(payload.get("outcome"), dict) and bool(payload["outcome"].get("verdict")),
+                    "sweep.has_verdict",
+                    f"verb={verb} item={item_id or '-'} npc={npc_id} 返回里没有 outcome.verdict",
+                )
 
 
 def audit_guest(audit: Audit, guest: str, turns: int, rng: random.Random) -> None:
@@ -151,6 +199,7 @@ def main(argv: list[str] | None = None) -> int:
     ENGINE = args.engine.rstrip("/")
 
     audit = Audit()
+    sweep_branches(audit, "扫测客")
     for index in range(args.guests):
         rng = random.Random(1000 + index)
         audit_guest(audit, f"审计{index}", args.turns, rng)

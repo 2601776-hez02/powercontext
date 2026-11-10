@@ -159,7 +159,7 @@ def resolve(
 
     # ---------------------------------------------------------------- 送礼
     if verb == "gift":
-        if item is not None and inventory.get(item["id"], 0) > 0:
+        if item is not None and inventory.get(item["item_id"], 0) > 0:
             gain = 12 if item["kind"] == "旧物" else 8
             return Outcome(
                 "success",

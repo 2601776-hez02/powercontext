@@ -195,6 +195,16 @@ def main(argv: list[str] | None = None) -> int:
         drink_facts.replace("\n", " ")[:80],
     )
 
+    # ---- 4d. 请客（带具体物品）不能炸：这是最容易踩的一个分支
+    reset()
+    gift = act("给阿箬买一壶桂花酿。")
+    report.check(
+        "interaction.gift_with_item",
+        "「请你喝一壶桂花酿」走送礼分支，返回正常结果而不是报错",
+        isinstance(gift.get("outcome"), dict) and bool(gift["outcome"].get("verdict")),
+        f"verdict={(gift.get('outcome') or {}).get('verdict')} detail={str((gift.get('outcome') or {}).get('detail'))[:40]}",
+    )
+
     # ---- 5. 读心
     reset()
     act("要一壶桂花酿。")
