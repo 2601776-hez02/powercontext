@@ -240,7 +240,7 @@ def _ask_answer(utterance: str, action: Action, outcome: "rules.Outcome", npcs: 
         return f"{name}把抹布往肩上一搭：「忘川酒馆。渡口最后一盏灯，什么都记得。」"
     if any(word in text for word in ("你是谁", "什么人", "你叫", "名字")):
         return f"{name}：「阿箬。这店我看了十年，账本比人记得清楚。」"
-    if any(word in text for word in ("规矩", "规则", "怎么玩", "能做什么", "做什么", "干什么", "玩法")):
+    if any(word in text for word in ("规矩", "规则", "怎么玩", "能做什么", "做什么", "干什么", "玩法", "好玩", "有趣", "玩什么")):
         world = world_of(db)
         rules = "；".join(str(rule).split("：")[0] for rule in (world.get("rules") or [])[:3])
         return f"{name}：「规矩三条：{rules}。剩下的，你自己试。」"
@@ -248,6 +248,9 @@ def _ask_answer(utterance: str, action: Action, outcome: "rules.Outcome", npcs: 
         if storyteller:
             return f"{storyteller}在角落里清了清嗓子：「要听旧事？先说好，听完别问我是听谁说的。」"
         return f"{name}：「渡口的事，问老陶去。我只管账。」"
+    if any(word in text for word in ("谢谢", "多谢", "谢了")):
+        return f"{name}摆摆手：「不用谢。账上记着就行。」"
+
     if "在吗" in text or "有人" in text:
         return f"{name}：「在。门开着，进来坐。」"
     return str(outcome.detail)

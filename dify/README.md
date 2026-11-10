@@ -12,6 +12,7 @@
 | **在本地跑起来** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型 | 一条命令起后端并自检 |
 | **核对「声明 vs 结果」** | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md) | **34 条声明逐条 PASS/FAIL + 实测值** |
 | **核对「预期 vs 实际」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md) | **11 步样例逐条断言** |
+| **看第一句话会发生什么** | [`docs/evidence/first-messages.md`](docs/evidence/first-messages.md)（十种开场白的真实回答） | 十句都不冷场 |
 | **核对 seekdb 真的在干活** | [`docs/evidence/seekdb-explain.json`](docs/evidence/seekdb-explain.json)、[`engine-transcript.json`](docs/evidence/engine-transcript.json)、[`dify/`](docs/evidence/dify/) 截图 | 执行计划、账本流水、节点记录 |
 | **卡住了** | `bash scripts/07_doctor.sh` | 8 项环境体检，每项给修复命令 |
 
