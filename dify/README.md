@@ -430,6 +430,9 @@ DSL 里 3 个 LLM 节点都写的是 `deepseek-flash`；**你可以照这个名�
 | `dsl/wangchuan-tavern.chatflow.yaml` | `http://172.17.0.1:9100`（你机器上起的引擎） | **验收默认**：完全可复现，数据都在你机器上，不依赖作者侧任何服务 |
 | `dsl/wangchuan-tavern.demo.yaml` | 作者托管的公网演示后端（已填好） | **零配置先玩一把**：不想起后端时用，导入 + 配模型即可 |
 
+> 实测：把 `wangchuan-tavern.demo.yaml` 以**全新应用**导入一个 Dify，发布后直接聊三句
+> （你好 / 这是什么地方 / 要一壶桂花酿），全部正常返回——不需要在本机起任何服务。
+>
 > 公网演示后端是作者临时托管的（`https://presence-hierarchy-necessarily-females.trycloudflare.com`），
 > 可能随时下线、数据也是共享的——所以**默认那份连本地**，验收不受作者侧服务影响。
 > 想临时体验又不想起后端，就把默认 DSL 里的 `TAVERN_ENGINE_URL` 改成这个公网地址，
