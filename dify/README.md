@@ -12,7 +12,8 @@
 | Dify 干什么 | Chatflow 11 节点：拆动作（LLM）→ 是否读心（IF）→ 调引擎 / 读心接口 → 叙事（LLM）→ 拼事实行 → 回答 |
 | seekdb 干什么 | 唯一事实源：账本、好感、物品、事件流水 + NPC 记忆（`FULLTEXT ngram` + `VECTOR HNSW`，RRF 融合） |
 | PowerContext 干什么 | 每局结束再写一份「传说」到长期记忆层；关掉也不影响玩法（seekdb 的 `tw_legend` 是主来源） |
-| 怎么跑 | `scripts/02_dify.sh` → `03_engine.sh` → `04_powercontext.sh` → `deploy/dify_provision.py`（登录/装插件/配模型/导入 DSL/发布） |
+| 怎么跑 | 零配置：导入 `dsl/wangchuan-tavern.demo.yaml` + 配一个对话模型即可（连作者托管的公网后端）；
+| | 全本地（可复现）：`scripts/02_dify.sh` → `03_engine.sh` → `04_powercontext.sh` → `deploy/dify_provision.py` |
 | 怎么核 | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md)：**24 条声明逐条 PASS/FAIL**；`bash scripts/08_audit.sh` 再随机跑 8×40 回合验不变式 |
 | 证据在哪 | [`docs/evidence/`](docs/evidence/)：Dify 编排与对话截图、10 回合叙事、seekdb 执行计划与记忆行 |
 | 已验证版本 | Dify 1.19.0 + seekdb 1.4.0 + PowerContext 1.5.0 + `deepseek-flash`（任何 OpenAI 兼容模型可替换） |
@@ -180,7 +181,8 @@
 dify/
 ├── README.md                     ← 本文（运行说明）
 ├── dsl/
-│   └── wangchuan-tavern.chatflow.yaml   Dify Chatflow 的 DSL（导入即用）
+│   ├── wangchuan-tavern.chatflow.yaml   Dify Chatflow 的 DSL（正式版，连本地后端）
+│   └── wangchuan-tavern.demo.yaml      Dify Chatflow 的 DSL（在线演示版，零配置）
 ├── engine/                       酒馆引擎（FastAPI + pymysql）
 │   ├── app.py                    HTTP 接口
 │   ├── game.py                   一回合的编排
@@ -322,9 +324,20 @@ python3 deploy/dify_provision.py apikey        # 输出 app-xxxxxxxx
 python3 deploy/dify_provision.py chat --message "要一壶桂花酿，铜板放在柜台上。"
 ```
 
-也可以走界面：控制台 → 创建应用 → **导入 DSL** → 选 `dsl/wangchuan-tavern.chatflow.yaml`
-→ 右上角「发布」。DSL 里 3 个 LLM 节点都写的是 `deepseek-flash`；**你可以照这个名字配模型**
-（最省事），也可以在应用里把这 3 个节点的模型换成你已有的任意对话模型。
+也可以走界面：控制台 → 创建应用 → **导入 DSL** → 选文件 → 右上角「发布」。
+DSL 里 3 个 LLM 节点都写的是 `deepseek-flash`；**你可以照这个名字配模型**（最省事），
+也可以在应用里把这 3 个节点的模型换成你已有的任意对话模型。
+
+**两个 DSL，用途不同，按需要选一个导入**：
+
+| 文件 | 后端 | 适合什么场景 | 导入顺序 |
+| --- | --- | --- | --- |
+| `dsl/wangchuan-tavern.demo.yaml` | 作者托管的公网后端（`TAVERN_ENGINE_URL` 已填好） | **零配置先玩一把**：只要配一个对话模型，不用起任何服务 | 单独导入即可 |
+| `dsl/wangchuan-tavern.chatflow.yaml` | 你自己的后端（默认 `http://172.17.0.1:9100`） | **正式验收**：完整可复现，seekdb 数据都在你机器上 | 先跑第 1~2 步，再导入 |
+
+> 在线演示后端是作者临时托管的（`https://presence-hierarchy-necessarily-females.trycloudflare.com`），
+> 可能随时下线、数据也是共享的——**验收请用本地那份**，它不依赖任何作者侧服务。
+> 想换成自己的引擎，把两份 DSL 里的环境变量 `TAVERN_ENGINE_URL` 改掉即可。
 
 > 已核对「导出的工作流与实际运行版本一致」：用 Dify 的导出功能把运行中的应用导出，
 > 与仓库里的 `dsl/wangchuan-tavern.chatflow.yaml` **语义完全相同**（节点、连线、环境变量、
@@ -486,7 +499,7 @@ bash scripts/07_doctor.sh
 
 | 题目要求 | 位置 |
 | --- | --- |
-| Dify DSL + 导入顺序 | `dsl/wangchuan-tavern.chatflow.yaml`（单个应用，导入即用） |
+| Dify DSL + 导入顺序 | ① `dsl/wangchuan-tavern.demo.yaml`（零配置体验，连作者公网后端）② `dsl/wangchuan-tavern.chatflow.yaml`（正式验收，连本地后端）——两者只需导入一个 |
 | 运行说明 | 本文 |
 | 验证样例（初始状态/输入/步骤/预期/实际） | `docs/sample-walkthrough.md` + `data/samples/walkthrough.json` |
 | 实际运行结果与证据 | `docs/evidence/`（引擎日志、seekdb 查询、Dify 节点记录与截图） |

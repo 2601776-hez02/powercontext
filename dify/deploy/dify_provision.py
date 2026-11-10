@@ -319,7 +319,7 @@ def cmd_import(args: argparse.Namespace) -> int:
         path = ROOT / path
     content = path.read_text(encoding="utf-8")
     body: dict = {"mode": "yaml-content", "yaml_content": content}
-    app_id = args.app_id or load_state().get("app_id")
+    app_id = "" if getattr(args, "new", False) else (args.app_id or load_state().get("app_id"))
     if app_id:
         body["app_id"] = app_id
     status, payload, _ = request(base, "/apps/imports", method="POST", body=body)
@@ -619,6 +619,7 @@ def main(argv: list[str] | None = None) -> int:
 
     p_import = sub.add_parser("import", help="导入 DSL")
     p_import.add_argument("--file", required=True)
+    p_import.add_argument("--new", action="store_true", help="强制新建应用，不覆盖已有 app_id")
     p_import.add_argument("--app-id", default="")
     p_import.set_defaults(func=cmd_import)
 
