@@ -235,6 +235,20 @@ def main(argv: list[str] | None = None) -> int:
     report.check("sample.reproducible", "10 回合验证样例的判定与文档一致",
                  sequences["自检甲"] == declared, " ".join(v[:4] for v in sequences["自检甲"]))
 
+    # ---- 8b. 跨会话记忆以 seekdb 为主来源（关掉 PowerContext 也成立）
+    reset(GUEST)
+    act("要一壶桂花酿。")
+    act("打烊了，我该走了。")
+    started = call("/session/start", {"guest": GUEST})[1]
+    memory = started.get("tavern_memory") or {}
+    sources = {hit.get("source") for hit in (memory.get("hits") or [])}
+    report.check(
+        "memory.cross_session_seekdb",
+        "跨会话记忆来自 seekdb 的账本（不依赖额外服务）",
+        "seekdb" in sources,
+        f"mode={memory.get('mode')} sources={sorted(sources)}",
+    )
+
     # ---- 9. PowerContext（未启用时跳过，不算失败）
     pc = health.get("powercontext", {})
     if pc.get("enabled"):

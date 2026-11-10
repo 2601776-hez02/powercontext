@@ -173,6 +173,50 @@ def inventory_of(db: SeekDB, guest: str) -> dict[str, int]:
 # ------------------------------------------------------------------ 开场
 
 
+def _legend_hits(db: SeekDB, guest: str, limit: int = 3) -> list[dict[str, Any]]:
+    """上一局留下的「传说」——存在 seekdb 的 tw_legend 里，关掉 PowerContext 也照样在。"""
+
+    rows = db.query(
+        "SELECT session_no, ending, summary FROM tw_legend WHERE guest = %s ORDER BY id DESC LIMIT %s",
+        (guest, limit),
+    )
+    return [
+        {
+            "text": str(row["summary"]),
+            "kind": "tavern-legend",
+            "source": "seekdb",
+            "session_no": int(row["session_no"]),
+            "ending": str(row["ending"]),
+        }
+        for row in rows
+    ]
+
+
+def _tavern_recall(db: SeekDB, pc: PowerContext, guest: str) -> dict[str, Any]:
+    """跨会话记忆：先读 seekdb 的账本，再叠上 PowerContext（如果开着）。
+
+    这样「下一局它还记得你」不依赖额外服务——PowerContext 关掉（POWERCONTEXT_ENABLED=0）
+    或没起，功能仍然成立，只是少了一层长期记忆。
+    """
+
+    hits = _legend_hits(db, guest)
+    mode = "seekdb" if hits else "none"
+    available = bool(hits)
+    pc_hits: list[dict[str, Any]] = []
+    if pc is not None and getattr(pc, "enabled", False):
+        try:
+            recall_result = pc.recall(_pc_scope(db, pc, guest))
+        except Exception:  # pragma: no cover - 额外服务，失败不影响玩法
+            recall_result = {"hits": []}
+        pc_hits = recall_result.get("hits") or []
+        if pc_hits:
+            known = {hit["text"] for hit in hits}
+            hits = hits + [hit for hit in pc_hits if hit.get("text") not in known]
+            available = True
+            mode = "seekdb+powercontext" if len(hits) > len(pc_hits) else "powercontext"
+    return {"available": available, "mode": mode, "hits": hits, "scope_id": _pc_scope(db, pc, guest) if pc else ""}
+
+
 def start(guest: str, *, db: SeekDB, pc: PowerContext, settings: Settings) -> dict[str, Any]:
     player = ensure_player(db, guest, settings)
     world = world_of(db)
@@ -191,7 +235,7 @@ def start(guest: str, *, db: SeekDB, pc: PowerContext, settings: Settings) -> di
 
     scope_id = _pc_scope(db, pc, guest)
     tavern_memory = (
-        pc.recall(scope_id)
+        _tavern_recall(db, pc, guest)
         if resumed
         else {"available": False, "hits": [], "mode": "none", "scope_id": scope_id}
     )
@@ -445,7 +489,7 @@ def act(
 
     tavern_memory: dict[str, Any] = {"available": False, "hits": [], "mode": "none"}
     if turn == 1:
-        tavern_memory = pc.recall(_pc_scope(db, pc, guest))
+        tavern_memory = _tavern_recall(db, pc, guest)
 
     player_after = get_player(db, guest) or player
     affinities_after = affinities_of(db, guest)
@@ -711,10 +755,10 @@ def facts(guest: str, *, db: SeekDB, pc: PowerContext | None = None) -> str:
         else:
             lines.append(f"【{who}守了多年的事】{body}")
 
-    if turn == 1 and pc is not None:
-        recall = pc.recall(_pc_scope(db, pc, guest)) if pc else {"hits": []}
+    if turn == 1:
+        recall = _tavern_recall(db, pc, guest) if pc is not None else {"hits": _legend_hits(db, guest)}
         for hit in (recall.get("hits") or [])[:1]:
-            lines.append(f"【酒馆记得你】{hit.get('text', '')[:120]}")
+            lines.append(f"【酒馆记得你】{str(hit.get('text', ''))[:120]}")
 
     lines.append(
         f"> 铜板 {int(player['coins'])}｜风评 {int(player['reputation'])}"

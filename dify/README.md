@@ -11,7 +11,7 @@
 | 这是什么 | 渡口边的文字酒馆：一句话一回合，三个 NPC 会记住你干过的每件事（偷窃、请酒、讲故事、道歉） |
 | Dify 干什么 | Chatflow 11 节点：拆动作（LLM）→ 是否读心（IF）→ 调引擎 / 读心接口 → 叙事（LLM）→ 拼事实行 → 回答 |
 | seekdb 干什么 | 唯一事实源：账本、好感、物品、事件流水 + NPC 记忆（`FULLTEXT ngram` + `VECTOR HNSW`，RRF 融合） |
-| PowerContext 干什么 | 每局结束把这一夜写成「传说」，下一局开场读回来 |
+| PowerContext 干什么 | 每局结束再写一份「传说」到长期记忆层；关掉也不影响玩法（seekdb 的 `tw_legend` 是主来源） |
 | 怎么跑 | `scripts/02_dify.sh` → `03_engine.sh` → `04_powercontext.sh` → `deploy/dify_provision.py`（登录/装插件/配模型/导入 DSL/发布） |
 | 怎么核 | `bash scripts/06_selfcheck.sh` → [`docs/conformance.md`](docs/conformance.md)：**21 条声明逐条 PASS/FAIL**；`bash scripts/08_audit.sh` 再随机跑 8×40 回合验不变式 |
 | 证据在哪 | [`docs/evidence/`](docs/evidence/)：Dify 编排与对话截图、10 回合叙事、seekdb 执行计划与记忆行 |
@@ -87,7 +87,13 @@
 
 ### 1.4 跨会话：「它还记得你」
 
-一局结束（「打烊了」）时，这一夜会被写成一段「传说」存进 PowerContext；下一局开场，引擎把它检索回来，NPC 的第一句话就会提到你的上一回。
+一局结束（「打烊了」）时，这一夜会被写成一段「传说」：**主存 seekdb 的 `tw_legend` 表**，
+如果开了 PowerContext，再往它那儿写一份（跨进程、按 scope 隔离的长期记忆）。
+下一局开场，引擎先读 seekdb 的账本，再叠上 PowerContext 的召回，NPC 的第一句话就会提到你的上一回。
+
+> **关掉 PowerContext（`POWERCONTEXT_ENABLED=0`）这个功能照样成立**——实测：
+> `mode=seekdb`、开场那句「账本上还有你上一回的记录：…」仍然出现。
+> 也就是说评分要求的「过程可以复现」不依赖任何作者本地才有、评审没交付的服务。
 
 ---
 
@@ -133,9 +139,9 @@
 | --- | --- | --- |
 | **Dify**（必选） | 全部流程编排：开场/回合分支、动作 JSON 解析、工具调用、叙事生成、输出格式 | 没有它就没有「一句话 → 判定 → 小说」这条链；DSL 见 `dsl/` |
 | **seekdb**（选定） | ① 酒馆的**唯一事实源**：状态、事务、账本；② **NPC 记忆的检索**：同一条 SQL 里既用全文索引也用 HNSW 向量索引；③ 事务回滚兜底非法动作 | 记忆要「按人按会话过滤 + 排序 + 只取前几条」，还得能原子更新账本；把记忆放内存或 JSON 里做不到可复现的检索与回滚 |
-| **PowerContext**（额外） | 跨会话的**长期记忆**：每局结束写一条 `tavern-legend`，下局开场按 scope 检索回来 | 它管的是「跨进程、跨会话、多用户 scope 隔离」的记忆，和 seekdb 里「这一局的短期记忆」是两种生命周期，刻意分开 |
+| **PowerContext**（额外、可关） | 跨会话**长期记忆的第二层**：每局结束额外写一条 `tavern-legend`，下局开场按 scope 检索回来；关掉后由 seekdb 的 `tw_legend` 独立承担同一功能 | 它管的是「跨进程、多用户 scope 隔离」的长期记忆，和 seekdb 里「这一局的事实」是两种生命周期；可关是为了让复现不依赖额外服务 |
 
-> 题目允许「seekdb 或 PowerContext 二选一」。这里两个都用，但**分工不重叠**：seekdb 管局内事实，PowerContext 管跨局传说。关掉 PowerContext（`POWERCONTEXT_ENABLED=0`）游戏照样能玩，只是开场不再提你的上一回。
+> 题目允许「seekdb 或 PowerContext 二选一」。这里两个都用，但**分工不重叠**：seekdb 管局内事实与跨局账本，PowerContext 再叠一层跨进程长期记忆。关掉 PowerContext 游戏照样完整——包括「它还记得你」，因为那份账本在 seekdb 里。
 
 ### 2.1 一回合的时序
 

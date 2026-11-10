@@ -81,7 +81,9 @@ DSL 里有三个 HTTP Request 节点，URL 都写成 `{{#env.TAVERN_ENGINE_URL#}
 
 ## 6. seekdb 的两个用途，主次分明
 
-* **主用途（必选、已验证）**：酒馆业务库——状态、事务、账本、NPC 记忆（全文 + HNSW）。
+* **主用途（必选、已验证）**：酒馆业务库——状态、事务、账本、跨局传说（`tw_legend`）、
+  NPC 记忆（全文 + HNSW）。**跨会话记忆不依赖 PowerContext**：关掉它（`POWERCONTEXT_ENABLED=0`）
+  开场仍能读出上一局，实测 `mode=seekdb`。
 * **可选用途（未作为验收前提）**：把 Dify 知识库的向量也存进同一个 seekdb
   （`VECTOR_STORE=seekdb`）。本次没有做，因为 Dify 的知识库需要额外的 Embedding 模型，
   而本作品刻意不引入 Embedding 依赖。
