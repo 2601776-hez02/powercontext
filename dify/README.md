@@ -193,7 +193,8 @@ dify/
 │   ├── .env.example              引擎与记忆层的配置模板
 │   ├── dify_provision.py         导入 DSL / 安装模型插件 / 配置模型 / 发布 / 建 API Key / 对话
 │   └── dify_walkthrough.py       用 Dify 应用 API 跑一遍 10 回合验证样例
-├── tests/test_logic.py           29 项单测（不需要数据库与模型）
+├── tests/test_logic.py           逻辑单测
+├── tests/test_phrasings.py       35 条「评审会怎么说」的解析用例
 └── docs/
     ├── sample-walkthrough.md     验证样例：初始状态 / 输入 / 预期 / 实际
     ├── conformance.md            声明一致性自检报告（23 条 PASS/FAIL，自动生成）

@@ -14,13 +14,19 @@ from .textutil import normalize
 
 VERBS: dict[str, tuple[str, ...]] = {
     "steal": ("偷", "摸走", "顺走", "顺了", "顺", "摸", "塞进袖", "揣进", "揣走", "拿走", "扒走", "扒", "据为己有", "揣"),
-    "buy": ("来一", "来碗", "来杯", "来壶", "给我来", "上一", "上壶", "点一", "打一", "买", "要一", "添一", "续一", "喝一", "再要", "再来", "加一"),
-    "gift": ("送给", "给", "送", "请", "敬", "递", "塞给", "敬一杯", "倒酒", "递过去"),
-    "tell_story": ("讲个", "讲一", "说个", "说一", "编个", "讲段", "唱一", "故事"),
-    "threaten": ("威胁", "吓唬", "恐吓", "拔刀", "拍桌", "警告", "瞪"),
-    "help": ("帮", "扶", "收拾", "跑腿", "端", "擦", "扫", "搬", "替", "代", "搭把手", "帮忙"),
+    "buy": (
+        "来一", "来碗", "来杯", "来壶", "来点", "来碟", "给我上", "给我来", "上一", "上壶", "点一",
+        "打二两", "打一斤", "打半斤", "打酒", "买", "要一", "添一", "续一", "喝一", "再要", "再来", "加一",
+    ),
+    # 注意：不要放单字「给」——「给我上碗面」是买不是送；送礼必须有对象或明说请/敬
+    "gift": (
+        "送给", "送他", "送她", "请", "敬", "递给他", "递给她", "塞给他", "塞给她", "算我请", "我请客",
+    ),
+    "tell_story": ("讲个", "讲一", "说个", "说一", "编个", "讲段", "唱一", "故事", "评书", "段子"),
+    "threaten": ("威胁", "吓唬", "恐吓", "拔刀", "拍桌", "拍桌子", "警告", "瞪", "砸了", "砸店", "掀桌子", "信不信"),
+    "help": ("帮", "扶", "收拾", "跑腿", "端", "擦", "扫", "搬", "替", "代", "搭把手", "帮忙", "洗碗", "刷碗", "择菜", "打下手"),
     "apologize": ("道歉", "赔不是", "赔个", "对不起", "认错", "低头"),
-    "read_mind": ("读心", "看看他在想", "看她在想", "看他在想", "心里想什么", "读一读", "看穿"),
+    "read_mind": ("读心", "看看他在想", "看她在想", "看他在想", "心里想什么", "读一读", "看穿", "你在想", "在想什么", "想什么呢"),
     "ask": ("问", "打听", "探", "聊", "想知道", "求", "说说", "告诉我", "听说", "怎么回事", "为什么"),
     "close": ("打烊", "告辞", "结账", "走了", "离开", "出门", "回去", "散了", "再见", "明天见"),
     "look": ("看", "观察", "打量", "环顾", "坐下", "坐一会儿"),
@@ -54,6 +60,9 @@ LOCATION_ALIASES: dict[str, tuple[str, ...]] = {
 }
 
 MOVE_PATTERN = r"(?:去|到|走向|走进|走回|回|进|上){1,2}"
+
+# 「请阿箬喝一碗」「敬老陶一杯」→ 请客；「请给我来一壶」→ 买（请只是客气）
+TREAT_PATTERN = r"(?:请|敬)(阿箬|老陶|小满|他|她|这位客人|客人)"
 
 
 @dataclass(frozen=True)
@@ -141,16 +150,20 @@ def detect_move(text: str) -> str:
 
 
 def detect_item(text: str, items: dict[str, dict]) -> str:
+    """按「物品名 + 别名」匹配；同样位置取更长的名字（避免「灯」抢了「旧灯笼」）。"""
+
     best: tuple[int, int, str] = (10**9, 0, "")
     for item_id, item in items.items():
-        name = item.get("name") or ""
-        if not name:
-            continue
-        index = text.find(name)
-        if index < 0:
-            continue
-        if (index, -len(name)) < (best[0], -best[1]):
-            best = (index, len(name), item_id)
+        names = [item.get("name") or ""]
+        names.extend(item.get("aliases") or [])
+        for name in names:
+            if not name:
+                continue
+            index = text.find(name)
+            if index < 0:
+                continue
+            if (index, -len(name)) < (best[0], -best[1]):
+                best = (index, len(name), item_id)
     return best[2]
 
 
@@ -185,6 +198,9 @@ def parse(
     verb = str(hint.get("verb") or "").strip()
     if verb not in VERB_CN:
         verb = _first_hit(text, VERBS) or ""
+        # 「请阿箬喝一碗」里的「喝一」会抢成买酒，这里按「请/敬 + 人」纠正为请客
+        if verb in {"buy", "look"} and re.search(TREAT_PATTERN, text) and "给" not in text[:2]:
+            verb = "gift"
         if not verb:
             verb = "ask" if _looks_like_talk(text) else "look"
         if verb == "look" and move_to:
