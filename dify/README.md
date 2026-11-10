@@ -345,6 +345,9 @@ bash scripts/00_bringup.sh
 bash scripts/02_dify.sh
 ```
 
+> 想先看看它会写什么配置、不实际起容器：`DRY_RUN=1 bash scripts/02_dify.sh`
+> （只取源码 + 写 `.env` / `envs/security.env` + 用 `docker compose config` 校验）。
+>
 > **已经有自己的 Dify？** 跳过 02，只补一台库就行——酒馆引擎把 seekdb 当业务库，
 > 没有它应用跑不起来：
 >

@@ -91,6 +91,12 @@ fi
 say "4/5 docker compose up -d（首次会拉取约 3~4 GiB 镜像）"
 cd "$DIFY_DIR"
 docker compose config >/dev/null
+if [ "${DRY_RUN:-0}" = "1" ]; then
+  echo "DRY_RUN=1：只做准备工作（源码 / .env / security.env / compose 校验），不启动容器"
+  echo "目录：$DIFY_DIR"
+  echo "下一步（手工）：cd $DIFY_DIR && docker compose up -d"
+  exit 0
+fi
 docker compose up -d
 
 say "4.1/5 修正数据目录属主（bind mount 由 root 创建，容器内用户写不进去）"
