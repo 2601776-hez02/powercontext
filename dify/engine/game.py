@@ -435,6 +435,15 @@ def act(
         ban_session = session
         outcome.emotion = "沉"
 
+    # 「在场的 NPC 各写一条记忆」：把当时在同一地点、不是当事人的 NPC 标成目击者
+    if not outcome.witnesses:
+        here = located.get("location") if isinstance(located, dict) else location
+        outcome.witnesses = [
+            npc_id
+            for npc_id, npc in npcs.items()
+            if npc_id != action.target and str(npc.get("location") or "") == str(here or "")
+        ]
+
     memories = rules.compose_memories(action, outcome, npcs=npcs, items=items)
     gossip = _gossip(guest, action, outcome, npcs, items, rng, settings, memories)
 

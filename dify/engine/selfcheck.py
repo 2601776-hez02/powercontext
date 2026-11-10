@@ -247,6 +247,18 @@ def main(argv: list[str] | None = None) -> int:
         "有脚步记忆" if walked else f"记忆={[str(r['text'])[:16] for r in step_rows[:3]]}",
     )
 
+    # ---- 3g.「在场的 NPC 各写一条记忆」：买酒时旁边的老陶也要有一条目击
+    reset()
+    act("要一壶桂花酿。")
+    witness_rows = call("/mind", {"guest": GUEST, "npc": "laotao", "limit": 6})[1].get("memories", [])
+    saw = any(int(row["turn"]) >= 1 and row["kind"] == "目击" for row in witness_rows)
+    report.check(
+        "memory.witness",
+        "「在场的 NPC 各写一条记忆」为真：买酒时老陶有一条目击记忆",
+        saw,
+        f"老陶的目击行={[r['kind'] for r in witness_rows if int(r['turn']) >= 1][:3]}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

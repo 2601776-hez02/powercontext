@@ -364,6 +364,12 @@ def compose_memories(
         for npc_id in npcs:
             rows.append(_row(npc_id, "亲历", f"他往{where}去了，脚步我听着呢。", "淡", 3))
 
+    # 旁观者也要有记忆（偷窃/威胁已有更具体的目击行，这里只补其余动作）
+    if action.verb not in {"steal", "threaten"} and outcome.verdict in {"success", "done", "moved", "closed"}:
+        for witness in outcome.witnesses:
+            if witness in npcs and witness != target:
+                rows.append(_row(witness, "目击", f"我瞧见他跟{name}那儿{action.verb_cn}。", "淡", 3))
+
     if outcome.secret:
         rows.append(_row(target, "秘密", outcome.secret, "沉", 10))
 
