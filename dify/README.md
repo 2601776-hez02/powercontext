@@ -633,7 +633,7 @@ pytest tests -q          # 32 passed
 | 交付材料不完整（缺 DSL / 源码 / 运行说明 / 验证样例） | 四样都在：`dsl/`、`engine/`、本 README、`data/samples/` + `docs/evidence/` |
 | **DSL 无法正常执行**（节点缺字段、变量引用错、导出与实际不一致） | 每次改完 DSL 都重新导入 + 发布 + **导出比对**（节点字段 0 差异），见 `docs/evidence/dify/dsl-export.yaml` |
 | 项目无法启动（依赖/SDK 不兼容、没等服务就绪） | `scripts/00_bringup.sh` 会等 `/health` 再自检；`07_doctor.sh` 8 项逐项给修复命令 |
-| **服务无法连通**（Dify 访问错误地址、隧道失效） | 默认环境变量是 `http://172.17.0.1:9100`（Docker 里访问宿主引擎），README §4.3 给了另外两种：`http://<宿主IP>:9100`、`http://tavern-engine:9100`；公网 demo 版另有一份 DSL |
+| **服务无法连通**（Dify 访问错误地址、隧道失效） | 默认 `http://172.17.0.1:9100`（Docker 访问宿主引擎）；**从 Dify 容器内实测**直连与经 ssrf_proxy 都是 200，见 [`docs/evidence/connectivity.md`](docs/evidence/connectivity.md)。另给 `http://<宿主IP>:9100`、`http://host.docker.internal:9100`（macOS/Windows）；公网 demo 版另有一份 DSL |
 | 记忆没有实际复用（写死示例、读了不用） | 每条记忆都来自玩家真实输入，**原话另存在 `tw_memory.raw`**（判题可直接查：`SELECT raw FROM tw_memory WHERE guest='你的名字'`），并在「读心」「目击」和【酒馆记得你】里被读回来；32 项单测 + 54 条自检覆盖 |
 | 没有真实组件接入（mock / SQLite / JSON 冒充） | 真 seekdb（`tw_memory` 有 `FULLTEXT ngram` + `VECTOR HNSW` 两个索引，执行计划见 `docs/evidence/seekdb-explain.json`）+ 真 PowerContext（HTTP 接入，可关） |
 | 验证范围不足（只有 YAML 检查 / 单测 / 截图） | 真实 Dify 1.19 + 真 seekdb + 真 PowerContext 跑完 10 回合；`scripts/05_verify.sh` 逐条断言 |
