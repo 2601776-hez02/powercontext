@@ -14,7 +14,7 @@
 | **核对「预期 vs 实际」** | `bash scripts/05_verify.sh` → [`docs/evidence/walkthrough-check.md`](docs/evidence/walkthrough-check.md) | **11 步样例逐条断言** |
 | **看「三次逐客」长什么样** | [`docs/evidence/dify/08-ban.png`](docs/evidence/dify/08-ban.png)（连发三次拍桌子 → 判定被逐出 + 结局逐客） | 规矩三当场兑现 |
 | **看「第一回合」长什么样** | [`docs/evidence/dify/07-first-turn.png`](docs/evidence/dify/07-first-turn.png)（全新名字、第 1 回合、判定行 + 杯边话 + 三条旁白） | 一眼看到这游戏怎么玩 |
-| **看「第二天」长什么样** | [`docs/evidence/dify/06-day-after.png`](docs/evidence/dify/06-day-after.png)（打烊 → 结局 → 第二天 → 铜板不够被拒） | 一屏看到四件事 |
+| **看「第二天」长什么样** | [`docs/evidence/dify/06-day-after.png`](docs/evidence/dify/06-day-after.png)（打烊 → 结局「过客」→ 第二天 →【酒馆记得你】上一回的账本） | 老陶：「认得，认得。雾一散，人就都回来了。」 |
 | **看三个人怎么说同一句话** | [`docs/evidence/three-voices.md`](docs/evidence/three-voices.md)（同一句「你是谁」问三位 NPC） | 口吻、动作、正文都不同 |
 | **看第一句话会发生什么** | [`docs/evidence/first-messages.md`](docs/evidence/first-messages.md)（十种开场白的真实回答） | 十句都不冷场 |
 | **核对 seekdb 真的在干活** | [`docs/evidence/seekdb-explain.json`](docs/evidence/seekdb-explain.json)、[`engine-transcript.json`](docs/evidence/engine-transcript.json)、[`dify/`](docs/evidence/dify/) 截图 | 执行计划、账本流水、节点记录 |
