@@ -285,6 +285,24 @@ def main(argv: list[str] | None = None) -> int:
         f"地方={'忘川酒馆' in where} 规矩={'规矩三条' in rules_facts}",
     )
 
+    # ---- 3j. 就算模型把「你好」解析成 look，引擎也要让人接话
+    reset()
+    greeting = call(
+        "/act/form",
+        form={
+            "guest": GUEST,
+            "utterance": "你好",
+            "parsed": '{"verb":"look","target":"aruo","item":"","tone":"plain"}',
+            "session": SESSION,
+        },
+    )[1]
+    report.check(
+        "first_message.greeting",
+        "模型把「你好」解析成 look 时，引擎仍按寒暄回应（不是「打量」）",
+        "来了" in str((greeting.get("outcome") or {}).get("detail", "")),
+        str((greeting.get("outcome") or {}).get("detail", ""))[:40],
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

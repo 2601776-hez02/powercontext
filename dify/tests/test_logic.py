@@ -329,3 +329,32 @@ def test_hint_wins_over_keywords_but_is_validated():
 def test_dice_does_not_depend_on_player_name():
     action = make_action("把玉佩塞进袖子。", verb="steal", target="aruo", item="jade_pei")
     assert rules.seeded_rng(3, action).random() == rules.seeded_rng(3, action).random()
+
+
+# ------------------------------------------------- 模型的解析不能盖过引擎的判断
+
+
+def test_greeting_overrides_look_hint():
+    """LLM 把「你好」解析成 look 时，引擎要改成 ask（否则回「你把屋里扫了一圈」）。"""
+
+    action = parse(
+        "你好",
+        items=ITEMS,
+        npcs=NPCS,
+        default_target="aruo",
+        hint={"verb": "look", "target": "aruo", "item": "", "tone": "plain"},
+    )
+    assert action.verb == "ask"
+
+
+def test_real_look_keeps_look_hint():
+    """但真正的「四处看看」不能被改成 ask。"""
+
+    action = parse(
+        "四处看看",
+        items=ITEMS,
+        npcs=NPCS,
+        default_target="aruo",
+        hint={"verb": "look", "target": "aruo", "item": "", "tone": "plain"},
+    )
+    assert action.verb == "look"

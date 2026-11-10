@@ -182,6 +182,29 @@ def _looks_like_talk(text: str) -> bool:
     return any(marker in text for marker in TALK_MARKERS) or text.endswith(("的", "了"))
 
 
+LOOK_WORDS = ("看", "打量", "观察", "环顾", "扫了一眼", "坐下", "坐一会")
+
+# 明显在看/坐的句子，不要被强行改成 ask
+EXPECT_LOOK = ("看看", "看一眼", "打量", "观察", "环顾", "扫了一眼", "坐下来", "坐一会", "到处看")
+
+
+def coerce_hint(utterance: str, hint: dict[str, Any] | None) -> dict[str, Any] | None:
+    """模型的解析不能盖过引擎对「寒暄/提问」的判断。
+
+    LLM 有时把「你好」「在吗」「这是什么地方」也解析成 look，那样引擎就会照着
+    「你把屋里扫了一圈」回一句，看起来像应用不理人。这里做一层兜底：
+    句子里有明显提问/寒暄标记、又没有「看/打量/坐」这类词时，把 verb 改成 ask。
+    """
+
+    if not hint or str(hint.get("verb") or "") != "look":
+        return hint
+    if any(word in utterance for word in EXPECT_LOOK):
+        return hint
+    if _looks_like_talk(utterance):
+        return {**hint, "verb": "ask"}
+    return hint
+
+
 def parse(
     utterance: str,
     *,
@@ -193,7 +216,7 @@ def parse(
     """把一句话解析成动作；``hint`` 是 Dify LLM 给出的结构化字段。"""
 
     text = normalize(utterance)
-    hint = hint or {}
+    hint = coerce_hint(text, hint) or {}
 
     # 「去后厨，替小满把碗端出来」既是挪步也是帮忙：记下目的地，动作照判。
     move_to = detect_move(text)
