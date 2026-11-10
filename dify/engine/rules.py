@@ -51,12 +51,13 @@ class Outcome:
     gain_item: str = ""
     lose_item: str = ""
     secret: str = ""
+    confide: str = ""
     roll: float = 0.0
     reason: str = ""
 
     @property
     def ok(self) -> bool:
-        return self.verdict in {"success", "done", "moved", "closed", "observed"}
+        return self.verdict in {"success", "done", "moved", "closed", "observed", "banned"}
 
     def as_dict(self) -> dict:
         return {
@@ -71,6 +72,7 @@ class Outcome:
             "gain_item": self.gain_item,
             "lose_item": self.lose_item,
             "secret": self.secret,
+            "confide": self.confide,
             "roll": round(self.roll, 3),
             "reason": self.reason,
         }
@@ -345,6 +347,13 @@ def compose_memories(
 
     if outcome.secret:
         rows.append(_row(target, "秘密", outcome.secret, "沉", 10))
+
+    if outcome.confide:
+        rows.append(_row(target, "杯边话", f"他请我喝了一碗，我就多说了句：「{outcome.confide}」。", "松", 8))
+
+    if outcome.verdict == "banned":
+        for npc_id in npcs:
+            rows.append(_row(npc_id, "逐客", "他第三次被记账，门是我上的。这个人不能再进门。", "决", 10))
 
     return rows
 

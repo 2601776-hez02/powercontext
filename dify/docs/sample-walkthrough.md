@@ -39,6 +39,24 @@ bash scripts/05_verify.sh               # 清洗玩家 → 回放整局 → 落�
 > 靠窗的老陶正在说一段渡口旧事，醒木停在半空；后厨传来一声「哎呀」——那是小满。
 > 这里的规矩只有三条：一杯酒换一个秘密；酒钱不能欠；动手的人，记账上。
 
+### 1.1 开场声明的三条规矩怎么实现
+
+| 规矩 | 实现落点 | 本剧本里的验证点 |
+| --- | --- | --- |
+| 一杯酒换一个秘密 | `game.act` 里判断「首次请他喝过酒」→ 把 `tw_npc.confide` 作为 `outcome.confide` 交给叙事；同一个人只说一次 | 第 2 回合（第一次买酒） |
+| 酒钱不能欠 | `rules.resolve` 的 `buy` 分支：`coins < price` 直接 `refused / no_coins`，账本不会出现负数 | 见 §5 的补测 |
+| 动手的人，记账上 | 偷窃失败 / 威胁 `wanted +1`；`wanted` 到 3 当场 `banned` + 结局「逐客」，之后再说话只得到「门在你身后合上了」 | 见 §5 的补测 |
+
+每一回合的回答末尾还有一行**引擎写的事实行**（不是模型写的）：
+
+```
+【第 4 回合 · 判定：失败】阿箬的手先按住了你的手腕：「客人，这个不卖。」
+> 铜板 17｜风评 0｜被记账 1｜大堂
+```
+
+它来自 `POST /facts/form`：读最近一条 `tw_event` + 当前 `tw_player`，拼成纯文本，Dify 的 Answer
+节点直接把它接在叙事后面——所以「成功还是失败、铜板剩多少」不可能被模型改写。
+
 ---
 
 ## 2. 逐回合
@@ -63,7 +81,9 @@ bash scripts/05_verify.sh               # 清洗玩家 → 回放整局 → 落�
 * 输入：`要一壶桂花酿，铜板放在柜台上。`
 * 判定：`success / paid` —— 铜板 −3（20→17），好感 +5（40→45），风评 +2
 * 记忆写入：阿箬「他要了桂花酿，铜板数得很慢，一个也没少给。」
-* **意外之喜**：骰子命中 40% 的传闻概率 → 老陶记下一条传闻
+* **规矩一兑现**：这是第一次请她喝酒 → `outcome.confide` 非空，阿箬压低声音说
+  「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」（再买一壶就不会重复）
+* **意外之喜**：骰子命中传闻概率 → 老陶记下一条传闻
   「渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。」（老陶当时不在场，是听说的）
 
 ### 第 3 回合
@@ -106,8 +126,9 @@ bash scripts/05_verify.sh               # 清洗玩家 → 回放整局 → 落�
 ### 第 8 回合 · 读心
 
 * 输入：`读心，看看小满现在在想什么。`
-* 判定：`observed / mind_read`，响应里额外带一个 `mind` 字段
-* 实际（`POST /mind`，Dify 分支走 `/mind/form`，直接读 seekdb）：
+* 判定：Dify 的 IF 节点命中 → 走 `/mind/form` 分支；引擎用 `read_mind()` 记一回合（`tw_event` 写一条
+  `read_mind/observed`，回合号 +1），再返回记忆行
+* 实际（直接读 seekdb，`docs/evidence/seekdb-mind-*.json`）：
 
   | turn | kind | 记忆 |
   | --- | --- | --- |
@@ -162,9 +183,10 @@ bash scripts/05_verify.sh               # 清洗玩家 → 回放整局 → 落�
 | --- | --- | --- |
 | 表结构与索引 | `GET /debug/tables` 或 `.venv/bin/python -m engine.cli sql "SHOW CREATE TABLE tw_memory"` | `FULLTEXT KEY ft_body (body) WITH PARSER ngram`、`VECTOR KEY vk_embedding ... TYPE=HNSW` |
 | 向量检索走索引 | `GET /debug/explain`（`docs/evidence/seekdb-explain.json`） | `VECTOR INDEX ADAPTIVE SCAN (PRE-FILTER)` |
-| NPC 记忆的真实行 | `POST /mind`（`docs/evidence/seekdb-mind-aruo.json`） | 12 条记忆，turn 0~11，含「秘密」「传闻」「目击」 |
+| NPC 记忆的真实行 | `POST /mind`（`docs/evidence/seekdb-mind-aruo.json`） | 12 条记忆，turn 0~11，含「秘密」「传闻」「目击」「杯边话」 |
 | 账本 | `.venv/bin/python -m engine.cli ledger --guest 无名客` | 每回合的 verb/verdict/detail |
 | 每局结局 | `tw_legend` 表 | `ending` + `summary` |
+| 声明规矩的可执行验证 | 下方 §5.1 的三条命令 | 「一杯酒一个秘密 / 酒钱不能欠 / 三次逐客」 |
 
 ---
 
@@ -178,6 +200,32 @@ curl -s -X POST http://127.0.0.1:9100/admin/reset -H 'Content-Type: application/
 
 PowerContext 里的传说不会跟着清（它本来就是跨会话的）；想让「它忘了你」，
 换一个 guest 名字（例如 `无名客2`）即可——scope 是 `wangchuan-tavern/<guest>`。
+
+### 5.1 单独验三条规矩（各 10 秒）
+
+```bash
+# 规矩一：第一次买酒换一句杯边话，第二次不再重复
+curl -s -X POST localhost:9100/admin/reset -H 'Content-Type: application/json' -d '{"guest":"验规客"}'
+curl -s -X POST localhost:9100/act -H 'Content-Type: application/json' \
+  -d '{"guest":"验规客","utterance":"要一壶桂花酿。"}' | python3 -c 'import json,sys;print(json.load(sys.stdin)["outcome"]["confide"])'
+curl -s -X POST localhost:9100/act -H 'Content-Type: application/json' \
+  -d '{"guest":"验规客","utterance":"再要一壶桂花酿。"}' | python3 -c 'import json,sys;print(repr(json.load(sys.stdin)["outcome"]["confide"]))'   # 空
+
+# 规矩二：铜板花光后点单会被拒，账本不会变负
+curl -s -X POST localhost:9100/admin/reset -H 'Content-Type: application/json' -d '{"guest":"验规客2"}'
+for i in $(seq 1 6); do curl -s -o /dev/null -X POST localhost:9100/act -H 'Content-Type: application/json' \
+  -d '{"guest":"验规客2","utterance":"要一碗阳春面。"}'; done
+curl -s -X POST localhost:9100/act -H 'Content-Type: application/json' \
+  -d '{"guest":"验规客2","utterance":"再要一碗阳春面。"}' | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d["outcome"]["reason"], d["player"]["coins"])'
+
+# 规矩三：连偷三次 → 当场逐出，之后再说话只会被挡在门外
+curl -s -X POST localhost:9100/admin/reset -H 'Content-Type: application/json' -d '{"guest":"验规客3"}'
+for i in 1 2 3; do curl -s -X POST localhost:9100/act -H 'Content-Type: application/json' \
+  -d '{"guest":"验规客3","utterance":"把柜台上的玉佩塞进袖子。"}' \
+  | python3 -c 'import json,sys;d=json.load(sys.stdin);print(d["outcome"]["verdict"], d["player"]["wanted"], (d.get("ending") or {}).get("ending"))'; done
+curl -s -X POST localhost:9100/act -H 'Content-Type: application/json' \
+  -d '{"guest":"验规客3","utterance":"我再喝一碗。"}' | python3 -c 'import json,sys;print(json.load(sys.stdin)["outcome"]["reason"])'
+```
 
 ---
 

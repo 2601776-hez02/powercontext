@@ -45,11 +45,11 @@ def ensure_seed(db: SeekDB, seed: dict[str, Any]) -> dict[str, int]:
         )
         for npc in seed["npcs"]:
             cursor.execute(
-                "INSERT INTO tw_npc (npc_id, name, title, voice, secret_text, secret_threshold, attention, location) "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s) "
+                "INSERT INTO tw_npc (npc_id, name, title, voice, secret_text, secret_threshold, attention, location, confide) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s) "
                 "ON DUPLICATE KEY UPDATE name=VALUES(name), title=VALUES(title), voice=VALUES(voice), "
                 "secret_text=VALUES(secret_text), secret_threshold=VALUES(secret_threshold), "
-                "attention=VALUES(attention), location=VALUES(location)",
+                "attention=VALUES(attention), location=VALUES(location), confide=VALUES(confide)",
                 (
                     npc["id"],
                     npc["name"],
@@ -59,6 +59,7 @@ def ensure_seed(db: SeekDB, seed: dict[str, Any]) -> dict[str, int]:
                     int(npc["secret_threshold"]),
                     int(npc["attention"]),
                     npc.get("location", "大堂"),
+                    npc.get("confide", ""),
                 ),
             )
             stats["npcs"] += 1
@@ -249,328 +250,31 @@ def act(
     affinities = affinities_of(db, guest)
     inventory = inventory_of(db, guest)
 
-    location = player["location"]
-    action = parse(
-        utterance,
-        items=items,
-        npcs=npcs,
-        default_target=_default_target(npcs, location),
-        hint=hint,
-    )
-    # 「去后厨，替小满把碗端出来」：先挪步，再在这个新地点里判定动作
-    move_to = action.location if action.location and action.verb != "move" else ""
-    located = {**player, "location": move_to} if move_to else player
-    if move_to:
-        action = parse(
-            utterance,
-            items=items,
-            npcs=npcs,
-            default_target=_default_target(npcs, move_to),
-            hint=hint,
-        )
-
-    turn = int(player["turn"]) + 1
-    rng = rules.seeded_rng(guest, turn, action)
-    outcome = rules.resolve(
-        action,
-        player=located,
-        npcs=npcs,
-        affinities=affinities,
-        inventory=inventory,
-        items=items,
-        rng=rng,
-    )
-    if move_to and outcome.verdict != "moved":
-        outcome.detail = f"你走到{move_to}。{outcome.detail}"
-
-    # 好感越过门槛 → 说出秘密（同一条秘密只解锁一次）
-    if outcome.affinity_delta and not outcome.secret:
-        target = action.target
-        if target in npcs:
-            after = int(affinities.get(target, 40)) + int(outcome.affinity_delta.get(target, 0))
-            threshold = int(npcs[target]["secret_threshold"])
-            if after >= threshold and int(affinities.get(target, 40)) < threshold:
-                if not _secret_known(db, guest, target):
-                    outcome.secret = npcs[target]["secret_text"]
-                    outcome.emotion = "沉"
-
-    memories = rules.compose_memories(action, outcome, npcs=npcs, items=items)
-    gossip = _gossip(guest, action, outcome, npcs, items, rng, settings, memories)
-
-    # ---- 落库：一次事务，动作、账本、记忆一起生效（失败即整体回滚）
-    with db.transaction() as cursor:
-        cursor.execute(
-            "INSERT INTO tw_event (guest, turn, verb, target_npc, item_id, verdict, utterance, detail, created_at) "
-            "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, NOW())",
-            (
-                guest,
-                turn,
-                action.verb,
-                action.target,
-                action.item,
-                outcome.verdict,
-                utterance[:512],
-                outcome.detail[:512],
-            ),
-        )
-        new_location = action.location if outcome.verdict == "moved" else (move_to or location)
-        cursor.execute(
-            "UPDATE tw_player SET coins = %s, reputation = %s, wanted = %s, turn = %s, location = %s, "
-            "status = %s, updated_at = NOW() WHERE guest = %s",
-            (
-                max(0, int(player["coins"]) + outcome.coin_delta),
-                max(0, int(player["reputation"]) + outcome.reputation_delta),
-                max(0, int(player["wanted"]) + outcome.wanted_delta),
-                turn,
-                new_location,
-                "closed" if outcome.verdict == "closed" else "open",
-                guest,
-            ),
-        )
-        for npc_id, delta in outcome.affinity_delta.items():
-            cursor.execute(
-                "INSERT INTO tw_affinity (guest, npc_id, value, updated_at) VALUES (%s, %s, %s, NOW()) "
-                "ON DUPLICATE KEY UPDATE value = GREATEST(0, LEAST(100, value + %s)), updated_at = NOW()",
-                (guest, npc_id, max(0, min(100, 40 + delta)), delta),
-            )
-        if outcome.gain_item:
-            cursor.execute(
-                "INSERT INTO tw_inventory (guest, item_id, qty) VALUES (%s, %s, 1) "
-                "ON DUPLICATE KEY UPDATE qty = qty + 1",
-                (guest, outcome.gain_item),
-            )
-        if outcome.lose_item:
-            cursor.execute(
-                "UPDATE tw_inventory SET qty = GREATEST(0, qty - 1) WHERE guest = %s AND item_id = %s",
-                (guest, outcome.lose_item),
-            )
-        for memory in memories + gossip:
-            cursor.execute(
-                "INSERT INTO tw_memory (guest, npc, turn, kind, body, emotion, importance, source, embedding, created_at) "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())",
-                (
-                    guest,
-                    memory["npc"],
-                    turn,
-                    memory["kind"],
-                    memory["body"][:1000],
-                    memory["emotion"],
-                    int(memory["importance"]),
-                    memory["source"],
-                    _literal(memory["body"]),
-                ),
-            )
-
-    # ---- 检索：此刻每个在场 NPC 会想起什么
-    query = _recall_query(action, utterance, items, npcs)
-    present = [npc_id for npc_id, npc in npcs.items() if npc["location"] == new_location]
-    ambient_mode = action.verb in {"look", "move"}
-    recalls = []
-    for npc_id in present:
-        if ambient_mode:
-            hits = recall.ambient(db, guest=guest, npc=npc_id, limit=1)
-        else:
-            hits = recall.recall(
-                db,
-                guest=guest,
-                npc=npc_id,
-                query=query,
-                limit=settings.recall_per_npc,
-                current_turn=turn,
-            )
-        for hit in hits:
-            hit["npc_name"] = npcs[npc_id]["name"]
-            recalls.append(hit)
-    recalls.sort(key=lambda row: (row["relevant"], row["score"]), reverse=True)
-
-    tavern_memory: dict[str, Any] = {"available": False, "hits": [], "mode": "none"}
-    if turn == 1:
-        tavern_memory = pc.recall(_pc_scope(db, pc, guest))
-
-    player_after = get_player(db, guest) or player
-    affinities_after = affinities_of(db, guest)
-    target_npc = npcs.get(action.target)
-    target_view = None
-    if target_npc is not None:
-        affinity = int(affinities_after.get(action.target, 40))
-        mood, _ = rules.mood_of(affinity)
-        target_view = {
-            "id": action.target,
-            "name": target_npc["name"],
-            "mood": mood,
-            "affinity": affinity,
-            "voice": target_npc["voice"],
-        }
-
-    mind_view: dict[str, Any] | None = None
-    if action.verb == "read_mind" and action.target in npcs:
-        mind_view = {
-            "npc": npcs[action.target]["name"],
-            "memories": [
-                {"turn": int(row["turn"]), "kind": row["kind"], "source": row["source"], "text": row["body"]}
-                for row in recall.mind_of(db, guest=guest, npc=action.target, limit=4)
-            ],
-        }
-
-    ending = None
-    status = player_after["status"]
-    if outcome.verdict == "closed":
-        ending = close_session(guest, db=db, pc=pc, settings=settings, write_legend=True)
-
-    return {
-        "ok": True,
-        "guest": guest,
-        "turn": turn,
-        "location": new_location,
-        "utterance": utterance,
-        "action": action.as_dict() | {
-            "item_name": items.get(action.item, {}).get("name", ""),
-            "target_name": target_npc["name"] if target_npc else "",
-        },
-        "outcome": outcome.as_dict(),
-        "deltas": {
-            "coins": int(player_after["coins"]) - int(player["coins"]),
-            "reputation": int(player_after["reputation"]) - int(player["reputation"]),
-            "wanted": int(player_after["wanted"]) - int(player["wanted"]),
-        },
-        "player": {
-            "coins": int(player_after["coins"]),
-            "reputation": int(player_after["reputation"]),
-            "wanted": int(player_after["wanted"]),
-            "status": status,
-        },
-        "npc": target_view,
-        "present": [
-            {
-                "id": npc_id,
-                "name": npcs[npc_id]["name"],
-                "mood": rules.mood_of(int(affinities_after.get(npc_id, 40)))[0],
-            }
-            for npc_id in present
-        ],
-        "recalls": recalls,
-        "memory_written": [
-            {"npc": npcs[row["npc"]]["name"] if row["npc"] in npcs else row["npc"], "kind": row["kind"], "text": row["body"]}
-            for row in memories + gossip
-        ],
-        "status_line": f"> 铜板 {int(player_after['coins'])}｜风评 {int(player_after['reputation'])}｜被记账 {int(player_after['wanted'])}｜{new_location}",
-        "tavern_memory": tavern_memory,
-        "mind": mind_view,
-        "hints": _hints(db, guest, npcs, new_location),
-        "ending": ending,
-    }
-
-
-def close_session(
-    guest: str,
-    *,
-    db: SeekDB,
-    pc: PowerContext,
-    settings: Settings,
-    write_legend: bool = True,
-) -> dict[str, Any]:
-    """打烊：算结局，把这一局写成「传说」存进 PowerContext 与本地账本。"""
-
-    player = get_player(db, guest) or ensure_player(db, guest, settings)
-    npcs = npcs_of(db)
-    affinities = affinities_of(db, guest)
-    ending, epitaph = rules.ending_of(player)
-    events = db.query(
-        "SELECT turn, verb, verdict, detail FROM tw_event WHERE guest = %s ORDER BY turn",
-        (guest,),
-    )
-    memory_rows = db.query(
-        "SELECT npc, kind, body FROM tw_memory WHERE guest = %s ORDER BY importance DESC, id DESC LIMIT 6",
-        (guest,),
-    )
-    deeds = "；".join(_deed(row, short=True) for row in events[-3:]) or "什么也没做成"
-    mood_text = "，".join(
-        f"{npcs[npc_id]['name']}{rules.mood_of(int(value))[0]}" for npc_id, value in sorted(affinities.items()) if npc_id in npcs
-    )
-    # 传说要短：一句结局 + 一句账 + 两三件具体事 + 一条最重的记忆（开场白会引用它）
-    summary = (
-        f"第 {int(player['turn'])} 回合，{guest} 在忘川酒馆的结局是「{ending}」；"
-        f"铜板剩 {int(player['coins'])}，风评 {int(player['reputation'])}，被记账 {int(player['wanted'])} 次。"
-        f"最近做的事：{deeds}。"
-        f"此刻 NPC 的态度：{mood_text}。"
-        f"酒馆记得最清楚的一句：{memory_rows[0]['body'] if memory_rows else '什么也没记住'}"
-    )[:900]
-    session_no = int(db.scalar("SELECT COUNT(*) FROM tw_legend WHERE guest = %s", (guest,)) or 0) + 1
-    resumed = int(player["turn"]) > 0
-
+    # 已经被逐出（或自己打烊走了）的人，先推门再说
     if player["status"] == "closed":
-        with db.transaction() as cursor:
-            cursor.execute(
-                "UPDATE tw_player SET status = 'open', location = '大堂', updated_at = NOW() WHERE guest = %s",
-                (guest,),
-            )
-        player = get_player(db, guest) or player
-
-    scope_id = _pc_scope(db, pc, guest)
-    tavern_memory = (
-        pc.recall(scope_id)
-        if resumed
-        else {"available": False, "hits": [], "mode": "none", "scope_id": scope_id}
-    )
-
-    npc_view = []
-    for npc_id, npc in npcs.items():
-        affinity = int(affinities.get(npc_id, 40))
-        mood, mood_line = rules.mood_of(affinity)
-        npc_view.append(
-            {
-                "id": npc_id,
-                "name": npc["name"],
-                "title": npc["title"],
-                "mood": mood,
-                "mood_line": mood_line,
-                "affinity": affinity,
-                "voice": npc["voice"],
-                "location": npc["location"],
-            }
-        )
-
-    scene = world.get("opening", "")
-    if resumed and tavern_memory.get("hits"):
-        recalled = "；".join(hit["text"] for hit in tavern_memory["hits"][:2])
-        scene = f"{scene}\n（账本上还有你上一回的记录：{recalled}）"
-
-    return {
-        "ok": True,
-        "guest": guest,
-        "session_no": session_no,
-        "resumed": resumed,
-        "turn": int(player["turn"]),
-        "coins": int(player["coins"]),
-        "reputation": int(player["reputation"]),
-        "wanted": int(player["wanted"]),
-        "location": player["location"],
-        "status": player["status"],
-        "scene": scene,
-        "world": {"name": world.get("name", "忘川酒馆"), "tagline": world.get("tagline", ""), "rules": world.get("rules", [])},
-        "npcs": npc_view,
-        "tavern_memory": tavern_memory,
-        "hints": _hints(db, guest, npcs, player["location"]),
-    }
-
-
-# ------------------------------------------------------------------ 一回合
-
-
-def act(
-    guest: str,
-    utterance: str,
-    *,
-    db: SeekDB,
-    pc: PowerContext,
-    settings: Settings,
-    hint: dict[str, Any] | None = None,
-) -> dict[str, Any]:
-    player = ensure_player(db, guest, settings)
-    npcs = npcs_of(db)
-    items = items_of(db)
-    affinities = affinities_of(db, guest)
-    inventory = inventory_of(db, guest)
+        return {
+            "ok": False,
+            "guest": guest,
+            "turn": int(player["turn"]),
+            "utterance": utterance,
+            "outcome": {
+                "verdict": "turned_away",
+                "reason": "tavern_closed",
+                "detail": "门在你身后合上了。今晚酒馆不留客——换个名字，或者等明天再来。",
+            },
+            "player": {
+                "coins": int(player["coins"]),
+                "reputation": int(player["reputation"]),
+                "wanted": int(player["wanted"]),
+                "status": player["status"],
+            },
+            "status_line": (
+                f"> 铜板 {int(player['coins'])}｜风评 {int(player['reputation'])}"
+                f"｜被记账 {int(player['wanted'])}｜门外"
+            ),
+            "recalls": [],
+            "hints": ["换个「你的名字」就能重新开局，酒馆会把新名字当新客人。"],
+        }
 
     location = player["location"]
     action = parse(
@@ -617,6 +321,23 @@ def act(
                     outcome.secret = npcs[target]["secret_text"]
                     outcome.emotion = "沉"
 
+    # 规矩一「一杯酒换一个秘密」：第一次请他喝酒（或当着他的面买酒），他会松一句杯边话
+    if (
+        outcome.verdict == "success"
+        and action.target in npcs
+        and action.verb in {"buy", "gift"}
+        and _counts_as_drink(action, items)
+        and not _confided(db, guest, action.target)
+    ):
+        outcome.confide = str(npcs[action.target].get("confide") or "")
+
+    # 规矩三「动手的人记账上」：记到第三次当场逐出
+    wanted_after = max(0, int(player["wanted"]) + int(outcome.wanted_delta))
+    if wanted_after >= 3 and action.verb in {"steal", "threaten"} and outcome.verdict != "refused":
+        outcome.verdict = "banned"
+        outcome.detail = "阿箬把门板上了：「记到第三次，酒馆不留你。」门外的雾一下子涌进来。"
+        outcome.emotion = "沉"
+
     memories = rules.compose_memories(action, outcome, npcs=npcs, items=items)
     gossip = _gossip(guest, action, outcome, npcs, items, rng, settings, memories)
 
@@ -646,7 +367,7 @@ def act(
                 max(0, int(player["wanted"]) + outcome.wanted_delta),
                 turn,
                 new_location,
-                "closed" if outcome.verdict == "closed" else "open",
+                "closed" if outcome.verdict in {"closed", "banned"} else "open",
                 guest,
             ),
         )
@@ -737,7 +458,7 @@ def act(
 
     ending = None
     status = player_after["status"]
-    if outcome.verdict == "closed":
+    if outcome.verdict in {"closed", "banned"}:
         ending = close_session(guest, db=db, pc=pc, settings=settings, write_legend=True)
 
     return {
@@ -837,6 +558,62 @@ def close_session(
     }
 
 
+def read_mind(
+    guest: str,
+    npc_id: str,
+    *,
+    db: SeekDB,
+    settings: Settings,
+    limit: int = 4,
+    text: str = "",
+) -> dict[str, Any]:
+    """读心：像一回合那样记账（turn + 事件 + 对方的一条记忆），再返回记忆行。"""
+
+    player = ensure_player(db, guest, settings)
+    result = mind(guest, npc_id, db=db, limit=limit, text=text)
+    if not result.get("ok"):
+        return result
+    npc = result["npc"]
+    turn = int(player["turn"]) + 1
+    with db.transaction() as cursor:
+        cursor.execute(
+            "INSERT INTO tw_event (guest, turn, verb, target_npc, item_id, verdict, utterance, detail, created_at) "
+            "VALUES (%s, %s, 'read_mind', %s, '', 'observed', %s, %s, NOW())",
+            (
+                guest,
+                turn,
+                npc["id"],
+                (text or "读心")[:512],
+                f"你盯着{npc['name']}的眼睛，看见了一些不该看见的。"[:512],
+            ),
+        )
+        cursor.execute(
+            "UPDATE tw_player SET turn = %s, updated_at = NOW() WHERE guest = %s",
+            (turn, guest),
+        )
+        cursor.execute(
+            "INSERT INTO tw_memory (guest, npc, turn, kind, body, emotion, importance, source, embedding, created_at) "
+            "VALUES (%s, %s, %s, '亲历', %s, '疑', 4, '亲历', %s, NOW())",
+            (
+                guest,
+                npc["id"],
+                turn,
+                f"他盯着我的眼睛看了很久，像是要看穿我。",
+                _literal(f"他盯着我的眼睛看了很久，像是要看穿我。"),
+            ),
+        )
+    row = get_player(db, guest)
+    status_line = ""
+    if row:
+        status_line = (
+            f"> 铜板 {int(row['coins'])}｜风评 {int(row['reputation'])}"
+            f"｜被记账 {int(row['wanted'])}｜{row['location']}"
+        )
+    result["status_line"] = status_line
+    result["turn"] = turn
+    return result
+
+
 def mind(guest: str, npc_id: str, *, db: SeekDB, limit: int = 8, text: str = "") -> dict[str, Any]:
     from .parse import detect_npc
 
@@ -871,6 +648,33 @@ def mind(guest: str, npc_id: str, *, db: SeekDB, limit: int = 8, text: str = "")
             for row in rows
         ],
     }
+
+
+def facts(guest: str, *, db: SeekDB) -> str:
+    """最近一回合的事实行（纯文本）。Dify 的 Answer 节点直接拼它，模型改不了。"""
+
+    event = db.one(
+        "SELECT turn, verb, verdict, detail FROM tw_event WHERE guest = %s ORDER BY turn DESC, id DESC LIMIT 1",
+        (guest,),
+    )
+    player = get_player(db, guest)
+    if not event or not player:
+        return ""
+    verdict_cn = {
+        "success": "成功",
+        "fail": "失败",
+        "refused": "不成",
+        "observed": "只是看着",
+        "moved": "挪了步",
+        "closed": "打烊了",
+        "banned": "被逐出",
+        "turned_away": "门外",
+    }.get(str(event["verdict"]), str(event["verdict"]))
+    return (
+        f"【第 {int(event['turn'])} 回合 · 判定：{verdict_cn}】{event['detail']}\n"
+        f"> 铜板 {int(player['coins'])}｜风评 {int(player['reputation'])}"
+        f"｜被记账 {int(player['wanted'])}｜{player['location']}"
+    )
 
 
 def ledger(guest: str, *, db: SeekDB, limit: int = 10) -> dict[str, Any]:
@@ -927,6 +731,24 @@ def _pc_scope(db: SeekDB, pc: PowerContext, guest: str) -> str:
             (key, scope_id),
         )
     return scope_id
+
+
+def _counts_as_drink(action: Action, items: dict[str, dict]) -> bool:
+    """「请他喝酒」的判定：买的是酒类，或者用请客的方式给的酒。"""
+
+    item = items.get(action.item)
+    if item is None:
+        # 没有指定具体酒水时，「请一碗」仍然算请酒
+        return action.verb == "gift"
+    return item.get("kind") == "酒"
+
+
+def _confided(db: SeekDB, guest: str, npc_id: str) -> bool:
+    count = db.scalar(
+        "SELECT COUNT(*) FROM tw_memory WHERE guest = %s AND npc = %s AND kind = '杯边话'",
+        (guest, npc_id),
+    )
+    return int(count or 0) > 0
 
 
 def _secret_known(db: SeekDB, guest: str, npc_id: str) -> bool:

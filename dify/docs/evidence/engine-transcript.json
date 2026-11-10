@@ -40,6 +40,7 @@
         "gain_item": "",
         "lose_item": "",
         "secret": "",
+        "confide": "",
         "roll": 0.0,
         "reason": "look"
       },
@@ -139,9 +140,9 @@
             ]
           },
           {
-            "text": "无名客 在忘川酒馆待了 10 回合，结局「常客」；铜板剩 18，风评 10，被记账 1 次。做过的事：第5回合·你低了头。阿箬盯着你看了半晌，才说：「下不为例。」；第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+            "text": "无名客 在忘川酒馆待了 11 回合，结局「常客」；铜板剩 15，风评 12，被记账 1 次。做过的事：第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。；第11回合·阿箬收下 3 个铜板，把桂花酿推到你面前。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
             "kind": "tavern-legend",
-            "artifact_id": "art_013d4edd9efa468c9f2a5ee433c3a5a7",
+            "artifact_id": "art_9f6f7c49d37e41b099713a9f6af68803",
             "revision": 1,
             "score": 0.0159,
             "matched_by": [
@@ -194,6 +195,7 @@
         "gain_item": "",
         "lose_item": "",
         "secret": "",
+        "confide": "客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。",
         "roll": 0.0,
         "reason": "paid"
       },
@@ -229,7 +231,26 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000037,
+          "memory_id": 1000142,
+          "npc": "aruo",
+          "turn": 2,
+          "kind": "杯边话",
+          "text": "他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。",
+          "emotion": "松",
+          "source": "亲历",
+          "importance": 8,
+          "score": 0.1546,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.027,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000141,
           "npc": "aruo",
           "turn": 2,
           "kind": "亲历",
@@ -267,26 +288,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 3,
-          "npc": "aruo",
-          "turn": 0,
-          "kind": "旧事",
-          "text": "柜台第三块砖有点松，脚一踩会响；那是她自己撬开又按回去的。",
-          "emotion": "静",
-          "source": "设定",
-          "importance": 6,
-          "score": 0.0329,
-          "channels": [
-            "fts",
-            "vector"
-          ],
-          "vector_similarity": 0.034,
-          "relevant": true,
-          "origin": "world",
-          "npc_name": "阿箬"
-        },
-        {
-          "memory_id": 1000038,
+          "memory_id": 1000143,
           "npc": "laotao",
           "turn": 2,
           "kind": "传闻",
@@ -347,6 +349,11 @@
           "text": "他要了桂花酿，铜板数得很慢，一个也没少给。"
         },
         {
+          "npc": "阿箬",
+          "kind": "杯边话",
+          "text": "他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。"
+        },
+        {
           "npc": "老陶",
           "kind": "传闻",
           "text": "渡口那边都在传：无名客喝过一碗酒。这话是从阿箬那儿漏出来的。"
@@ -399,6 +406,7 @@
         "gain_item": "",
         "lose_item": "",
         "secret": "",
+        "confide": "",
         "roll": 0.0,
         "reason": "asked"
       },
@@ -434,6 +442,25 @@
       ],
       "recalls": [
         {
+          "memory_id": 1000142,
+          "npc": "aruo",
+          "turn": 2,
+          "kind": "杯边话",
+          "text": "他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。",
+          "emotion": "松",
+          "source": "亲历",
+          "importance": 8,
+          "score": 0.1028,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.2324,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
           "memory_id": 1,
           "npc": "aruo",
           "turn": 0,
@@ -442,7 +469,7 @@
           "emotion": "淡",
           "source": "设定",
           "importance": 9,
-          "score": 0.0366,
+          "score": 0.036,
           "channels": [
             "fts",
             "vector"
@@ -461,7 +488,7 @@
           "emotion": "淡",
           "source": "设定",
           "importance": 7,
-          "score": 0.0356,
+          "score": 0.035,
           "channels": [
             "fts",
             "vector"
@@ -472,26 +499,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 3,
-          "npc": "aruo",
-          "turn": 0,
-          "kind": "旧事",
-          "text": "柜台第三块砖有点松，脚一踩会响；那是她自己撬开又按回去的。",
-          "emotion": "静",
-          "source": "设定",
-          "importance": 6,
-          "score": 0.0336,
-          "channels": [
-            "fts",
-            "vector"
-          ],
-          "vector_similarity": 0.0461,
-          "relevant": true,
-          "origin": "world",
-          "npc_name": "阿箬"
-        },
-        {
-          "memory_id": 1000038,
+          "memory_id": 1000143,
           "npc": "laotao",
           "turn": 2,
           "kind": "传闻",
@@ -597,6 +605,7 @@
         "gain_item": "",
         "lose_item": "",
         "secret": "",
+        "confide": "",
         "roll": 0.941,
         "reason": "caught"
       },
@@ -632,7 +641,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000039,
+          "memory_id": 1000144,
           "npc": "aruo",
           "turn": 4,
           "kind": "亲历",
@@ -646,6 +655,25 @@
             "vector"
           ],
           "vector_similarity": 0.1569,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000142,
+          "npc": "aruo",
+          "turn": 2,
+          "kind": "杯边话",
+          "text": "他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。",
+          "emotion": "松",
+          "source": "亲历",
+          "importance": 8,
+          "score": 0.0709,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.0309,
           "relevant": true,
           "origin": "personal",
           "npc_name": "阿箬"
@@ -670,26 +698,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 3,
-          "npc": "aruo",
-          "turn": 0,
-          "kind": "旧事",
-          "text": "柜台第三块砖有点松，脚一踩会响；那是她自己撬开又按回去的。",
-          "emotion": "静",
-          "source": "设定",
-          "importance": 6,
-          "score": 0.0329,
-          "channels": [
-            "fts",
-            "vector"
-          ],
-          "vector_similarity": 0.038,
-          "relevant": true,
-          "origin": "world",
-          "npc_name": "阿箬"
-        },
-        {
-          "memory_id": 1000040,
+          "memory_id": 1000145,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -707,7 +716,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1000038,
+          "memory_id": 1000143,
           "npc": "laotao",
           "turn": 2,
           "kind": "传闻",
@@ -809,6 +818,7 @@
         "gain_item": "",
         "lose_item": "",
         "secret": "",
+        "confide": "",
         "roll": 0.0,
         "reason": "apologized"
       },
@@ -844,7 +854,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000042,
+          "memory_id": 1000147,
           "npc": "aruo",
           "turn": 5,
           "kind": "亲历",
@@ -862,7 +872,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000039,
+          "memory_id": 1000144,
           "npc": "aruo",
           "turn": 4,
           "kind": "亲历",
@@ -880,7 +890,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000040,
+          "memory_id": 1000145,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -898,7 +908,25 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1000038,
+          "memory_id": 1000142,
+          "npc": "aruo",
+          "turn": 2,
+          "kind": "杯边话",
+          "text": "他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。",
+          "emotion": "松",
+          "source": "亲历",
+          "importance": 8,
+          "score": 0.033,
+          "channels": [
+            "vector"
+          ],
+          "vector_similarity": -0.0009,
+          "relevant": false,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000143,
           "npc": "laotao",
           "turn": 2,
           "kind": "传闻",
@@ -914,24 +942,6 @@
           "relevant": false,
           "origin": "personal",
           "npc_name": "老陶"
-        },
-        {
-          "memory_id": 1000037,
-          "npc": "aruo",
-          "turn": 2,
-          "kind": "亲历",
-          "text": "他要了桂花酿，铜板数得很慢，一个也没少给。",
-          "emotion": "淡",
-          "source": "亲历",
-          "importance": 4,
-          "score": 0.0321,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": 0.0,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "阿箬"
         },
         {
           "memory_id": 5,
@@ -1013,6 +1023,7 @@
         "gain_item": "",
         "lose_item": "",
         "secret": "",
+        "confide": "",
         "roll": 0.0,
         "reason": "story_told"
       },
@@ -1048,7 +1059,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000044,
+          "memory_id": 1000149,
           "npc": "laotao",
           "turn": 6,
           "kind": "亲历",
@@ -1067,7 +1078,26 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1000037,
+          "memory_id": 1000142,
+          "npc": "aruo",
+          "turn": 2,
+          "kind": "杯边话",
+          "text": "他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。",
+          "emotion": "松",
+          "source": "亲历",
+          "importance": 8,
+          "score": 0.0474,
+          "channels": [
+            "fts",
+            "vector"
+          ],
+          "vector_similarity": 0.0774,
+          "relevant": true,
+          "origin": "personal",
+          "npc_name": "阿箬"
+        },
+        {
+          "memory_id": 1000141,
           "npc": "aruo",
           "turn": 2,
           "kind": "亲历",
@@ -1075,7 +1105,7 @@
           "emotion": "淡",
           "source": "亲历",
           "importance": 4,
-          "score": 0.0426,
+          "score": 0.0421,
           "channels": [
             "fts",
             "vector"
@@ -1094,7 +1124,7 @@
           "emotion": "淡",
           "source": "设定",
           "importance": 9,
-          "score": 0.0378,
+          "score": 0.0375,
           "channels": [
             "fts",
             "vector"
@@ -1105,25 +1135,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000042,
-          "npc": "aruo",
-          "turn": 5,
-          "kind": "亲历",
-          "text": "他低了头说上次是他不对。我认这句话。",
-          "emotion": "缓",
-          "source": "亲历",
-          "importance": 5,
-          "score": 0.0779,
-          "channels": [
-            "vector"
-          ],
-          "vector_similarity": -0.0011,
-          "relevant": false,
-          "origin": "personal",
-          "npc_name": "阿箬"
-        },
-        {
-          "memory_id": 1000040,
+          "memory_id": 1000145,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -1141,7 +1153,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1000038,
+          "memory_id": 1000143,
           "npc": "laotao",
           "turn": 2,
           "kind": "传闻",
@@ -1215,6 +1227,7 @@
         "gain_item": "",
         "lose_item": "",
         "secret": "后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。",
+        "confide": "",
         "roll": 0.0,
         "reason": "helped"
       },
@@ -1245,7 +1258,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000046,
+          "memory_id": 1000151,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "秘密",
@@ -1264,7 +1277,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1000045,
+          "memory_id": 1000150,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "亲历",
@@ -1361,6 +1374,7 @@
         "gain_item": "",
         "lose_item": "",
         "secret": "",
+        "confide": "",
         "roll": 0.0,
         "reason": "mind_read"
       },
@@ -1391,7 +1405,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000046,
+          "memory_id": 1000151,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "秘密",
@@ -1409,7 +1423,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1000045,
+          "memory_id": 1000150,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "亲历",
@@ -1427,7 +1441,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1000043,
+          "memory_id": 1000148,
           "npc": "xiaoman",
           "turn": 5,
           "kind": "传闻",
@@ -1523,6 +1537,7 @@
         "gain_item": "",
         "lose_item": "",
         "secret": "",
+        "confide": "",
         "roll": 0.0,
         "reason": "paid"
       },
@@ -1558,7 +1573,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000047,
+          "memory_id": 1000152,
           "npc": "aruo",
           "turn": 9,
           "kind": "亲历",
@@ -1577,7 +1592,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000044,
+          "memory_id": 1000149,
           "npc": "laotao",
           "turn": 6,
           "kind": "亲历",
@@ -1595,7 +1610,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1000042,
+          "memory_id": 1000147,
           "npc": "aruo",
           "turn": 5,
           "kind": "亲历",
@@ -1603,7 +1618,7 @@
           "emotion": "缓",
           "source": "亲历",
           "importance": 5,
-          "score": 0.023,
+          "score": 0.0229,
           "channels": [
             "vector"
           ],
@@ -1613,7 +1628,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000039,
+          "memory_id": 1000144,
           "npc": "aruo",
           "turn": 4,
           "kind": "亲历",
@@ -1621,7 +1636,7 @@
           "emotion": "恼",
           "source": "亲历",
           "importance": 9,
-          "score": 0.0203,
+          "score": 0.0201,
           "channels": [
             "vector"
           ],
@@ -1631,7 +1646,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000040,
+          "memory_id": 1000145,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -1726,6 +1741,7 @@
         "gain_item": "",
         "lose_item": "",
         "secret": "",
+        "confide": "",
         "roll": 0.0,
         "reason": "closed"
       },
@@ -1761,7 +1777,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1000047,
+          "memory_id": 1000152,
           "npc": "aruo",
           "turn": 9,
           "kind": "亲历",
@@ -1769,7 +1785,7 @@
           "emotion": "淡",
           "source": "亲历",
           "importance": 4,
-          "score": 0.0776,
+          "score": 0.0774,
           "channels": [
             "vector"
           ],
@@ -1779,7 +1795,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000044,
+          "memory_id": 1000149,
           "npc": "laotao",
           "turn": 6,
           "kind": "亲历",
@@ -1797,7 +1813,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1000042,
+          "memory_id": 1000147,
           "npc": "aruo",
           "turn": 5,
           "kind": "亲历",
@@ -1805,7 +1821,7 @@
           "emotion": "缓",
           "source": "亲历",
           "importance": 5,
-          "score": 0.0185,
+          "score": 0.0183,
           "channels": [
             "vector"
           ],
@@ -1815,7 +1831,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000039,
+          "memory_id": 1000144,
           "npc": "aruo",
           "turn": 4,
           "kind": "亲历",
@@ -1823,7 +1839,7 @@
           "emotion": "恼",
           "source": "亲历",
           "importance": 9,
-          "score": 0.0168,
+          "score": 0.0166,
           "channels": [
             "vector"
           ],
@@ -1833,7 +1849,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1000040,
+          "memory_id": 1000145,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -1887,12 +1903,12 @@
         "ending": "常客",
         "epitaph": "阿箬在账本上你的名字后面画了个圈——她说，圈是留给会再来的人的。",
         "session_no": 1,
-        "summary": "无名客 在忘川酒馆待了 10 回合，结局「常客」；铜板剩 18，风评 10，被记账 1 次。做过的事：第5回合·你低了头。阿箬盯着你看了半晌，才说：「下不为例。」；第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+        "summary": "无名客 在忘川酒馆待了 10 回合，结局「常客」；铜板剩 18，风评 10，被记账 1 次。做过的事：第5回合·你低了头。阿箬盯着你看了半晌，才说：「下不为例。」；第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。",
         "powercontext": {
           "available": true,
           "written": true,
           "status": 200,
-          "artifact_id": "art_6534e4a1724140bf97aae82eec49fe21",
+          "artifact_id": "art_179eb152712e47babee86bab3ef1d011",
           "revision": 1,
           "kind": "tavern-legend",
           "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
@@ -1929,9 +1945,9 @@
           ]
         },
         {
-          "text": "无名客 在忘川酒馆待了 10 回合，结局「常客」；铜板剩 18，风评 10，被记账 1 次。做过的事：第5回合·你低了头。阿箬盯着你看了半晌，才说：「下不为例。」；第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
+          "text": "无名客 在忘川酒馆待了 11 回合，结局「常客」；铜板剩 15，风评 12，被记账 1 次。做过的事：第6回合·老陶把醒木一按，听完了，喉咙里滚出一声笑：「这故事值两枚铜板。」；第7回合·你走到后厨。你搭了把手，小满愣了一下，把活计分了一半给你。；第8回合·你盯着小满的眼睛，看见了一些不该看见的。；第9回合·你走到大堂。阿箬收下 2 个铜板，把烧刀子推到你面前。；第10回合·你把碗推开，起身。；第11回合·阿箬收下 3 个铜板，把桂花酿推到你面前。。此刻 NPC 态度：阿箬冷淡，老陶平和，小满平和。酒馆记住：后厨那只三花猫从来不叫，是小满在替它答话——她已经替它答了三年。；他把手伸向玉佩，被我按住了。这笔账我记着。；他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。",
           "kind": "tavern-legend",
-          "artifact_id": "art_013d4edd9efa468c9f2a5ee433c3a5a7",
+          "artifact_id": "art_9f6f7c49d37e41b099713a9f6af68803",
           "revision": 1,
           "score": 0.0159,
           "matched_by": [

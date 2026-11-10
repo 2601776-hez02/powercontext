@@ -11,6 +11,7 @@ from contextlib import asynccontextmanager
 from typing import Any
 
 from fastapi import FastAPI, Form, HTTPException
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 
 from . import game, recall
@@ -169,7 +170,17 @@ def mind_form(
     limit: int = Form(6),
 ) -> dict[str, Any]:
     _guard()
-    return game.mind(guest, npc, db=DB, limit=max(1, min(int(limit), 20)), text=q)
+    return game.read_mind(guest, npc, db=DB, settings=SETTINGS, limit=max(1, min(int(limit), 20)), text=q)
+
+
+@app.post("/facts/form")
+def facts_form(guest: str = Form("无名客")):
+    """最近一回合的事实线（纯文本）。Dify 的 Answer 节点把它拼在叙事后面，
+    这样"成功/失败 + 状态行"是引擎写的，模型改不了。"""
+
+    _guard()
+    text = game.facts(guest, db=DB)
+    return PlainTextResponse(text + ("\n" if text else ""))
 
 
 @app.post("/session/close")
@@ -191,7 +202,7 @@ def mind_post(body: MindBody) -> dict[str, Any]:
     """读心（POST 版）：Dify 的 HTTP 节点用它，中文参数不用自己拼 URL。"""
 
     _guard()
-    return game.mind(body.guest, body.npc, db=DB, limit=body.limit, text=body.q)
+    return game.read_mind(body.guest, body.npc, db=DB, settings=SETTINGS, limit=body.limit, text=body.q)
 
 
 @app.get("/ledger")

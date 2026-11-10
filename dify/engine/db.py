@@ -45,6 +45,7 @@ DDL: tuple[str, ...] = (
         secret_threshold INT NOT NULL,
         attention INT NOT NULL DEFAULT 50,
         location VARCHAR(32) NOT NULL DEFAULT '大堂',
+        confide VARCHAR(512) NOT NULL DEFAULT '',
         PRIMARY KEY (npc_id)
     ) DEFAULT CHARSET = utf8mb4
     """,
@@ -126,7 +127,13 @@ DDL: tuple[str, ...] = (
     """,
 )
 
-SCHEMA_VERSION = "1"
+SCHEMA_VERSION = "2"
+
+# 老库升级：ADD COLUMN 在 MySQL/seekdb 里没有 IF NOT EXISTS，重复执行会报 1060，
+# 这里逐条尝试并忽略「列已存在」。
+MIGRATIONS: tuple[str, ...] = (
+    "ALTER TABLE tw_npc ADD COLUMN confide VARCHAR(512) NOT NULL DEFAULT ''",
+)
 
 
 class SeekDBError(RuntimeError):
@@ -196,6 +203,13 @@ class SeekDB:
                 for statement in DDL:
                     cursor.execute(statement)
                 self.conn.commit()
+                for statement in MIGRATIONS:
+                    try:
+                        cursor.execute(statement)
+                        self.conn.commit()
+                    except Exception:
+                        # 列已存在（1060）或该版本不支持，忽略即可
+                        self.conn.rollback()
             finally:
                 cursor.close()
             self._schema_ready = True

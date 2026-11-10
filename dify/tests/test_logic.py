@@ -247,3 +247,41 @@ def test_rrf_fusion_rewards_agreement():
     # 两路都命中的 id=2 得分更高
     assert merged[2]["rrf"] > merged[1]["rrf"]
     assert merged[2]["channels"] == ["vector", "fts"]
+
+
+# ------------------------------------------------- 声明规矩：记忆落库的形状
+
+
+def test_confide_memory_is_written_once_per_npc():
+    action = make_action("要一壶桂花酿。", verb="buy", target="aruo", item="wine_guihua")
+    outcome = rules.resolve(
+        action,
+        player=PLAYER,
+        npcs=NPCS,
+        affinities={"aruo": 40},
+        inventory={},
+        items=ITEMS,
+        rng=random.Random(7),
+    )
+    outcome.confide = "灯底下压着东西。"
+    rows = rules.compose_memories(action, outcome, npcs=NPCS, items=ITEMS)
+    kinds = [row["kind"] for row in rows]
+    assert "杯边话" in kinds
+    assert any("灯底下压着东西" in row["body"] for row in rows)
+
+
+def test_banned_memory_is_written_for_every_npc():
+    action = make_action("把玉佩塞进袖子。", verb="steal", target="aruo", item="jade_pei")
+    outcome = rules.Outcome("banned", "阿箬把门板上了。", emotion="沉")
+    rows = rules.compose_memories(action, outcome, npcs=NPCS, items=ITEMS)
+    assert {row["npc"] for row in rows} == set(NPCS)
+    assert all(row["kind"] == "逐客" for row in rows)
+
+
+def test_drink_detection():
+    from engine.game import _counts_as_drink
+
+    wine = parse("要一壶桂花酿。", items=ITEMS, npcs=NPCS, default_target="aruo", hint={"verb": "buy", "target": "aruo", "item": "wine_guihua"})
+    noodle = parse("要一碗阳春面。", items=ITEMS, npcs=NPCS, default_target="aruo", hint={"verb": "buy", "target": "aruo", "item": "soup_noodle"})
+    assert _counts_as_drink(wine, ITEMS) is True
+    assert _counts_as_drink(noodle, ITEMS) is False

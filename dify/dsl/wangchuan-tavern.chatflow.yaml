@@ -130,22 +130,44 @@ workflow:
         isInIteration: false
         isInLoop: false
         sourceType: llm
-        targetType: answer
-      id: e-mind-answer
-      source: llm_mind
+        targetType: http-request
+      id: e-llm_narrate-http_facts
+      source: llm_narrate
       sourceHandle: source
-      target: answer_mind
+      target: http_facts
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: answer
+      id: e-http_facts-answer_turn
+      source: http_facts
+      sourceHandle: source
+      target: answer_turn
       targetHandle: target
       type: custom
     - data:
         isInIteration: false
         isInLoop: false
         sourceType: llm
-        targetType: answer
-      id: e-act-answer
-      source: llm_narrate
+        targetType: http-request
+      id: e-llm_mind-http_mfacts
+      source: llm_mind
       sourceHandle: source
-      target: answer_turn
+      target: http_mfacts
+      targetHandle: target
+      type: custom
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: answer
+      id: e-http_mfacts-answer_mind
+      source: http_mfacts
+      sourceHandle: source
+      target: answer_mind
       targetHandle: target
       type: custom
     nodes:
@@ -348,7 +370,7 @@ workflow:
 
             铁律：只能用给出的记忆，不许编造；不要出现「数据库」「系统」「JSON」这类词；不要替玩家做决定。
 
-            最后单独一行原样复制 JSON 里的 status_line。
+            不要写状态行（程序会自动附上判定与状态）。
 
 
             【记忆行】
@@ -378,7 +400,10 @@ workflow:
       type: custom
       width: 244
     - data:
-        answer: '{{#llm_mind.text#}}'
+        answer: '{{#llm_mind.text#}}
+
+
+          {{#http_mfacts.body#}}'
         desc: ''
         selected: false
         title: 回答（读心）
@@ -387,10 +412,10 @@ workflow:
       height: 103
       id: answer_mind
       position:
-        x: 1490
+        x: 1780
         y: 180
       positionAbsolute:
-        x: 1490
+        x: 1780
         y: 180
       selected: false
       sourcePosition: right
@@ -471,9 +496,11 @@ workflow:
 
             6. 若 outcome.secret 非空，让对应 NPC 把这句话说出来——这是他守了多年的事，语气要重。
 
+            6b. 若 outcome.confide 非空，让对应 NPC 压低声音说出这句话——这是「一杯酒换一个秘密」，只对请他喝过酒的人说。
+
             7. 若 tavern_memory.hits 非空，开头用一句 NPC 的话点出「你上次来过」。
 
-            8. 正文 120~240 字，最后单独一行**原样复制** JSON 里的 status_line（不要自己算数）
+            8. 正文 120~240 字。**不要写状态行**（程序会在你的文字后面自动附上「判定 + 铜板/风评/被记账」，不要抢）。
 
 
             【输出格式】
@@ -482,7 +509,7 @@ workflow:
 
             第二段：NPC 台词，用「阿箬：……」这种格式。
 
-            最后一行：原样复制 status_line。
+            最后不要再写状态行。
 
 
             【引擎数据】
@@ -512,7 +539,10 @@ workflow:
       type: custom
       width: 244
     - data:
-        answer: '{{#llm_narrate.text#}}'
+        answer: '{{#llm_narrate.text#}}
+
+
+          {{#http_facts.body#}}'
         desc: ''
         selected: false
         title: 回答
@@ -521,11 +551,91 @@ workflow:
       height: 103
       id: answer_turn
       position:
+        x: 1780
+        y: 480
+      positionAbsolute:
+        x: 1780
+        y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          type: x-www-form-urlencoded
+          data:
+          - key: guest
+            type: text
+            value: '{{#start.guest#}}'
+        desc: 取这一回合的事实行（成功/失败 + 状态），由引擎写、模型改不了
+        headers: ''
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: 事实行 /facts
+        type: http-request
+        url: http://172.17.0.1:9100/facts/form
+        variables: []
+      height: 98
+      id: http_facts
+      position:
         x: 1490
         y: 480
       positionAbsolute:
         x: 1490
         y: 480
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          type: x-www-form-urlencoded
+          data:
+          - key: guest
+            type: text
+            value: '{{#start.guest#}}'
+        desc: 取这一回合的事实行（成功/失败 + 状态），由引擎写、模型改不了
+        headers: ''
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 2
+          retry_enabled: true
+          retry_interval: 1000
+        selected: false
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: 事实行（读心）
+        type: http-request
+        url: http://172.17.0.1:9100/facts/form
+        variables: []
+      height: 98
+      id: http_mfacts
+      position:
+        x: 1490
+        y: 180
+      positionAbsolute:
+        x: 1490
+        y: 180
       selected: false
       sourcePosition: right
       targetPosition: left
