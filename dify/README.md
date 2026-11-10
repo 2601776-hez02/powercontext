@@ -618,6 +618,24 @@ pytest tests -q          # 32 passed
 
 ---
 
+## 8.5 自查：对照官方 FAQ 里的「判题失败原因」
+
+赛事 FAQ 列了 Dify 赛题判题失败的几类原因。逐条对着本作品的提交材料自查：
+
+| FAQ 列出的失败原因 | 本作品的情况 |
+| --- | --- |
+| 提交信息错误（分支/commit 未推送、填反） | 分支 `2026-competition-ecosystem`，commit 与远端一致；仓库公开可读 |
+| 交付材料不完整（缺 DSL / 源码 / 运行说明 / 验证样例） | 四样都在：`dsl/`、`engine/`、本 README、`data/samples/` + `docs/evidence/` |
+| **DSL 无法正常执行**（节点缺字段、变量引用错、导出与实际不一致） | 每次改完 DSL 都重新导入 + 发布 + **导出比对**（节点字段 0 差异），见 `docs/evidence/dify/dsl-export.yaml` |
+| 项目无法启动（依赖/SDK 不兼容、没等服务就绪） | `scripts/00_bringup.sh` 会等 `/health` 再自检；`07_doctor.sh` 8 项逐项给修复命令 |
+| **服务无法连通**（Dify 访问错误地址、隧道失效） | 默认环境变量是 `http://172.17.0.1:9100`（Docker 里访问宿主引擎），README §4.3 给了另外两种：`http://<宿主IP>:9100`、`http://tavern-engine:9100`；公网 demo 版另有一份 DSL |
+| 记忆没有实际复用（写死示例、读了不用） | 每条记忆都来自玩家真实输入（`tw_memory.body`），并在「读心」「目击」和【酒馆记得你】里被读回来；32 项单测 + 54 条自检覆盖 |
+| 没有真实组件接入（mock / SQLite / JSON 冒充） | 真 seekdb（`tw_memory` 有 `FULLTEXT ngram` + `VECTOR HNSW` 两个索引，执行计划见 `docs/evidence/seekdb-explain.json`）+ 真 PowerContext（HTTP 接入，可关） |
+| 验证范围不足（只有 YAML 检查 / 单测 / 截图） | 真实 Dify 1.19 + 真 seekdb + 真 PowerContext 跑完 10 回合；`scripts/05_verify.sh` 逐条断言 |
+
+> 官方题面第 2.2 节还明确写着：「只要 seekdb 实际承担所声明的数据存储职责…**无需在工作流中额外增加直接调用 seekdb 的节点**」，
+> 以及「基础验收…也不以节点数量、插件数量或同时使用两种指定技术作为质量判断依据」。本作品的 11 节点编排 + 引擎分工正对应这一条。
+
 ## 9. 已知限制
 
 见 [`docs/limitations.md`](docs/limitations.md)。三条要点：
