@@ -371,6 +371,147 @@ def cmd_apikey(args: argparse.Namespace) -> int:
     return 0
 
 
+"""给 `dify_provision.py doctor` 用的实现片段（由 patch 脚本注入）。
+
+依次检查：Dify 起来了没 / 初始化没 / 登录没 / 模型插件装没 / 模型配没 /
+引擎通不通 / seekdb 表建没 / 应用导入了没 / API Key 能不能真的跑一回合。
+每一步失败都直接给「怎么修」，免得评审卡在某个环节只能猜。
+"""
+
+def _probe_chat(base: str, api_key: str, guest: str = "体检客") -> tuple[bool, str]:
+    """真的打一回合：能拿到带「【第 N 回合 · 判定：」的回答才算通过。"""
+
+    import json as _json
+    import urllib.error as _urlerror
+    import urllib.request as _urlrequest
+
+    body = _json.dumps(
+        {"inputs": {"guest": guest}, "query": "要一壶桂花酿。", "response_mode": "blocking", "user": "doctor"}
+    ).encode("utf-8")
+    req = _urlrequest.Request(
+        base.rstrip("/") + "/v1/chat-messages",
+        data=body,
+        method="POST",
+        headers={"Content-Type": "application/json", "Authorization": f"Bearer {api_key}"},
+    )
+    try:
+        with _urlrequest.urlopen(req, timeout=180) as response:
+            payload = _json.loads(response.read().decode("utf-8"))
+    except _urlerror.HTTPError as exc:
+        return False, f"HTTP {exc.code}: {exc.read().decode('utf-8', 'replace')[:160]}"
+    except Exception as exc:  # pragma: no cover - 网络诊断
+        return False, f"{type(exc).__name__}: {exc}"
+    answer = str(payload.get("answer") or "")
+    ok = "【第" in answer and "判定" in answer
+    return ok, answer.replace("\n", " ")[:120]
+
+
+def cmd_doctor(args) -> int:  # noqa: PLR0912, PLR0915
+    base = args.base
+    rows: list[tuple[str, str, str]] = []
+
+    def add(name: str, ok: bool, detail: str, fix: str = "") -> None:
+        mark = "PASS" if ok else "FAIL"
+        rows.append((name, mark, detail if ok else (detail + (f"｜修：{fix}" if fix else ""))))
+
+    # 1. Dify 起来了吗
+    try:
+        status, init, _ = request(base, "/init", auth=False)
+        up = status == 200
+        detail = f"{status} {str(init)[:60]}"
+    except Exception as exc:  # pragma: no cover
+        up, detail = False, f"{type(exc).__name__}: {exc}"
+    add("Dify 可达", up, detail, "docker compose up -d（见 scripts/02_dify.sh）")
+    if not up:
+        return _print_doctor(rows)
+
+    # 2. 初始化了吗
+    init_text = json.dumps(init, ensure_ascii=False) if isinstance(init, dict) else str(init)
+    initialized = "finished" in init_text
+    add("Dify 已初始化", initialized, str(init)[:80], "浏览器打开 :8080 走一遍初始化向导")
+
+    # 3. 登录了吗
+    state = load_state()
+    cookies = state.get("cookies") or {}
+    add(
+        "命令行已登录",
+        bool(cookies.get("access_token") or cookies.get("csrf_token")),
+        f"cookie 数={len(cookies)}",
+        "python3 deploy/dify_provision.py login",
+    )
+
+    # 4. 模型插件
+    plugins_text = ""
+    try:
+        status, payload, _ = request(base, "/workspaces/current/plugin/list")
+        plugins_text = json.dumps(payload, ensure_ascii=False)
+    except Exception:  # pragma: no cover
+        pass
+    plugin_ok = "openai_api_compatible" in plugins_text
+    add("模型插件已装", plugin_ok, "openai_api_compatible" if plugin_ok else "未找到",
+        "python3 deploy/dify_provision.py plugin")
+
+    # 5. 模型
+    models_text = ""
+    try:
+        status, payload, _ = request(base, "/workspaces/current/models/model-types/llm")
+        models_text = json.dumps(payload, ensure_ascii=False)
+    except Exception:  # pragma: no cover
+        pass
+    model_ok = args.model in models_text
+    add(f"模型 {args.model} 已配", model_ok, args.model if model_ok else "未找到",
+        f"python3 deploy/dify_provision.py credentials --provider {args.provider} "
+        f"--model {args.model} --json '{{\"endpoint_url\":\"…\",\"api_key\":\"…\",\"mode\":\"chat\"}}'")
+
+    # 6. 引擎
+    engine = args.engine.rstrip("/")
+    engine_ok, engine_detail = False, "未响应"
+    try:
+        with urllib.request.urlopen(engine + "/health", timeout=10) as response:
+            health = json.loads(response.read().decode("utf-8"))
+        engine_ok = bool(health.get("ok"))
+        tables = (health.get("seekdb") or {}).get("tables") or {}
+        engine_detail = f"seekdb={((health.get('seekdb') or {}).get('version'))} 表={len(tables)} powercontext={'on' if ((health.get('powercontext') or {}).get('enabled')) else 'off'}"
+    except Exception as exc:  # pragma: no cover
+        engine_detail = f"{type(exc).__name__}: {exc}"
+    add("引擎可达并已建表", engine_ok, engine_detail, "bash scripts/03_engine.sh")
+
+    # 7. 应用 + 发布
+    app_id = state.get("app_id") or ""
+    app_ok, app_detail = False, "未导入"
+    if app_id:
+        try:
+            status, app, _ = request(base, f"/apps/{app_id}")
+            app_ok = status == 200 and bool(app.get("id"))
+            app_detail = f"{app.get('name')}（{app_id[:8]}…）"
+        except Exception as exc:  # pragma: no cover
+            app_detail = f"{type(exc).__name__}: {exc}"
+    add("DSL 已导入", app_ok, app_detail,
+        "python3 deploy/dify_provision.py import --file dsl/wangchuan-tavern.chatflow.yaml")
+
+    # 8. 真打一回合
+    api_key = state.get("api_key") or ""
+    if api_key:
+        chat_ok, chat_detail = _probe_chat(base, api_key)
+        add("应用能跑通一回合（回答含引擎判定）", chat_ok, chat_detail,
+            "先看上面几项；回答里没有判定行说明 /facts 节点没跑到")
+    else:
+        add("应用 API Key", False, "没有 key", "python3 deploy/dify_provision.py apikey")
+
+    return _print_doctor(rows)
+
+
+def _print_doctor(rows: list[tuple[str, str, str]]) -> int:
+    width = max((len(name) for name, _, _ in rows), default=10)
+    passed = 0
+    print("\n== 忘川酒馆 · 环境体检 ==\n")
+    for name, mark, detail in rows:
+        passed += mark == "PASS"
+        print(f"  [{mark}] {name.ljust(width)}  {detail}")
+    print(f"\n  {passed}/{len(rows)} 通过\n")
+    return 0 if passed == len(rows) else 1
+
+
 def cmd_export(args: argparse.Namespace) -> int:
     """导出应用 DSL。Dify 返回的是一个 zip（内含 app.yaml / manifest.yaml），
     所以这里按二进制落盘，不要当文本解码。"""
@@ -488,6 +629,12 @@ def main(argv: list[str] | None = None) -> int:
     p_key = sub.add_parser("apikey", help="创建应用 API Key")
     p_key.add_argument("--app-id", default="")
     p_key.set_defaults(func=cmd_apikey)
+
+    p_doctor = sub.add_parser("doctor", help="环境体检：一层层检查到「能跑通一回合」")
+    p_doctor.add_argument("--engine", default="http://127.0.0.1:9100")
+    p_doctor.add_argument("--provider", default="langgenius/openai_api_compatible/openai_api_compatible")
+    p_doctor.add_argument("--model", default="deepseek-flash")
+    p_doctor.set_defaults(func=cmd_doctor)
 
     p_export = sub.add_parser("export", help="导出应用 DSL")
     p_export.add_argument("--app-id", default="")

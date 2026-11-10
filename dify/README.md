@@ -180,7 +180,7 @@ dify/
 ├── data/
 │   ├── seed/tavern.json          世界设定：3 个 NPC、11 件物品、12 条前置记忆
 │   └── samples/walkthrough.json  验证样例的剧本（10 回合）
-├── scripts/                      一键脚本（01 检查 → 02 Dify → 03 引擎 → 04 PowerContext → 05 验证 → 06 自检）
+├── scripts/                      一键脚本（01 检查 → 02 Dify → 03 引擎 → 04 PowerContext → 05 验证 → 06 自检 → 07 体检）
 ├── deploy/
 │   ├── .env.example              引擎与记忆层的配置模板
 │   ├── dify_provision.py         导入 DSL / 安装模型插件 / 配置模型 / 发布 / 建 API Key / 对话
@@ -327,6 +327,7 @@ DSL 里三个 HTTP 节点的地址都写成 `{{#env.TAVERN_ENGINE_URL#}}/...`，
 ### 第 5 步：跑验证样例
 
 ```bash
+bash scripts/07_doctor.sh                                  # 环境体检：8 项，一路查到「能跑通一回合」
 bash scripts/05_verify.sh                                  # 引擎侧：判定 / 记忆 / 检索 / 执行计划
 bash scripts/06_selfcheck.sh                               # 声明一致性自检：21 条 PASS/FAIL
 python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
@@ -346,7 +347,18 @@ python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
 | ![编排](docs/evidence/dify/00-workflow-canvas.png) | Chatflow 的 11 个节点：开始 → 拆动作 → 是否读心（IF）→ 两条分支（引擎/读心 → 叙事 → 事实行）→ 回答 |
 | ![对话](docs/evidence/dify/02-chat-memory.png) | 真实对话：阿箬说「客人上回也是这么数铜板的，一个也没少给」——她引用的是上一局留在 seekdb 里的记忆 |
 
-### 5.1 跑不起来时先看这张表
+### 5.1 跑不起来时：先跑 `07_doctor.sh`
+
+```bash
+bash scripts/07_doctor.sh
+# [PASS] Dify 可达 / 已初始化 / 已登录 / 插件 / 模型 / 引擎建表 / DSL 已导入 / 能跑通一回合
+# 8/8 通过
+```
+
+每一项失败都直接打印「怎么修」。它最后一步会真的打一回合，检查回答里有没有引擎的
+`【第 N 回合 · 判定：…】` —— 这一行在，说明整条链路（Dify → 引擎 → seekdb → 事实行）是通的。
+
+实在要手工排查，看这张表：
 
 | 现象 | 原因 | 处理 |
 | --- | --- | --- |
@@ -356,6 +368,7 @@ python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
 | 引擎报 `Access denied for user` | seekdb 密码不对 | 改 `deploy/.env` 的 `SEEKDB_PASSWORD`，与 Dify `.env` 里的 `OCEANBASE_VECTOR_PASSWORD` 一致 |
 | 插件装不上（`permission denied` / 卡住） | 卷属主不对 / 网络慢 | `scripts/02_dify.sh` 已处理属主；镜像源见 `docs/limitations.md` §9 |
 | 回答里没有「判定」那一行 | DSL 少了 `/facts` 节点，或引擎版本旧 | 用仓库里的 DSL 重新导入，并确认 `GET /health` 里 `ok=true` |
+| 回答只有一句「（灯芯爆了一声…）」 | 模型调用失败（超时/限流/额度），DSL 用了兜底文案 | 判定行仍然在，换个模型或稍后重试即可 |
 
 ---
 
