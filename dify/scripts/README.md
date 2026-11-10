@@ -11,6 +11,7 @@ Compose 编排，不依赖任何云服务。
 | `03_engine.sh` | 建 Python 虚拟环境、装引擎依赖、初始化 seekdb 表与世界数据、起 `:9100` 服务 | 第一次，2 分钟 |
 | `04_powercontext.sh` | 装 PowerContext 1.5.0 并起 `:8000`（记忆层，可跳过） | 第一次，3 分钟 |
 | `05_verify.sh` | 跑验证样例：引擎回放 + Dify 应用 API 调用 + seekdb 证据 | 每次改动后 |
+| `06_selfcheck.sh` | 声明一致性自检（18 条 PASS/FAIL）→ `docs/conformance.md` | 改规则或改文档后 |
 
 ## 端口
 

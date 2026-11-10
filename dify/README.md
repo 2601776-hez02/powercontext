@@ -149,13 +149,15 @@ dify/
 ├── data/
 │   ├── seed/tavern.json          世界设定：3 个 NPC、11 件物品、12 条前置记忆
 │   └── samples/walkthrough.json  验证样例的剧本（10 回合）
-├── scripts/                      一键脚本（01 检查 → 05 验证）
+├── scripts/                      一键脚本（01 检查 → 02 Dify → 03 引擎 → 04 PowerContext → 05 验证 → 06 自检）
 ├── deploy/
 │   ├── .env.example              引擎与记忆层的配置模板
-│   └── dify_provision.py         导入 DSL / 发布 / 建 API Key 的小工具
-├── tests/test_logic.py           25 项单测（不需要数据库与模型）
+│   ├── dify_provision.py         导入 DSL / 安装模型插件 / 配置模型 / 发布 / 建 API Key / 对话
+│   └── dify_walkthrough.py       用 Dify 应用 API 跑一遍 10 回合验证样例
+├── tests/test_logic.py           29 项单测（不需要数据库与模型）
 └── docs/
     ├── sample-walkthrough.md     验证样例：初始状态 / 输入 / 预期 / 实际
+    ├── conformance.md            声明一致性自检报告（18 条 PASS/FAIL，自动生成）
     ├── evidence/                 截图与日志（seekdb 证据、Dify 节点记录）
     └── limitations.md            已知边界
 ```
@@ -278,12 +280,15 @@ python3 deploy/dify_provision.py chat --message "要一壶桂花酿，铜板放�
 
 ```bash
 bash scripts/05_verify.sh                                  # 引擎侧：判定 / 记忆 / 检索 / 执行计划
+bash scripts/06_selfcheck.sh                               # 声明一致性自检：18 条 PASS/FAIL
 python3 deploy/dify_walkthrough.py --base http://127.0.0.1:8080 \
         --engine http://127.0.0.1:9100 --guest 无名客       # Dify 侧：走完整条 Chatflow
 ```
 
 第一个脚本清洗玩家状态、跑完 10 回合剧本、把证据写进 `docs/evidence/`；
-第二个脚本用 Dify 的应用 API 逐句发送同样的 10 句，把每轮 **Dify 生成的叙事**存成
+第二个脚本把 README 与样样例里「会怎样」的每一条都跑一遍，生成
+[`docs/conformance.md`](docs/conformance.md)（**本次 18 条 18 PASS / 0 FAIL**，只依赖 seekdb + 引擎，
+不需要 Dify 和模型）；第三个脚本用 Dify 的应用 API 逐句发送同样的 10 句，把每轮叙事存成
 `docs/evidence/dify-walkthrough.json`。逐条对照见 [`docs/sample-walkthrough.md`](docs/sample-walkthrough.md)。
 
 本次实际跑出来的样子（`docs/evidence/dify/`）：

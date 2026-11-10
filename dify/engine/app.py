@@ -233,6 +233,26 @@ def debug_explain(guest: str = "无名客", npc: str = "aruo", q: str = "偷玉�
     return plan
 
 
+class SqlBody(BaseModel):
+    query: str = Field(min_length=1, max_length=2000)
+
+
+@app.post("/debug/sql")
+def debug_sql(body: SqlBody) -> list[dict[str, Any]] | dict[str, Any]:
+    """只读 SQL（自检用）：只放行 SELECT / SHOW / EXPLAIN。"""
+
+    _guard()
+    query = body.query.strip()
+    if not query.lower().startswith(("select", "show", "explain")):
+        raise HTTPException(status_code=400, detail="only read-only statements are allowed")
+    try:
+        rows = DB.query(query)
+        DB.conn.commit()
+        return rows
+    except Exception as exc:  # pragma: no cover - 诊断
+        return {"error": str(exc)}
+
+
 @app.get("/debug/tables")
 def debug_tables() -> dict[str, Any]:
     _guard()
