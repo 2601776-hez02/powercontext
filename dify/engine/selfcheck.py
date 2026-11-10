@@ -303,6 +303,28 @@ def main(argv: list[str] | None = None) -> int:
         str((greeting.get("outcome") or {}).get("detail", ""))[:40],
     )
 
+    # ---- 3k. 规矩二：赊账一律回绝
+    reset()
+    credit = act("我没钱，先赊一壶桂花酿。")
+    credit_outcome = credit.get("outcome") or {}
+    report.check(
+        "rule.no_credit",
+        "「酒钱不能欠」：说赊账被回绝（refused / no_credit），不是照卖",
+        credit_outcome.get("verdict") == "refused" and "不赊账" in str(credit_outcome.get("detail")),
+        f"{credit_outcome.get('verdict')}｜{str(credit_outcome.get('detail'))[:28]}",
+    )
+
+    # ---- 3l. 规矩三：偷成功也要记账
+    reset()
+    stolen = act("把柜台上的玉佩塞进袖子。")
+    wanted = int((stolen.get("player") or {}).get("wanted") or 0)
+    report.check(
+        "rule.steal_marks_even_on_success",
+        "「动手要记账」：偷成功也记一笔（不是只有被抓才记）",
+        wanted >= 1,
+        f"verdict={((stolen.get('outcome') or {}).get('verdict'))} wanted={wanted}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

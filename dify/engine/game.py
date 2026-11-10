@@ -1039,7 +1039,7 @@ def _hints(db: SeekDB, guest: str, npcs: dict[str, dict], location: str) -> list
     drinks = [item["name"] for item in items.values() if item["price"] > 0]
     hints = [
         f"你可以 {('、'.join(drinks[:3]))} 中的任一样，也可以请人喝一碗（5 个铜板）。",
-        "偷东西会有人看见；被抓住要被记账，记到第三次就进不来了。",
+        "偷东西（成没成都算）和威胁人会记账，记到第三次就进不来了。",
         "想听故事就找老陶；想打听消息，得先让人愿意开口。",
     ]
     here = [npc["name"] for npc in npcs.values() if npc["location"] == location]

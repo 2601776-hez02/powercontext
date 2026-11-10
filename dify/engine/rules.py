@@ -139,6 +139,14 @@ def resolve(
 
     # ---------------------------------------------------------------- 买酒
     if verb == "buy":
+        raw = str(getattr(action, "raw", "") or "")
+        if any(word in raw for word in ("赊", "欠着", "先记上", "下次给", "回头给", "先欠")):
+            return Outcome(
+                "refused",
+                f"{name}把手一伸：「本店不赊账。铜板先摆上。」",
+                emotion="冷",
+                reason="no_credit",
+            )
         if item is None or item["price"] <= 0:
             return Outcome("refused", f"{name}抬眼：「要什么，直说。」", reason="no_item")
         if player["coins"] < item["price"]:
@@ -203,6 +211,7 @@ def resolve(
                 affinity_delta={w: -6 for w in witnesses} | ({target: -8} if witnesses else {}),
                 gain_item=item["item_id"],
                 witnesses=witnesses,
+                wanted_delta=1,  # 「动手要记账」：偷成功也记一笔（只是没被抓现行）
                 roll=roll,
                 reason="sleight_of_hand",
             )

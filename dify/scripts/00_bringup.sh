@@ -62,7 +62,7 @@ step "检查环境" run_check
 step "起 seekdb" run_seekdb
 step "装依赖 + 建表 + 起引擎" run_engine
 step "跑验证样例（11 步）" run_verify
-step "声明一致性自检（35 条）" run_selfcheck
+step "声明一致性自检（37 条）" run_selfcheck
 
 printf '\n== 汇总 ==\n'
 for line in "${SUMMARY[@]}"; do printf '  %s\n' "$line"; done
