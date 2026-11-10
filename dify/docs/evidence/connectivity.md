@@ -36,4 +36,4 @@ INFO:     172.19.0.8:45072 - "GET /health HTTP/1.1" 200 OK
 * 引擎监听 `0.0.0.0:9100`，容器网段可达；
 * 若你的 Dify 跑在 **macOS / Windows 的 Docker Desktop**，`172.17.0.1` 不通，
   把环境变量改成 `http://host.docker.internal:9100`；跑在 Kubernetes 里则用服务名。
-* 完全不想起后端时，用 `dsl/wangchuan-tavern.chatflow.yaml`（默认就连公网，容器里也测过 200）。
+* 完全不想起后端时，用 `dsl/wangchuan-tavern.demo.yaml`（连公网，容器里也测过 200）。

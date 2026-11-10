@@ -6,7 +6,7 @@
 | # | 声明 | 结果 | 实测 |
 | --- | --- | --- | --- |
 | 1 | seekdb 与引擎可用 | **PASS** | `seekdb=5.7.25-OceanBase seekdb-v1.4.0.0` |
-| 2 | 初始化后应有 3 NPC / 11 物品 / 不少于 12 条前置记忆 | **PASS** | `npc=3 item=11 memory=2782 (≥12)` |
+| 2 | 初始化后应有 3 NPC / 11 物品 / 不少于 12 条前置记忆 | **PASS** | `npc=3 item=11 memory=2853 (≥12)` |
 | 3 | NPC 记忆有全文索引（ngram 分词） | **PASS** | `tw_memory.FULLTEXT` |
 | 4 | NPC 记忆有 HNSW 向量索引 | **PASS** | `tw_memory.VECTOR` |
 | 5 | 向量排序走向量索引扫描（不是全表扫） | **PASS** | `VECTOR INDEX ADAPTIVE SCAN (PRE-FILTER)` |
@@ -47,7 +47,7 @@
 | 40 | 提到「七尸案」时老陶接话；提到「沈客人」时阿箬答得出 | **PASS** | `「二十年前渡口翻过一条船，他讲的「渡口七尸案」不是听｜阿箬把抹布往肩上一搭：「十年前，姓沈的客人说去渡口接` |
 | 41 | README「还能做什么」那张表的七行，逐行与实现一致 | **PASS** | `greeting=阿箬抬眼看了看你：「｜whoami=阿箬抬眼看了看你：「｜buy=阿箬收下 3 个铜板｜price=阿箬：「桂花酿，3 ｜coins=阿箬瞟了一眼你袖口：｜praise=阿箬笑了一下：「少来｜haggle=阿箬把算盘往你面前推｜insult=阿箬把手里的活放下：` |
 | 42 | 记忆里存着玩家的原话（tw_memory.raw），判题可据此确认不是演示文本 | **PASS** | `raw 样本=['把柜台上那枚玉佩塞进袖子', '把柜台上那枚玉佩塞进袖子', '把柜台上那枚玉佩塞进袖子']` |
-| 43 | 两份 DSL 的节点/开场白完全一致，只有 TAVERN_ENGINE_URL 不同 | **PASS** | `图一致=True 变量一致=True` |
+| 43 | 两份 DSL（默认连公网 / local 连本机）的节点与开场白完全一致，只有 TAVERN_ENGINE_URL 不同 | **PASS** | `图一致=True 变量一致=True` |
 | 44 | 好感过门槛 → NPC 说出守了多年的秘密（事实行里也写出来） | **PASS** | `kinds_has_secret=True facts_has_secret=True` |
 | 45 | 只说「来壶酒」也能真的买到（引擎按场景补最便宜的酒） | **PASS** | `item=wine_shaodao verdict=success` |
 | 46 | 目标在别的区域时会自己走过去（「帮小满收拾」→ 后厨） | **PASS** | `at=后厨 verdict=success` |
@@ -60,4 +60,4 @@
 | 53 | 骰子与玩家名字无关（换名字复现同一串判定） | **PASS** | `obse succ obse fail succ succ succ obse succ clos` |
 | 54 | 10 回合验证样例的判定与文档一致 | **PASS** | `obse succ obse fail succ succ succ obse succ clos` |
 | 55 | 跨会话记忆来自 seekdb 的账本（不依赖额外服务） | **PASS** | `mode=seekdb sources=['seekdb']` |
-| 56 | 打烊时把这一局写成「传说」存进 PowerContext | **PASS** | `{"available": true, "written": true, "status": 200, "artifact_id": "art_9dd1af95` |
+| 56 | 打烊时把这一局写成「传说」存进 PowerContext | **PASS** | `{"available": true, "written": true, "status": 200, "artifact_id": "art_287375ec` |
