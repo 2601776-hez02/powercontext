@@ -293,6 +293,10 @@ def act(
     settings: Settings,
     hint: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    utterance = (utterance or "").strip()[:500]
+    if not utterance:
+        utterance = "（没说话，只是站着）"
+
     player = ensure_player(db, guest, settings)
     npcs = npcs_of(db)
     items = items_of(db)

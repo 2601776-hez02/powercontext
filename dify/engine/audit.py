@@ -116,6 +116,43 @@ def sweep_branches(audit: Audit, guest: str) -> None:
                 )
 
 
+ODD_GUESTS = ["", "   ", "a" * 200, "带 空格的 名字", "🙂表情客", "'; DROP TABLE tw_player; --"]
+ODD_UTTERANCES = [
+    "",
+    "   ",
+    "。" * 200,
+    "请阿箬喝一壶\"桂花酿\"",
+    "我\n想\n偷\n点\n东\n西",
+    "🙂",
+    "'; DROP TABLE tw_event; --",
+    "把柜台上的玉佩塞进袖子然后跑出去再回头看一眼再把它还回去再道歉再讲个故事",
+]
+
+
+def sweep_odd_inputs(audit: Audit) -> None:
+    """奇怪的输入不能让应用 500：空串、纯空白、超长、引号、换行、表情、注入串。"""
+
+    for guest in ODD_GUESTS:
+        for utterance in ODD_UTTERANCES[:4]:
+            payload = call("/act", {"guest": guest, "utterance": utterance})
+            if "__http_error__" in payload:
+                audit.expect(
+                    False,
+                    "odd.input_500",
+                    f"guest={guest!r} utterance={utterance!r} -> {payload.get('__http_error__')}",
+                )
+            else:
+                audit.expect(
+                    isinstance(payload.get("outcome"), dict),
+                    "odd.input_shape",
+                    f"guest={guest!r} utterance={utterance!r} 没有 outcome",
+                )
+    # 表单入口（Dify 走这条）：空 guest / 空 utterance
+    for guest in ["", "   ", "a" * 200]:
+        payload = call("/act", {"guest": guest, "utterance": "要一壶桂花酿。"})
+        audit.expect("__http_error__" not in payload, "odd.form_guest", f"guest={guest!r} -> {payload.get('__http_error__')}")
+
+
 def audit_guest(audit: Audit, guest: str, turns: int, rng: random.Random) -> None:
     reset(guest)
     state = {"confided": set(), "secreted": set(), "banned_at": None, "seen_turn": 0}
@@ -200,6 +237,7 @@ def main(argv: list[str] | None = None) -> int:
 
     audit = Audit()
     sweep_branches(audit, "扫测客")
+    sweep_odd_inputs(audit)
     for index in range(args.guests):
         rng = random.Random(1000 + index)
         audit_guest(audit, f"审计{index}", args.turns, rng)

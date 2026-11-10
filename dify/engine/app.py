@@ -42,12 +42,14 @@ app = FastAPI(
 
 
 class StartBody(BaseModel):
-    guest: str = Field(default="无名客", max_length=64, description="酒客的名字或代号")
+    # 不为输入设 min_length：玩家名可能是空串（Dify 的输入变量没填），交给 _clean_guest 收口
+    guest: str = Field(default="无名客", max_length=200, description="酒客的名字或代号")
 
 
 class ActBody(BaseModel):
-    guest: str = Field(default="无名客", max_length=64)
-    utterance: str = Field(min_length=1, max_length=500, description="玩家这一回合说的话")
+    guest: str = Field(default="无名客", max_length=200)
+    # 空串、超长都不该让请求 422：引擎自己截断并给个合理回应
+    utterance: str = Field(default="", max_length=4000, description="玩家这一回合说的话")
     # Dify 的 HTTP 节点会把 JSON 当字符串带上；这里两种都收，解析失败就当没给
     parsed: dict[str, Any] | str | None = Field(
         default=None, description="Dify LLM 节点解析出的结构化动作（对象或 JSON 字符串，可选）"
@@ -137,16 +139,31 @@ def health() -> dict[str, Any]:
     return info
 
 
+def _clean_guest(guest: str | None) -> str:
+    """玩家名来自 Dify 的输入变量，可能是空串、纯空格、超长或带表情。
+
+    统一收口：去掉首尾空白、按列宽截断、空则用默认名——避免因为一个奇怪的输入
+    让整回合 500（评审随手填个名字就报错，等于「应用起不来」）。
+    """
+
+    name = (guest or "").strip()
+    if not name:
+        return "无名客"
+    return name[:32]
+
+
 @app.post("/session/start")
 def session_start(body: StartBody) -> dict[str, Any]:
     _guard()
-    return game.start(body.guest, db=DB, pc=PC, settings=SETTINGS)
+    return game.start(_clean_guest(body.guest), db=DB, pc=PC, settings=SETTINGS)
 
 
 @app.post("/act")
 def act(body: ActBody) -> dict[str, Any]:
     _guard()
-    return game.act(body.guest, body.utterance, db=DB, pc=PC, settings=SETTINGS, hint=body.parsed_hint())
+    return game.act(
+        _clean_guest(body.guest), (body.utterance or "").strip(), db=DB, pc=PC, settings=SETTINGS, hint=body.parsed_hint()
+    )
 
 
 @app.post("/act/form")
@@ -165,7 +182,7 @@ def act_form(
             hint = loaded if isinstance(loaded, dict) else None
         except ValueError:
             hint = None
-    return game.act(guest, utterance, db=DB, pc=PC, settings=SETTINGS, hint=hint)
+    return game.act(_clean_guest(guest), (utterance or "").strip(), db=DB, pc=PC, settings=SETTINGS, hint=hint)
 
 
 @app.post("/mind/form")
@@ -176,7 +193,7 @@ def mind_form(
     limit: int = Form(6),
 ) -> dict[str, Any]:
     _guard()
-    return game.read_mind(guest, npc, db=DB, settings=SETTINGS, limit=max(1, min(int(limit), 20)), text=q)
+    return game.read_mind(_clean_guest(guest), npc, db=DB, settings=SETTINGS, limit=max(1, min(int(limit), 20)), text=q)
 
 
 @app.post("/facts/form")
@@ -185,14 +202,14 @@ def facts_form(guest: str = Form("无名客")):
     这样"成功/失败 + 状态行"是引擎写的，模型改不了。"""
 
     _guard()
-    text = game.facts(guest, db=DB, pc=PC)
+    text = game.facts(_clean_guest(guest), db=DB, pc=PC)
     return PlainTextResponse(text + ("\n" if text else ""))
 
 
 @app.post("/session/close")
 def session_close(body: CloseBody) -> dict[str, Any]:
     _guard()
-    return game.close_session(body.guest, db=DB, pc=PC, settings=SETTINGS)
+    return game.close_session(_clean_guest(body.guest), db=DB, pc=PC, settings=SETTINGS)
 
 
 @app.get("/mind")
