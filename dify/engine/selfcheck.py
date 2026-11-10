@@ -235,6 +235,18 @@ def main(argv: list[str] | None = None) -> int:
         "命中旧灯笼" if aliases_ok else f"记忆={[row['text'][:20] for row in mind_rows[:3]]}",
     )
 
+    # ---- 3f.「记得每个人的脚步」：移动也要留记忆（老陶的设定就是听脚步认人）
+    reset()
+    act("去后厨。")
+    step_rows = call("/mind", {"guest": GUEST, "npc": "laotao", "limit": 10})[1].get("memories", [])
+    walked = any("脚步" in str(row["text"]) for row in step_rows)
+    report.check(
+        "memory.footsteps",
+        "「记得每个人的脚步」为真：走到后厨后老陶的脑子里有一条脚步记忆",
+        walked,
+        "有脚步记忆" if walked else f"记忆={[str(r['text'])[:16] for r in step_rows[:3]]}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

@@ -311,7 +311,10 @@ def compose_memories(
                 topic = item["name"] if item else "店里的事"
                 rows.append(_row(target, "亲历", f"他问起{topic}，我没往下说。", "淡", 3))
         elif outcome.verdict == "refused" and target in npcs:
-            rows.append(_row(target, "亲历", f"他想{action.verb_cn}，没成；我记下了。", "淡", 3))
+            if str(outcome.reason) == "no_coins":
+                rows.append(_row(target, "亲历", f"他要{item_name}，铜板不够；这账我记着。", "淡", 4))
+            else:
+                rows.append(_row(target, "亲历", f"他想{action.verb_cn}，没成；我记下了。", "淡", 3))
         return rows
 
     if action.verb == "buy" and outcome.coin_delta < 0:
@@ -357,7 +360,9 @@ def compose_memories(
             _row(target, "亲历", f"他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。", "喜", 6)
         )
     elif action.verb == "move":
-        pass
+        where = action.location or "别处"
+        for npc_id in npcs:
+            rows.append(_row(npc_id, "亲历", f"他往{where}去了，脚步我听着呢。", "淡", 3))
 
     if outcome.secret:
         rows.append(_row(target, "秘密", outcome.secret, "沉", 10))

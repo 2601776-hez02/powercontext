@@ -215,7 +215,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1013255,
+          "memory_id": 1014628,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -234,7 +234,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013254,
+          "memory_id": 1014627,
           "npc": "aruo",
           "turn": 2,
           "kind": "亲历",
@@ -253,7 +253,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013252,
+          "memory_id": 1014625,
           "npc": "laotao",
           "turn": 1,
           "kind": "亲历",
@@ -271,7 +271,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013251,
+          "memory_id": 1014624,
           "npc": "aruo",
           "turn": 1,
           "kind": "亲历",
@@ -420,7 +420,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1013256,
+          "memory_id": 1014629,
           "npc": "aruo",
           "turn": 3,
           "kind": "亲历",
@@ -439,7 +439,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013255,
+          "memory_id": 1014628,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -477,7 +477,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013252,
+          "memory_id": 1014625,
           "npc": "laotao",
           "turn": 1,
           "kind": "亲历",
@@ -625,7 +625,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1013257,
+          "memory_id": 1014630,
           "npc": "aruo",
           "turn": 4,
           "kind": "亲历",
@@ -644,7 +644,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013255,
+          "memory_id": 1014628,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -682,7 +682,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013258,
+          "memory_id": 1014631,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -700,7 +700,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013252,
+          "memory_id": 1014625,
           "npc": "laotao",
           "turn": 1,
           "kind": "亲历",
@@ -833,7 +833,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1013259,
+          "memory_id": 1014632,
           "npc": "aruo",
           "turn": 5,
           "kind": "亲历",
@@ -851,7 +851,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013260,
+          "memory_id": 1014633,
           "npc": "laotao",
           "turn": 5,
           "kind": "传闻",
@@ -869,7 +869,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013257,
+          "memory_id": 1014630,
           "npc": "aruo",
           "turn": 4,
           "kind": "亲历",
@@ -887,7 +887,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013258,
+          "memory_id": 1014631,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -905,7 +905,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013256,
+          "memory_id": 1014629,
           "npc": "aruo",
           "turn": 3,
           "kind": "亲历",
@@ -923,7 +923,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013252,
+          "memory_id": 1014625,
           "npc": "laotao",
           "turn": 1,
           "kind": "亲历",
@@ -1038,7 +1038,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1013261,
+          "memory_id": 1014634,
           "npc": "laotao",
           "turn": 6,
           "kind": "亲历",
@@ -1057,7 +1057,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013256,
+          "memory_id": 1014629,
           "npc": "aruo",
           "turn": 3,
           "kind": "亲历",
@@ -1076,7 +1076,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013255,
+          "memory_id": 1014628,
           "npc": "aruo",
           "turn": 2,
           "kind": "杯边话",
@@ -1095,7 +1095,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013254,
+          "memory_id": 1014627,
           "npc": "aruo",
           "turn": 2,
           "kind": "亲历",
@@ -1114,7 +1114,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013260,
+          "memory_id": 1014633,
           "npc": "laotao",
           "turn": 5,
           "kind": "传闻",
@@ -1132,7 +1132,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013258,
+          "memory_id": 1014631,
           "npc": "laotao",
           "turn": 4,
           "kind": "目击",
@@ -1237,7 +1237,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1013263,
+          "memory_id": 1014636,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "秘密",
@@ -1256,7 +1256,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1013262,
+          "memory_id": 1014635,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "亲历",
@@ -1389,7 +1389,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1013263,
+          "memory_id": 1014636,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "秘密",
@@ -1407,7 +1407,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1013262,
+          "memory_id": 1014635,
           "npc": "xiaoman",
           "turn": 7,
           "kind": "亲历",
@@ -1425,7 +1425,7 @@
           "npc_name": "小满"
         },
         {
-          "memory_id": 1013253,
+          "memory_id": 1014626,
           "npc": "xiaoman",
           "turn": 1,
           "kind": "亲历",
@@ -1557,7 +1557,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1013265,
+          "memory_id": 1014638,
           "npc": "aruo",
           "turn": 9,
           "kind": "亲历",
@@ -1576,7 +1576,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013252,
+          "memory_id": 1014625,
           "npc": "laotao",
           "turn": 1,
           "kind": "亲历",
@@ -1594,7 +1594,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013251,
+          "memory_id": 1014624,
           "npc": "aruo",
           "turn": 1,
           "kind": "亲历",
@@ -1612,7 +1612,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013266,
+          "memory_id": 1014639,
           "npc": "laotao",
           "turn": 9,
           "kind": "传闻",
@@ -1630,7 +1630,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013264,
+          "memory_id": 1014637,
           "npc": "laotao",
           "turn": 7,
           "kind": "传闻",
@@ -1648,7 +1648,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013259,
+          "memory_id": 1014632,
           "npc": "aruo",
           "turn": 5,
           "kind": "亲历",
@@ -1761,7 +1761,7 @@
       ],
       "recalls": [
         {
-          "memory_id": 1013251,
+          "memory_id": 1014624,
           "npc": "aruo",
           "turn": 1,
           "kind": "亲历",
@@ -1779,7 +1779,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013252,
+          "memory_id": 1014625,
           "npc": "laotao",
           "turn": 1,
           "kind": "亲历",
@@ -1797,7 +1797,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013265,
+          "memory_id": 1014638,
           "npc": "aruo",
           "turn": 9,
           "kind": "亲历",
@@ -1815,7 +1815,7 @@
           "npc_name": "阿箬"
         },
         {
-          "memory_id": 1013266,
+          "memory_id": 1014639,
           "npc": "laotao",
           "turn": 9,
           "kind": "传闻",
@@ -1833,7 +1833,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013264,
+          "memory_id": 1014637,
           "npc": "laotao",
           "turn": 7,
           "kind": "传闻",
@@ -1851,7 +1851,7 @@
           "npc_name": "老陶"
         },
         {
-          "memory_id": 1013259,
+          "memory_id": 1014632,
           "npc": "aruo",
           "turn": 5,
           "kind": "亲历",
@@ -1892,7 +1892,7 @@
           "available": true,
           "written": true,
           "status": 200,
-          "artifact_id": "art_44c99114c4eb49bc9373943292b0e93c",
+          "artifact_id": "art_fe87f4e140ce4e3d9aedc1b05364fbae",
           "revision": 1,
           "kind": "tavern-legend",
           "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
