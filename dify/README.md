@@ -33,10 +33,11 @@
 >
 > **只想先跑起来？** 看一页纸的 [`QUICKSTART.md`](QUICKSTART.md)（6 步，3 分钟）。
 
-## 评审速查（先看这 6 行）
+## 评审速查
 
 | 你想做什么 | 怎么做 | 结果 |
 | --- | --- | --- |
+| **先看 10 秒动图** | [`docs/evidence/dify/playthrough.gif`](docs/evidence/dify/playthrough.gif)（真机录的 5 回合：买酒 / 赊账被拒 / 读心 / 打烊 / 第二天） | 一屏看完玩法 |
 | **直接用浏览器玩** | 打开 <https://parents-pendant-stamps-pools.trycloudflare.com/chat/US2WZk6wfvkw7R4Q>（作者托管，可能下线） | 十秒内能看到三条规矩生效 |
 | **最快跑起来** | 导入 `dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型（**不需要起后端**，默认连作者的公网演示） | 两分钟就能玩 |
 | **完全本地跑** | `bash scripts/00_bringup.sh` → 导入 `dsl/wangchuan-tavern.local.yaml` → 配模型 | 一条命令起后端并自检，不依赖作者侧服务 |
@@ -101,6 +102,13 @@
 
 > 这个页面背后是：Cloudflare 隧道 → 运行中的 Dify 1.19 → 酒馆引擎 → seekdb。
 > 只是"先玩一把"的便利；**验收请按第 5 节在本地跑**，那条路不依赖作者侧任何服务。
+
+### 1.0 动图：真机上玩五回合
+
+![五回合动图](docs/evidence/dify/playthrough.gif)
+
+> 依次是：开场白 → 买一壶桂花酿（杯边话）→ 赊账被拒 → 读心 → 打烊 → 第二天「我又来了」。
+> 判定行与数字由引擎结算，正文由模型写。
 
 ### 1.0 一段真实的对话（直接从运行中的实例里抄的）
 
