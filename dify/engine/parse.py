@@ -154,7 +154,10 @@ def detect_item(text: str, items: dict[str, dict]) -> str:
     return best[2]
 
 
-TALK_MARKERS = ("吗", "呢", "什么", "怎么", "为什么", "能不能", "你是不是", "听说", "告诉我", "？", "?")
+TALK_MARKERS = (
+    "吗", "呢", "什么", "怎么", "为什么", "能不能", "你是不是", "听说", "告诉我", "？", "?",
+    "你好", "您好", "在吗", "有人", "嗨", "哈喽", "老板", "掌柜",
+)
 
 
 def _looks_like_talk(text: str) -> bool:

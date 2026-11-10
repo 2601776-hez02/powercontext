@@ -64,9 +64,10 @@ Squid 的 ACL 是在容器启动时从环境变量渲染的）。
 
 ## 4. 依赖 Dify 的 HTTP 节点地址
 
-DSL 里有三个 HTTP Request 节点，地址都是 `http://172.17.0.1:9100/...`（Linux 上 Docker 默认网桥的
-宿主机地址）：`/act/form`、`/mind/form`、`/facts/form`。如果引擎装在别的机器、或 Docker 网络被改过，
-这三个 URL 要一起改：
+DSL 里有三个 HTTP Request 节点，URL 都写成 `{{#env.TAVERN_ENGINE_URL#}}/...`
+（`/act/form`、`/mind/form`、`/facts/form`），只看 DSL 的**环境变量** `TAVERN_ENGINE_URL`。
+默认 `http://172.17.0.1:9100` 是 Linux 上 Docker 默认网桥的宿主机地址；引擎装在别的机器、
+或 Docker 网络被改过时，只改这一个变量：
 
 * 同机 Docker：`172.17.0.1`（`ip -4 addr show docker0` 可确认）
 * 引擎在另一台机器：改成引擎的 IP

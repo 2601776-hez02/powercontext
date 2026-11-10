@@ -10,7 +10,12 @@ kind: app
 version: 0.7.0
 workflow:
   conversation_variables: []
-  environment_variables: []
+  environment_variables:
+  - id: 940a5edf-bd42-4745-9e48-cfc37a7a0492
+    name: TAVERN_ENGINE_URL
+    value: http://172.17.0.1:9100
+    value_type: string
+    description: 酒馆引擎地址。引擎与 Dify 同机跑在宿主机上时用 docker0 网关（172.17.0.1）；不在同机就改成引擎的实际地址，例如 http://10.0.0.5:9100
   features:
     file_upload:
       allowed_file_extensions: []
@@ -339,7 +344,7 @@ workflow:
           max_write_timeout: 0
         title: 读心接口
         type: http-request
-        url: http://172.17.0.1:9100/mind/form
+        url: '{{#env.TAVERN_ENGINE_URL#}}/mind/form'
         variables: []
       height: 98
       id: http_mind
@@ -459,7 +464,7 @@ workflow:
           max_write_timeout: 0
         title: 酒馆引擎 /act
         type: http-request
-        url: http://172.17.0.1:9100/act/form
+        url: '{{#env.TAVERN_ENGINE_URL#}}/act/form'
         variables: []
       height: 98
       id: http_act
@@ -595,7 +600,7 @@ workflow:
           max_write_timeout: 0
         title: 事实行 /facts
         type: http-request
-        url: http://172.17.0.1:9100/facts/form
+        url: '{{#env.TAVERN_ENGINE_URL#}}/facts/form'
         variables: []
       height: 98
       id: http_facts
@@ -635,7 +640,7 @@ workflow:
           max_write_timeout: 0
         title: 事实行（读心）
         type: http-request
-        url: http://172.17.0.1:9100/facts/form
+        url: '{{#env.TAVERN_ENGINE_URL#}}/facts/form'
         variables: []
       height: 98
       id: http_mfacts

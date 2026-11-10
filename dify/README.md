@@ -298,14 +298,25 @@ python3 deploy/dify_provision.py chat --message "要一壶桂花酿，铜板放�
 也可以走界面：控制台 → 创建应用 → **导入 DSL** → 选 `dsl/wangchuan-tavern.chatflow.yaml`
 → 右上角「发布」。DSL 里两个 LLM 节点写的是 `deepseek-flash`，换成你自己的模型名即可。
 
-**4.4 关于请求地址（两个容易踩的坑）**
+**4.4 引擎地址：改 DSL 环境变量，不用编辑节点**
 
-* DSL 里 HTTP 节点的地址是 `http://172.17.0.1:9100/act/form` 与 `/mind/form`——宿主机在 Docker
-  默认网桥上的地址。引擎不在这台机器上时改成 `<引擎IP>:9100`。
-* Dify 1.19 的 HTTP 节点默认**禁止访问私网地址**，必须允许宿主机的网段，否则会报
-  `blocked by SSRF protection`。`scripts/02_dify.sh` 已经写好了：
-  `.env` 里 `SSRF_PROXY_ALLOW_PRIVATE_IPS=172.17.0.0/16`，改完后要 `docker compose up -d --force-recreate ssrf_proxy`。
-* HTTP 节点用 `x-www-form-urlencoded` 提交，玩家输入里带引号/换行也不会破坏 JSON。
+DSL 里三个 HTTP 节点的地址都写成 `{{#env.TAVERN_ENGINE_URL#}}/...`，导入后在应用里
+**环境变量**把 `TAVERN_ENGINE_URL` 改成你的引擎地址即可（默认 `http://172.17.0.1:9100`，
+即 Dify 同机宿主机在 docker0 网桥上的地址）：
+
+| 你的部署 | 该填什么 |
+| --- | --- |
+| 引擎跑在宿主机（README 默认路径） | `http://172.17.0.1:9100`（`ip -4 addr show docker0` 可确认） |
+| 引擎跑在另一台机器 | `http://<那台机器的IP>:9100` |
+| 引擎也放进 compose 网络 | `http://tavern-engine:9100`（服务名） |
+
+两件必须知道的：
+
+* Dify 1.19 的 HTTP 节点默认**禁止访问私网地址**，会报 `blocked by SSRF protection`。
+  `scripts/02_dify.sh` 已在 `.env` 里放行 docker 的常见网段
+  （`SSRF_PROXY_ALLOW_PRIVATE_IPS=172.17.0.0/16,...`）；换别的内网地址要把它加进去，
+  改完必须 `docker compose up -d --force-recreate ssrf_proxy`（Squid 的 ACL 在容器启动时渲染）。
+* HTTP 节点用 `x-www-form-urlencoded` 提交，玩家输入带引号/换行也不会破坏 JSON。
 
 ### 第 5 步：跑验证样例
 

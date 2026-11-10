@@ -55,9 +55,10 @@ DIFY_AGENT_LOCAL_SANDBOX_AUTH_TOKEN=${sandbox_token}
 SEEKDB_MEMORY_LIMIT=${SEEKDB_MEMORY_LIMIT:-4G}
 OCEANBASE_VECTOR_PASSWORD=${SEEKDB_PASSWORD}
 
-# Dify 的 HTTP Request 节点默认拒绝访问私网地址；酒馆引擎就装在宿主机上，
-# 走的是 docker0 网桥（172.17.0.0/16），这里把它加进白名单。
-SSRF_PROXY_ALLOW_PRIVATE_IPS=${SSRF_PROXY_ALLOW_PRIVATE_IPS:-172.17.0.0/16}
+# Dify 的 HTTP Request 节点默认拒绝访问私网地址；酒馆引擎要么在宿主机（172.17.0.1，
+# docker0 网关），要么在同一个 compose 网络里（172.18~172.21）。这里把常见网段一起放行；
+# 换成别的内网地址时，把那个网段追加进来即可。
+SSRF_PROXY_ALLOW_PRIVATE_IPS=${SSRF_PROXY_ALLOW_PRIVATE_IPS:-172.17.0.0/16,172.18.0.0/16,172.19.0.0/16,172.20.0.0/16,172.21.0.0/16}
 EOF
   echo "已写入 $DIFY_DIR/.env"
 else
