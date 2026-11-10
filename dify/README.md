@@ -397,7 +397,8 @@ bash scripts/07_doctor.sh
 | 引擎报 `Access denied for user` | seekdb 密码不对 | 改 `deploy/.env` 的 `SEEKDB_PASSWORD`，与 Dify `.env` 里的 `OCEANBASE_VECTOR_PASSWORD` 一致 |
 | 插件装不上（`permission denied` / 卡住） | 卷属主不对 / 网络慢 | `scripts/02_dify.sh` 已处理属主；镜像源见 `docs/limitations.md` §9 |
 | 回答里没有「判定」那一行 | DSL 少了 `/facts` 节点，或引擎版本旧 | 用仓库里的 DSL 重新导入，并确认 `GET /health` 里 `ok=true` |
-| 回答只有一句「（灯芯爆了一声…）」 | 模型调用失败（超时/限流/额度），DSL 用了兜底文案 | 判定行仍然在，换个模型或稍后重试即可 |
+| 回答只有一句「（灯芯爆了一声…）」 | 模型调用失败（超时/限流/额度），LLM 节点走了默认值 | 判定行仍然在，换个模型或稍后重试即可 |
+| 报错 `Run failed: Request failed with status code 503` / `blocked by SSRF protection` | 引擎地址不通（未启动、地址错、或不在 SSRF 白名单里） | 先 `curl http://<引擎地址>:9100/health`；再查 DSL 环境变量 `TAVERN_ENGINE_URL` 与 `SSRF_PROXY_ALLOW_PRIVATE_IPS`（见 4.4） |
 
 ---
 
