@@ -244,6 +244,18 @@ def _ask_answer(utterance: str, action: Action, outcome: "rules.Outcome", npcs: 
         world = world_of(db)
         rules = "；".join(str(rule).split("：")[0] for rule in (world.get("rules") or [])[:3])
         return f"{name}：「规矩三条：{rules}。剩下的，你自己试。」"
+    # 问到具体物件（灯、玉佩、烧刀子…）时，让在场的人就着这件东西说一句
+    item_id = str(getattr(action, "item", "") or "")
+    if item_id:
+        try:
+            item = items_of(db).get(item_id) or {}
+        except Exception:
+            item = {}
+        if item:
+            lore = str(item.get("lore") or "").strip()
+            if lure := lore:
+                return f"{name}瞟了一眼那{item['name']}：「{lure}」"
+
     if any(word in text for word in ("发生过", "故事", "听说", "旧事", "传闻", "出过")):
         if storyteller:
             return f"{storyteller}在角落里清了清嗓子：「要听旧事？先说好，听完别问我是听谁说的。」"
@@ -679,7 +691,7 @@ def close_session(
         "SELECT npc, kind, body FROM tw_memory WHERE guest = %s ORDER BY importance DESC, id DESC LIMIT 6",
         (guest,),
     )
-    deeds = "；".join(f"{_deed(row)}" for row in events[-6:]) or "什么也没做成"
+    deeds = "；".join(_deed(row).rstrip("。；") for row in events[-6:]) or "什么也没干"
     mood_text = "，".join(
         f"{npcs[npc_id]['name']}{rules.mood_of(int(value))[0]}" for npc_id, value in sorted(affinities.items()) if npc_id in npcs
     )

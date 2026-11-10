@@ -349,6 +349,30 @@ def main(argv: list[str] | None = None) -> int:
         str(turned_facts).replace("\n", " ")[:60],
     )
 
+    # ---- 3o. 问具体物件时，NPC 要就着这件东西说一句
+    reset()
+    ask_item = act("这灯为什么夜里不灭？")
+    detail = str((ask_item.get("outcome") or {}).get("detail") or "")
+    report.check(
+        "ask.about_item",
+        "打听具体物件时有人接话（不是「没有立刻接」）：问灯能听到灯的事",
+        ("灯" in detail) and ("没有立刻接" not in detail),
+        detail[:40],
+    )
+
+    # ---- 3p. 账本里不能出现「。。」
+    reset()
+    act("要一壶桂花酿。")
+    act("打烊了，我该走了。")
+    act("我又来了。")
+    legend_facts = call("/facts/form", form={"guest": GUEST}, text=True)[1]
+    report.check(
+        "legend.no_double_period",
+        "「酒馆记得你」那一行不会出现连续两个句号",
+        "。。" not in str(legend_facts),
+        str(legend_facts).replace("\n", " ")[:50],
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []
