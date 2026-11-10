@@ -298,6 +298,9 @@ workflow:
 
             {"verb":"read_mind","target":"xiaoman","item":"","tone":"plain"}
 
+            5. 玩家只是在寒暄、自我介绍、或问「你能做什么 / 这是什么地方 / 介绍一下你自己」时，没有具体动作，verb 一律用 ask（让人物接话），不要用
+            look。
+
             '
         - role: user
           text: 玩家：{{#sys.query#}}

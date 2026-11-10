@@ -270,7 +270,17 @@ def resolve(
 
     # ---------------------------------------------------------------- 打听
     if verb == "ask":
-        return Outcome("observed", f"你把话头递过去，{name}没有立刻接。", emotion="淡", reason="asked")
+        raw = str(getattr(action, "raw", "") or "")
+        greeting = any(word in raw for word in ("你好", "您好", "早上好", "晚上好", "早安", "午安", "嗨", "哈喽"))
+        if greeting:
+            return Outcome(
+                "observed",
+                f"{name}抬眼看了看你：「来了。」手上的活没停，只把声音放软了些。",
+                emotion="平",
+                reputation_delta=1,
+                reason="greeted",
+            )
+        return Outcome("observed", f"你把话头递过去，{name}没有立刻接。", emotion="平", reason="asked")
 
     # ---------------------------------------------------------------- 读心
     if verb == "read_mind":
