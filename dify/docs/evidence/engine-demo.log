@@ -58,7 +58,7 @@
   - [老陶｜亲历｜6｜fts,vector｜0.1544] 他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。
   - [阿箬｜目击｜6｜fts,vector｜0.1507] 我瞧见他跟老陶那儿讲了个故事。
   - [阿箬｜亲历｜3｜fts,vector｜0.0502] 他问起旧灯笼，我没往下说。
-  - [阿箬｜杯边话｜2｜fts,vector｜0.0463] 他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。
+  - [阿箬｜杯边话｜2｜fts,vector｜0.0459] 他请我喝了一碗，我就多说了句：「客人要是问起柜台后头那盏灯——灯底下压着东西。第三块砖别踩，踩了要赔。」。
 
 --- 第 7 回合 ---
 玩家：去后厨，替小满把那一摞碗端出来。
@@ -103,7 +103,7 @@ PowerContext：{
   "available": true,
   "written": true,
   "status": 200,
-  "artifact_id": "art_fb846495041c45dc9543bfa06d0bb6e1",
+  "artifact_id": "art_9da61ffb97b04d7a83c711f3b7bd5620",
   "revision": 1,
   "kind": "tavern-legend",
   "scope_id": "scp_7jc5d572rqksqe94995v8kt3v1"
