@@ -16,6 +16,9 @@ workflow:
     value: http://172.17.0.1:9100
     value_type: string
     description: 本机酒馆引擎地址（scripts/00_bringup.sh 或 02b+03 之后可用）。已部署好的演示后端见 wangchuan-tavern.demo.yaml。
+    selector:
+    - env
+    - TAVERN_ENGINE_URL
   features:
     file_upload:
       allowed_file_extensions: []

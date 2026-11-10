@@ -16,6 +16,9 @@ workflow:
     value: https://presence-hierarchy-necessarily-females.trycloudflare.com
     value_type: string
     description: 作者托管的在线演示后端（可能下线）。换成自己的引擎就改成 http://<你的地址>:9100。
+    selector:
+    - env
+    - TAVERN_ENGINE_URL
   features:
     file_upload:
       allowed_file_extensions: []
