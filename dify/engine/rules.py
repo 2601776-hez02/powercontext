@@ -277,6 +277,41 @@ def resolve(
             reason="story_told",
         )
 
+    # ---------------------------------------------------------------- 夸人
+    if verb == "praise":
+        raw = str(getattr(action, "raw", "") or "")
+        if any(word in raw for word in ("不用找", "小费", "赏你")):
+            return Outcome(
+                "success",
+                f"{name}把铜板码齐：「客人客气。这钱我记在账上。」",
+                emotion="喜",
+                affinity_delta={target: 4},
+                reputation_delta=1,
+                reason="tipped",
+            )
+        lines = {
+            "aruo": "少来这套。账本上不记好话。",
+            "laotao": "嘿，这话我爱听。故事嘛，讲给听得懂的人。",
+            "xiaoman": "哎呀……真的吗？我、我没什么好夸的。",
+        }
+        return Outcome(
+            "success",
+            f"{name}笑了一下：「{lines.get(str(target), '谢谢你这句话。')}」",
+            emotion="喜",
+            affinity_delta={target: 4},
+            reputation_delta=1,
+            reason="praised",
+        )
+
+    # ---------------------------------------------------------------- 讲价
+    if verb == "haggle":
+        return Outcome(
+            "refused",
+            f"{name}把算盘往你面前推了推：「本店的价是死数，一文不让。」",
+            emotion="冷",
+            reason="no_discount",
+        )
+
     # ---------------------------------------------------------------- 骂人
     if verb == "insult":
         return Outcome(
@@ -349,7 +384,9 @@ def compose_memories(
                 topic = item["name"] if item else "店里的事"
                 rows.append(_row(target, "亲历", f"他问起{topic}，我没往下说。", "淡", 3))
         elif outcome.verdict == "refused" and target in npcs:
-            if str(outcome.reason) == "insulted":
+            if str(outcome.reason) == "no_discount":
+                rows.append(_row(target, "亲历", "他嫌贵，想让我让价。这价是死数。", "淡", 3))
+            elif str(outcome.reason) == "insulted":
                 rows.append(_row(target, "亲历", "他张口骂人。这话我记着。", "怒", 5))
             elif str(outcome.reason) == "no_coins":
                 rows.append(_row(target, "亲历", f"他要{item_name}，铜板不够；这账我记着。", "淡", 4))
@@ -395,6 +432,8 @@ def compose_memories(
         rows.append(_row(target, "亲历", "他帮我把活计收拾了，手上利落，不像是白帮忙的人。", "暖", 5))
     elif action.verb == "apologize":
         rows.append(_row(target, "亲历", "他低了头说上次是他不对。我认这句话。", "缓", 5))
+    elif action.verb == "praise" and target in npcs:
+        rows.append(_row(target, "亲历", "他夸了我一句。好话我记着。", "喜", 4))
     elif action.verb == "tell_story":
         rows.append(
             _row(target, "亲历", f"他给我讲了个故事，讲得像个活人说的话。我给了他两枚铜板。", "喜", 6)

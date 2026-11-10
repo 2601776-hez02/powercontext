@@ -168,6 +168,17 @@ def detect_item(text: str, items: dict[str, dict]) -> str:
     return best[2]
 
 
+PRAISE_WORDS = (
+    "好看", "漂亮", "真棒", "厉害", "真好", "佩服", "喜欢你", "故事好听", "讲得好", "好听",
+    "有本事", "人真好", "手艺好", "好手艺",
+    # 慷慨也算示好：给小费、不用找零
+    "不用找", "小费", "赏你", "多的是",
+)
+
+HAGGLE_WORDS = (
+    "太贵", "便宜点", "便宜些", "少收", "打折", "砍价", "便宜点儿", "降价", "能不能少",
+)
+
 INSULT_WORDS = (
     "闭嘴", "笨蛋", "蠢", "滚", "骗子", "混蛋", "废物", "傻", "狗东西", "去死", "白痴",
 )
@@ -229,6 +240,10 @@ def parse(
     verb = str(hint.get("verb") or "").strip()
     if any(word in text for word in INSULT_WORDS):
         verb = "insult"  # 骂人是一个独立动作，别被 look 吞掉
+    elif any(word in text for word in PRAISE_WORDS):
+        verb = "praise"
+    elif any(word in text for word in HAGGLE_WORDS):
+        verb = "haggle"
     elif verb not in VERB_CN:
         verb = _first_hit(text, VERBS) or ""
         # 「请阿箬喝一碗」里的「喝一」会抢成买酒，这里按「请/敬 + 人」纠正为请客

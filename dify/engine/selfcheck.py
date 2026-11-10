@@ -492,6 +492,19 @@ def main(argv: list[str] | None = None) -> int:
         f"{rude_detail[:24]}｜记住={remembered}",
     )
 
+    # ---- 3y. 夸人要涨好感、讲价要被回绝
+    reset()
+    praise = act("阿箬你真好看。")
+    praise_aff = int((praise.get("npc") or {}).get("affinity") or 0)
+    haggle = act("这酒太贵了，便宜点吧。")
+    haggle_detail = str((haggle.get("outcome") or {}).get("detail") or "")
+    report.check(
+        "praise_and_haggle",
+        "夸人会涨好感（40→44），讲价会被回绝（本店不二价）",
+        praise_aff >= 44 and "一文不让" in haggle_detail,
+        f"好感 {praise_aff}｜{haggle_detail[:22]}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []
