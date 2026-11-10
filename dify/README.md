@@ -15,9 +15,15 @@
 | 读心 | 发「读心，看看阿箬现在在想什么。」 | 【判定：只是看着】+ 她脑子里**真实的记忆行**（亲历/目击/传闻/旧事） |
 | 每个 NPC 都会记住 | 买一壶酒之后分别读心三人 | 阿箬「亲历」、老陶「目击」、小满「传闻」 |
 
-> **导入前请先装一个模型供应商插件**：Dify 1.19 的模型能力全部来自插件，镜像里没有内置。
-> 本 DSL 引用的是 `openai_api_compatible`（可接 DeepSeek / 通义 / 智谱等任何 OpenAI 兼容端点）；
-> 没装它的话，发第一句话会直接报 `Provider ... does not exist`。装法见 [4.1](#第-4-步装模型插件--导入-dsl命令行一条都别少)。
+> **导入前有两件事必须做，缺一个都会在第一句话就报 400**（Dify 的模型能力全部来自插件，镜像里没有内置）：
+>
+> 1. 装 `openai_api_compatible` 插件（可接 DeepSeek / 通义 / 智谱等任何 OpenAI 兼容端点）——
+>    缺它报 `Provider langgenius/openai_api_compatible does not exist`；
+> 2. 配一个**名为 `deepseek-flash`** 的对话模型（或把三个 LLM 节点的模型改成你自己的）——
+>    缺它报 `Model deepseek-flash not exist`。
+>
+> 两处的具体命令见 [4.1](#第-4-步装模型插件--导入-dsl命令行一条都别少) / [4.2](#42-配模型deepseek-flash-或任意-openai-兼容模型)。
+> **这两种情况下 Dify 会在工作流开始前就拒绝执行，节点的兜底救不了** —— 所以务必先做。
 >
 > 这六行就是"核心玩法结果"与"声明规则"的对应关系：每一行的左列是**声明**，右列是**实际输出**，
 > 都能在 [`docs/conformance.md`](docs/conformance.md)（58 条）和
@@ -563,7 +569,7 @@ bash scripts/07_doctor.sh
 | 现象 | 原因 | 处理 |
 | --- | --- | --- |
 | 应用报 `Provider langgenius/openai_api_compatible does not exist` | 还没装模型供应商插件（Dify 1.19 的模型能力全来自插件） | 按 4.1 装 `openai_api_compatible`，或把三个 LLM 节点的模型换成你已装的任意对话模型 |
-| 应用报 `Model deepseek-flash not exist` | 没配模型，或模型名不一致 | 按 4.2 配同名模型，或在应用里把 3 个 LLM 节点的模型改成你有的 |
+| 应用报 `Model deepseek-flash not exist`（HTTP 400） | 没配模型，或模型名不一致。**Dify 会在工作流开始前拒绝执行**，节点兜底救不了 | 按 4.2 配同名模型，或在应用里把 3 个 LLM 节点的模型改成你有的 |
 | 应用报 `blocked by SSRF protection` | Dify 的 HTTP 节点禁止访问私网 | 见 4.4：`.env` 放行网段并 `--force-recreate ssrf_proxy` |
 | 应用报连接超时 / 502 | 引擎没起，或 `TAVERN_ENGINE_URL` 不对 | `curl http://<你的地址>:9100/health` 先通；改 DSL 环境变量 |
 | 引擎报 `Access denied for user` | seekdb 密码不对 | 改 `deploy/.env` 的 `SEEKDB_PASSWORD`，与 Dify `.env` 里的 `OCEANBASE_VECTOR_PASSWORD` 一致 |
