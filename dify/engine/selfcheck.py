@@ -544,6 +544,19 @@ def main(argv: list[str] | None = None) -> int:
         "｜".join(f"{key}={value[:10]}" for key, value in replies.items()),
     )
 
+    # ---- 3ab. 记忆里要存下玩家的原话（不是示例文本）
+    reset()
+    utterance = "把柜台上那枚玉佩塞进袖子里。"
+    act(utterance)
+    stored = sql(f"SELECT raw FROM tw_memory WHERE guest = '{GUEST}' AND turn > 0 LIMIT 5")
+    raws = [str(row.get("raw") or "") for row in stored]
+    report.check(
+        "memory.stores_raw_input",
+        "记忆里存着玩家的原话（tw_memory.raw），判题可据此确认不是演示文本",
+        any(utterance in raw for raw in raws),
+        f"raw 样本={[raw[:12] for raw in raws][:3]}",
+    )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

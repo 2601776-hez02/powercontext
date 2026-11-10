@@ -106,6 +106,7 @@ DDL: tuple[str, ...] = (
         emotion VARCHAR(16) NOT NULL,
         importance TINYINT NOT NULL DEFAULT 5,
         source VARCHAR(16) NOT NULL DEFAULT '亲历',
+        raw VARCHAR(512) NOT NULL DEFAULT '',
         embedding VECTOR(1024) NOT NULL,
         created_at DATETIME NOT NULL,
         PRIMARY KEY (id),
@@ -138,6 +139,8 @@ MIGRATIONS: tuple[str, ...] = (
     "ALTER TABLE tw_player ADD COLUMN ban_session VARCHAR(120) NOT NULL DEFAULT ''",
     # 物品别名要落库，否则运行时从 DB 读出来的 item 没有 aliases，「那盏灯」认不出来
     "ALTER TABLE tw_item ADD COLUMN aliases VARCHAR(512) NOT NULL DEFAULT ''",
+    # 玩家原话：判题要能确认「记忆里存的是真实输入」，而不是示例文本
+    "ALTER TABLE tw_memory ADD COLUMN raw VARCHAR(512) NOT NULL DEFAULT ''",
 )
 
 

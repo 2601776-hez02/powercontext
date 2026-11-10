@@ -189,7 +189,7 @@ def mind_of(db: SeekDB, *, guest: str, npc: str, limit: int = 8) -> list[dict]:
     """读心：直接看这个 NPC 现在脑子里存着什么（新→旧）。"""
 
     return db.query(
-        "SELECT id, turn, kind, body, emotion, importance, source FROM tw_memory "
+        "SELECT id, turn, kind, body, emotion, importance, source, raw FROM tw_memory "
         "WHERE guest IN (%s, '*') AND npc = %s ORDER BY turn DESC, id DESC LIMIT %s",
         (guest, npc, limit),
     )

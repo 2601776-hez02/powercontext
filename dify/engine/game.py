@@ -731,8 +731,9 @@ def act(
             )
         for memory in memories + gossip:
             cursor.execute(
-                "INSERT INTO tw_memory (guest, npc, turn, kind, body, emotion, importance, source, embedding, created_at) "
-                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())",
+                "INSERT INTO tw_memory (guest, npc, turn, kind, body, emotion, importance, source, "
+                "raw, embedding, created_at) "
+                "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())",
                 (
                     guest,
                     memory["npc"],
@@ -742,6 +743,7 @@ def act(
                     memory["emotion"],
                     int(memory["importance"]),
                     memory["source"],
+                    str(utterance)[:500],
                     _literal(memory["body"]),
                 ),
             )
@@ -989,6 +991,7 @@ def mind(guest: str, npc_id: str, *, db: SeekDB, limit: int = 8, text: str = "")
                 "turn": int(row["turn"]),
                 "kind": row["kind"],
                 "source": row["source"],
+                "raw": str(row.get("raw") or ""),
                 "emotion": row["emotion"],
                 "importance": int(row["importance"]),
                 "text": row["body"],
