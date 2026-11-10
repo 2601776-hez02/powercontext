@@ -468,6 +468,17 @@ def main(argv: list[str] | None = None) -> int:
         f"三种说法={distinct}｜各自报名={self_named}｜没有串味={not crossed}",
     )
 
+    # ---- 3w. DSL 的两段提示词都写了人称约定（阿箬/小满用「她」）
+    dsl_path = pathlib.Path(__file__).resolve().parent.parent / "dsl" / "wangchuan-tavern.chatflow.yaml"
+    if dsl_path.exists():
+        dsl_text = dsl_path.read_text(encoding="utf-8")
+        report.check(
+            "prompt.pronoun_rule",
+            "两段剧本提示词都写明人称（阿箬/小满是「她」，老陶是「他」）",
+            dsl_text.count("人称：") >= 2,
+            f"出现 {dsl_text.count('人称：')} 次",
+        )
+
     # ---- 4. 好感过门槛说秘密
     reset()
     facts_during = []

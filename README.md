@@ -16,7 +16,7 @@
 * **想直接玩（零配置）**：<https://parents-pendant-stamps-pools.trycloudflare.com/chat/US2WZk6wfvkw7R4Q>
 * **想本地跑**：`cd dify && bash scripts/00_bringup.sh` → 导入 `dify/dsl/wangchuan-tavern.chatflow.yaml` → 配一个对话模型
 * **想核对「声明 vs 实际」**：
-  * 声明逐条：`dify/docs/conformance.md`（49 条 PASS/FAIL，含实测值）
+  * 声明逐条：`dify/docs/conformance.md`（50 条 PASS/FAIL，含实测值）
   * 样例逐条：`dify/docs/evidence/walkthrough-check.md`（11 步逐条断言）
   * seekdb 在干活：`dify/docs/evidence/seekdb-explain.json`、`engine-transcript.json`、`docs/evidence/dify/` 截图
 
