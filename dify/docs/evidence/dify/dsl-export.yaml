@@ -59,6 +59,7 @@ workflow:
 
       柜台后是阿箬，她手边摊着一本账，连半块铜板都标着日期；靠窗的老陶正在说一段渡口旧事，醒木停在半空；后厨传来一声「哎呀」——那是小满。
 
+
       这里的规矩只有三条：
 
       · 一杯酒换一个秘密——第一次请他喝酒，他会说一句只在杯边说的事；
@@ -67,7 +68,19 @@ workflow:
 
       · 动手要记账——偷东西或威胁人，账本记一笔，记到第三次就逐出酒馆。
 
-      你可以直接说一句你想做的事。比如：
+      另外两件事也会发生：好感够深，他会说出守了很多年的事；风评攒够了，渡口会开始讲你的传说。
+
+
+      想最快看到这几条规矩的后果，可以照这三件事做（各一两回合）：
+
+      1. 发「请阿箬喝一壶桂花酿」→ 第一回合就会看到【阿箬的杯边话】；
+
+      2. 连发三次「把柜台上的玉佩塞进袖子」→ 第三次看到【判定：被逐出】；这之后在同一段对话里说什么都进不去，点「开启新对话」就是第二天，还能进门；
+
+      3. 发「打烊了」，再发「我又来了，还认得我吗？」→ 开场就会写出「账本上还有你上一回的记录」。
+
+
+      其它随便玩，说人话就行：
 
       · 要一壶桂花酿，铜板放柜台上
 
@@ -77,9 +90,7 @@ workflow:
 
       · 去后厨，替小满把碗端出来
 
-      · 读心，看看阿箬现在在想什么
-
-      · 打烊了，我该走了'
+      · 读心，看看阿箬现在在想什么'
     retriever_resource:
       enabled: false
     sensitive_word_avoidance:
@@ -355,6 +366,9 @@ workflow:
           - key: limit
             type: text
             value: '4'
+          - key: session
+            type: text
+            value: '{{#sys.conversation_id#}}'
           type: x-www-form-urlencoded
         desc: 读心接口（表单提交，中文参数不用自己拼 URL）
         headers: ''
@@ -390,7 +404,12 @@ workflow:
         context:
           enabled: false
           variable_selector: []
+        default_value:
+        - key: text
+          type: string
+          value: （你盯着她看了一会儿，她能感觉到。）
         desc: 把真实记忆行写成「他此刻在想什么」
+        error_strategy: default-value
         model:
           completion_params:
             max_tokens: 512
@@ -438,10 +457,10 @@ workflow:
       type: custom
       width: 244
     - data:
-        answer: '{{#llm_mind.text#}}
+        answer: '{{#http_mfacts.body#}}
 
 
-          {{#http_mfacts.body#}}'
+          {{#llm_mind.text#}}'
         desc: ''
         selected: false
         title: 回答（读心）
@@ -475,6 +494,9 @@ workflow:
           - key: parsed
             type: text
             value: '{{#llm_parse.text#}}'
+          - key: session
+            type: text
+            value: '{{#sys.conversation_id#}}'
           type: x-www-form-urlencoded
         desc: 酒馆引擎：判定 + 事务落库 + 记忆混合检索；把「拆动作」的 JSON 一起带上（引擎会校验后采用）
         headers: ''
@@ -510,7 +532,12 @@ workflow:
         context:
           enabled: false
           variable_selector: []
+        default_value:
+        - key: text
+          type: string
+          value: （灯芯爆了一声，屋里静了下来。这一回合的判定与账本见上方。）
         desc: 按引擎给出的事实写小说体叙事，必须引用 NPC 想起的旧事
+        error_strategy: default-value
         model:
           completion_params:
             max_tokens: 900
@@ -520,45 +547,19 @@ workflow:
           provider: langgenius/openai_api_compatible/openai_api_compatible
         prompt_template:
         - role: system
-          text: '你是《忘川酒馆》的说书人。玩家是刚进店的客人；你要把「引擎判定的事实」写成一小段中文小说，并让在场 NPC 用他们自己的口吻说话。
-
-
-            【铁律】
-
-            1. 事实以引擎 JSON 为准：outcome.verdict / outcome.detail / player / deltas /
-            recalls 不许改，不许加戏改变结果。失败就是失败。
-
-            2. recalls 是 NPC 此刻真实想起来的旧事。**至少引用一条 relevant=true 的**，用 NPC 的原话或叙述带出来，让玩家感觉到「它记得」。
-
-            3. 每个在场 NPC 至多一句台词，符合他的 voice 与 mood；mood=警觉或冷淡时不要主动亲近。
-
-            4. 数字必须与 JSON 一致（铜板、风评、被记账次数）。
-
-            5. 不要出现「系统」「数据」「JSON」「AI」「引擎」这类词；不要替玩家做决定。
-
-            6. 若 outcome.secret 非空，让对应 NPC 把这句话说出来——这是他守了多年的事，语气要重。
-
-            6b. 若 outcome.confide 非空，让对应 NPC 压低声音说出这句话——这是「一杯酒换一个秘密」，只对请他喝过酒的人说。
-
-            7. 若 tavern_memory.hits 非空，开头用一句 NPC 的话点出「你上次来过」。
-
-            8. 正文 120~240 字。**不要写状态行**（程序会在你的文字后面自动附上「判定 + 铜板/风评/被记账」，不要抢）。
-
-
-            【输出格式】
-
-            第一段：场景与结果，带细节。
-
-            第二段：NPC 台词，用「阿箬：……」这种格式。
-
-            最后不要再写状态行。
-
-
-            【引擎数据】
-
-            {{#http_act.body#}}
-
-            '
+          text: "你是《忘川酒馆》的说书人。玩家是刚进店的客人；你要把「引擎判定的事实」写成一小段中文小说，并让在场 NPC 用他们自己的口吻说话。\n\
+            \n【铁律】\n1. 事实以引擎 JSON 为准：outcome.verdict / outcome.detail / player / deltas\
+            \ / recalls 不许改，不许加戏改变结果。失败就是失败。\n2. recalls 是 NPC 此刻真实想起来的旧事。**至少引用一条\
+            \ relevant=true 的**，用 NPC 的原话或叙述带出来，让玩家感觉到「它记得」。\n3. 每个在场 NPC 至多一句台词，符合他的\
+            \ voice 与 mood；mood=警觉或冷淡时不要主动亲近。\n4. 数字必须与 JSON 一致（铜板、风评、被记账次数）。\n5.\
+            \ 不要出现「系统」「数据」「JSON」「AI」「引擎」这类词；不要替玩家做决定。\n5b. **你的叙述必须与 JSON 里的 verdict\
+            \ 完全一致**：verdict 是 fail / refused 时，绝不能写出「你成功了」「东西到手了」这类结果；verdict 是 success\
+            \ 时也不能写成被抓住。\n   拿不准就少写，把 outcome.detail 那句原样化用进来即可（判定行会显示在回答最前面，读者对照着看）。\n\
+            6. 若 outcome.secret 非空，让对应 NPC 把这句话说出来——这是他守了多年的事，语气要重。\n6b. 若 outcome.confide\
+            \ 非空，让对应 NPC 压低声音说出这句话——这是「一杯酒换一个秘密」，只对请他喝过酒的人说。\n7. 若 tavern_memory.hits\
+            \ 非空，开头用一句 NPC 的话点出「你上次来过」。\n8. 正文 120~240 字。**不要写状态行**（程序会在你的文字后面自动附上「判定\
+            \ + 铜板/风评/被记账」，不要抢）。\n\n【输出格式】\n第一段：场景与结果，带细节。\n第二段：NPC 台词，用「阿箬：……」这种格式。\n\
+            最后不要再写状态行。\n\n【引擎数据】\n{{#http_act.body#}}\n"
         - role: user
           text: 玩家：{{#sys.query#}}
         selected: false
@@ -581,10 +582,10 @@ workflow:
       type: custom
       width: 244
     - data:
-        answer: '{{#llm_narrate.text#}}
+        answer: '{{#http_facts.body#}}
 
 
-          {{#http_facts.body#}}'
+          {{#llm_narrate.text#}}'
         desc: ''
         selected: false
         title: 回答
@@ -613,7 +614,16 @@ workflow:
             type: text
             value: '{{#start.guest#}}'
           type: x-www-form-urlencoded
+        default_value:
+        - key: body
+          type: string
+          value: 【判定】酒馆引擎没有响应：请确认 TAVERN_ENGINE_URL（DSL 环境变量）指向的服务已启动，默认 http://172.17.0.1:9100
+            。
+        - key: status_code
+          type: number
+          value: 0
         desc: 取这一回合的事实行（成功/失败 + 状态），由引擎写、模型改不了
+        error_strategy: default-value
         headers: ''
         method: post
         params: ''
@@ -653,7 +663,15 @@ workflow:
             type: text
             value: '{{#start.guest#}}'
           type: x-www-form-urlencoded
+        default_value:
+        - key: body
+          type: string
+          value: 【判定】酒馆引擎没有响应：请确认 TAVERN_ENGINE_URL（DSL 环境变量）指向的服务已启动。
+        - key: status_code
+          type: number
+          value: 0
         desc: 取这一回合的事实行（成功/失败 + 状态），由引擎写、模型改不了
+        error_strategy: default-value
         headers: ''
         method: post
         params: ''
