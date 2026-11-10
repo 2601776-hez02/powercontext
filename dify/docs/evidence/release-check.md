@@ -12,6 +12,8 @@
 | 5 | `bash scripts/07_doctor.sh` | **8/8 通过** |
 | 6 | `bash scripts/09_docs_lint.sh` | 表格列数一致、README 相对链接全部存在 |
 | 7 | `pip install -r requirements-dev.txt && pytest tests -q` | **32 passed** |
+| 8 | demo 版 DSL 以**全新应用**导入 + 聊三句（你好 / 要一壶桂花酿 / 读心） | 三句都有判定行，杯边话与读心正常 |
+| 9 | 空库首次启动（新建数据库直接起引擎） | 自动建表灌种子，一回合跑通，`raw` 存原话 |
 
 > 说明：第 5 项要求这台机器的 Dify 已经配好（登录/插件/模型/DSL/API Key）。
 > 全新克隆时它会是 3/8，正好对应 README 第 4 节还没做的部分。
